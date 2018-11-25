@@ -1,0 +1,101 @@
+/*
+ * Main
+ */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600');
+body {
+    background-color: #edeef0;
+    overflow: hidden;
+    margin: 0;
+    margin-left: 250px;
+    font-family: 'Open Sans', sans-serif;
+    padding: 20px 40px;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #6b6b6b;
+}
+
+#header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.2) 10px 0 20px 0;
+}
+
+#logo {
+    display: block;
+    width: 90%;
+    padding: 10px 5%;
+}
+
+#user_block {
+    display: block;
+    padding: 0 5%;
+    font-size: 14px;
+    line-height: 42px;
+    font-weight: bold;
+}
+
+#user_block > img {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 100%;
+    vertical-align: top;
+    margin-right: 5px;
+}
+
+#menu {
+    position: absolute;
+    top: 150px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+#menu > .item {
+    position: relative;
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    color: #545454;
+    padding: 0 10%;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+#menu > .item:hover {
+    color: #fff;
+    transition: 0.1s;
+}
+
+#menu > .item:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: 0px;
+    width: 5px;
+    transition: 0.3s;
+    border-radius: 0 5px 5px 0;
+    background-color: #00bcd4;
+    z-index: -1;
+}
+
+#menu > .item:hover:before {
+    width: 100%;
+    border-radius: 0;
+}

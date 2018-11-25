@@ -1,0 +1,311 @@
+﻿@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600');
+::selection {
+    background: #d26f6f;
+    color: #fff;
+}
+
+* { font-family: 'Open Sans', sans-serif; }
+[profile] { background-color: #edeef0; }
+
+[profile] > body { margin: 15px auto; }
+[profile] > body, #profile_wrapper {
+    position: relative;
+    width: 650px;
+    background-color: #fff;
+    font-size: 0;
+    padding-bottom: 15px;
+    border-radius: 6px 6px 4px 4px;
+}
+
+
+#profile_wrapper > .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #000;
+    border: 2px solid #000;
+    border-radius: 0 4px;
+    opacity: 0.4;
+}
+
+#profile_wrapper > .close:before,
+#profile_wrapper > .close:after {
+    background-color: #fff;
+}
+
+#profile_wrapper > img {
+    display: block;
+    width: 650px;
+    height: 220px;
+    border-radius: 4px 4px 0 0;
+}
+
+#profile_top {
+    position: relative;
+    display: flex;
+    padding: 0 15px;
+}
+
+#profile_top > img {
+    border: 5px solid #fff;
+    margin-top: -95px;
+    width: 180px !important;
+    height: 180px !important;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px 0;
+}
+
+#profile_status {
+    position: absolute;
+    left: 215px;
+    bottom: calc(100% + 5px);
+    letter-spacing: -0.1px;
+    background-color: #fff;
+    font-size: 13px;
+    padding: 0 3px;
+    border-radius: 4px;
+    line-height: 18px;
+}
+
+#profile_status:before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    right: 100%;
+    border-top: 5px solid transparent;
+    border-right: 5px solid #fff;
+}
+
+#profile_top > div {
+    flex: 1 1 0;
+    padding-left: 15px;
+}
+
+#profile_top > div > h1 {
+    display: block;
+    margin: 10px 0 5px 0;
+    font-size: 34px;
+    font-weight: lighter;
+    letter-spacing: -1px;
+}
+
+#profile_top > div > h1 > i {
+    vertical-align: top;
+    margin-top: 12px;
+    margin-left: -4px;
+}
+
+#profile_top > div > span { font-size: 15px; }
+#profile_top > div > span[online]:before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #4caf50;
+    box-shadow: #4caf50 0 0 0 0;
+    border-radius: 100%;
+    vertical-align: top;
+    margin: 6px 0;
+    margin-right: 5px;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    100% { box-shadow: #f000 0 0 5px 5px; }
+}
+
+#profile_gifts {
+    display: block;
+    height: 100px;
+    margin-top: 25px;
+}
+
+#profile_gifts > span {
+    display: block;
+    font-size: 14px;
+    text-align: center;
+    margin: auto;
+    padding: 5px 0;
+    cursor: pointer;
+    font-weight: 600;
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+#profile_gifts > span:hover {
+    opacity: 0.8;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#profile_about {
+    position: relative;
+    align-items: center;
+    font-size: 15px;
+}
+
+#profile_about > * { transition: 0.3s; }
+#profile_about > img {
+    width: 150px;
+    height: 180px;
+    padding-left: 15px;
+}
+
+#profile_about[editing] > div { width: 100%; }
+#profile_about[editing] > img {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    padding-left: 0;
+}
+
+#profile_about h1 {
+    font-size: 26px;
+    font-weight: 100;
+    letter-spacing: -1px;
+    margin: 0;
+}
+
+#profile_about p { margin: 0; }
+#profile_about table {
+    width: 100%;
+    color: #656565;
+    font-size: 14px;
+}
+
+#profile_about table td:first-child {padding-right: 15px;}
+#profile_wrapper textarea, #profile_wrapper input {
+    display: block;
+    width: 100% !important;
+    height: 100%;
+    margin: 0;
+    padding: 0 5px;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+/*
+ * Icons fallback
+ */
+[class*="chat_icon"] {
+    /* 22x23 Sprite Sheet */
+    display: inline-block;
+    background-clip: content-box;
+    background-image: url('/public/img/sprites.png');
+    background-repeat: no-repeat;
+}
+.chat_icon_edit { background-position: calc(3  * -22px) calc(2 * -23px); width: 20px; height: 20px; }
+.chat_icon_verificated { background-position: calc(10 * -22px) calc(0 * -23px); width: 14px; height: 14px; }
+
+i[edit] {
+    opacity: 0;
+    transition: 0.3s;
+    background-color: #fff;
+    border: 4px solid #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#profile_wrapper img:hover ~ i[edit], #profile_wrapper img:focus ~ i[edit],
+#profile_about :hover > i[edit], #profile_about :focus > i[edit],
+i[edit]:hover, i[edit]:focus {
+    opacity: 1;
+}
+
+#profile_about i[edit] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.1);
+    vertical-align: middle;
+}
+
+i[edit="cover"] {
+    position: absolute;
+    right: 5px;
+    top: 187px;
+}
+
+i[edit="avatar"] {
+    position: absolute;
+    left: 170px;
+    top: 60px;
+}
+
+#profile_wrapper .btn {
+    display: inline-block;
+    border: none;
+    background-color: #00897B;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+/*
+ * Tooltips
+ */
+.tooltip {
+    position: fixed;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0 10px 0, rgba(255, 255, 255, 0.7) 0 0 5px 0;
+    color: #fff;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0;
+    margin-top: 10px;
+    z-index: 99999;
+    transition: 0.3s;
+}
+
+.tooltip:before {
+    content: '';
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.7);
+    width: 0;
+    bottom: 100%;
+}
+
+.tabs > .caption {
+    display: flex;
+    color: #408ed6;
+    border-bottom: 1px solid #e7e8ec;
+    font-size: 14px;
+}
+
+.tabs > .caption > span {
+    padding: 10px 0;
+    margin: 0 15px;
+    border-bottom: 1px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.tabs > .caption > span:hover {
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    opacity: 1;
+}
+
+.tabs > .caption > span.active {
+    border-bottom-color: #408ed6;
+    opacity: 1;
+}
+
+.tabs > .tab.active { display: block; }
+.tabs > .tab.flex.active { display: flex; }
+.tabs > .tab {
+    display: none;
+    padding: 20px 15px;
+    font-size: 16px;
+}
