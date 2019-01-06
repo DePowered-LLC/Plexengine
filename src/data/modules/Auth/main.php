@@ -153,15 +153,7 @@ class Auth {
                     'about' => '{}',
                     'credits' => 0
                 ];
-                $user_id = DB::insert('users', $userdata);
-                $userdata['id'] = $user_id;
-                if($user_id === '1') {
-                    DB::update('users', ['access' => 'admin'], [
-                        'id = :0:',
-                        'bind' => [$user_id]
-                    ]);
-                    $userdata['access'] = 'admin';
-                }
+                $userdata['id'] = DB::insert('users', $userdata);
                 $_SESSION['userdata'] = $userdata;
                 exit('success');
             }

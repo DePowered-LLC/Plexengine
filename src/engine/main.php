@@ -14,7 +14,6 @@ define('LANG', ROOT.'/languages');
 define('MODULES', DATA.'/modules');
 
 $_CONFIG = parse_ini_file(DATA.'/config.ini');
-$_SESSION['rc'] = $_CONFIG['rc_key'];
 $_CONFIG['lang_delimiters'] = explode('...', $_CONFIG['lang_delimiters']);
 $_CONFIG['loaded_modules'] = explode(',', $_CONFIG['loaded_modules']);
 foreach($_CONFIG['loaded_modules'] as $key => $val) {
