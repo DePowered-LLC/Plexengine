@@ -164,6 +164,7 @@ input:not([type="submit"]), select {
     box-sizing: border-box;
     width: 100%;
     border: 1px solid #e3e4e8;
+    background-color: #fff;
     border-radius: 4px;
     padding: 10px 15px;
     height: 32px;
@@ -728,14 +729,15 @@ input:focus, select:focus {
 * User list
 */
 #userlist {
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
     width: 240px;
     height: 100%;
     background-color: #fff;
     padding: 5px;
     margin-left: 10px;
     box-sizing: border-box;
-    overflow: auto;
+    /* overflow: auto; */
 }
 
 .category {
@@ -1666,3 +1668,34 @@ chat-timestamp {
 
 #chat_admin[m="kick"] [name="action"] { width: calc(40% - 5px); }
 #chat_admin[m="kick"] [name="nick"] { width: 60%; }
+
+#userlist > :first-child {
+    flex: 1 1 0;
+    overflow: hidden auto;
+}
+
+#user_cat_select {
+    white-space: normal;
+    text-align: center;
+    padding: 5px 0;
+}
+
+#user_cat_select > button {
+    border: none;
+    background: none;
+    padding: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+}
+
+#user_cat_select > span {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+#user_cat_select > button:not(:last-child) {
+    margin-right: 10px;
+}

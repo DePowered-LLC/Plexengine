@@ -19,44 +19,53 @@
         </div>
         <div id="smiles" class="box"></div>
         <div id="userlist" class="box">
-            <div class="category" category="all">
-                <div class="caption">
-                    | all |
-                    <span class="right">
-                        <span count>0</span>
-                    </span>
+            <div>
+                <div class="category" category="all">
+                    <div class="caption">
+                        | all |
+                        <span class="right">
+                            <span count>0</span>
+                        </span>
+                    </div>
+                    <div class="content"></div>
                 </div>
-                <div class="content"></div>
+                <div class="category" category="male">
+                    <div class="caption">
+                        | boys |
+                        <span class="right">
+                            <i class="chat_icon_male"></i>
+                            <span count>0</span>
+                        </span>
+                    </div>
+                    <div class="content"></div>
+                </div>
+                <div class="category" category="female">
+                    <div class="caption">
+                        | girls |
+                        <span class="right">
+                            <i class="chat_icon_female"></i>
+                            <span count>0</span>
+                        </span>
+                    </div>
+                    <div class="content"></div>
+                </div>
+                <div class="category" category="guest">
+                    <div class="caption">
+                        | guests |
+                        <span class="right">
+                            <i class="chat_icon_guest"></i>
+                            <span count>0</span>
+                        </span>
+                    </div>
+                    <div class="content"></div>
+                </div>
             </div>
-            <div class="category" category="male">
-                <div class="caption">
-                    | boys |
-                    <span class="right">
-                        <i class="chat_icon_male"></i>
-                        <span count>0</span>
-                    </span>
-                </div>
-                <div class="content"></div>
-            </div>
-            <div class="category" category="female">
-                <div class="caption">
-                    | girls |
-                    <span class="right">
-                        <i class="chat_icon_female"></i>
-                        <span count>0</span>
-                    </span>
-                </div>
-                <div class="content"></div>
-            </div>
-            <div class="category" category="guest">
-                <div class="caption">
-                    | guests |
-                    <span class="right">
-                        <i class="chat_icon_guest"></i>
-                        <span count>0</span>
-                    </span>
-                </div>
-                <div class="content"></div>
+            <div id="user_cat_select">
+                <span>| select_to_view |</span>
+                <button onclick="chat.users_filter = 'all'">| all1 |</button>
+                <button onclick="chat.users_filter = 'male'">| boys1 |</button>
+                <button onclick="chat.users_filter = 'female'">| girls1 |</button>
+                <button onclick="chat.users_filter = 'guest'">| guests1 |</button>
             </div>
         </div>
     </div>

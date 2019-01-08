@@ -49,8 +49,8 @@
 #profile_top > img {
     border: 5px solid #fff;
     margin-top: -95px;
-    width: 180px !important;
-    height: 180px !important;
+    min-width: 180px;
+    min-height: 180px;
     box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px 0;
 }
 

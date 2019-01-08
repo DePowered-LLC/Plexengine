@@ -45,13 +45,21 @@ class Admin {
             $limit[] = time() + $time * 60;
         }
 
-        var_dump([implode(';', $limit), $_POST['nick']]);
-        DB::update('users', [
-            'limitation' => implode(';', $limit)
-        ], [
-            'nick = :0:',
-            'bind' => [$_POST['nick']]
-        ]);
+        if ($_POST['action'] == 'kick' && !DB::find_first('users', ['nick = :0:', 'bind' => [$_POST['nick']]])) {
+            DB::update('guests', [
+                'kick' => $_POST['reason']
+            ], [
+                'nick = :0:',
+                'bind' => [$_POST['nick']]
+            ]);
+        } else {
+            DB::update('users', [
+                'limitation' => implode(';', $limit)
+            ], [
+                'nick = :0:',
+                'bind' => [$_POST['nick']]
+            ]);
+        }
 
         DB::insert('chat', [
             'user_id' => 0,

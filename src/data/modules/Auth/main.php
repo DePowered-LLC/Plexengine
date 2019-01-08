@@ -21,12 +21,11 @@ class Auth {
                     'id = :0:',
                     'bind' => [$id]
                 ]);
-
                 if ($userdata) {
                     $userdata['date_of_birth'] = explode('_', $userdata['date_of_birth']);
                     $userdata['date_of_birth'][0] = str_pad($userdata['date_of_birth'][0], 2, '0', STR_PAD_LEFT);
                     $userdata['date_of_birth'][1] = str_pad($userdata['date_of_birth'][1], 2, '0', STR_PAD_LEFT);
-                    switch(intval($userdata['date_of_birth'][1])) {
+                    switch (intval($userdata['date_of_birth'][1])) {
                         case 1:
                             if($userdata['date_of_birth'][0] < 21) $userdata['zodiac'] = 'kozerog';
                             else $userdata['zodiac'] = 'vodolei';
@@ -41,7 +40,7 @@ class Auth {
                             break;
                         case 4:
                             if($userdata['date_of_birth'][0] < 21) $userdata['zodiac'] = 'oven';
-                            else return 'telec';
+                            else $userdata['zodiac'] = 'telec';
                             break;
                         case 5:
                             if($userdata['date_of_birth'][0] < 21) $userdata['zodiac'] = 'telec';
@@ -154,6 +153,7 @@ class Auth {
                     'credits' => 0
                 ];
                 $userdata['id'] = DB::insert('users', $userdata);
+                $userdata['ignored'] = [];
                 $_SESSION['userdata'] = $userdata;
                 exit('success');
             }
@@ -170,6 +170,7 @@ class Auth {
                 exit('wrong_password');
             } else {
                 $user['ignored'] = explode(',', $user['ignored']);
+                if ($user['ignored'][0] == '') unset($user['ignored'][0]);
                 $user['about'] = json_decode($user['about'], true);
                 $_SESSION['userdata'] = $user;
                 exit('success');

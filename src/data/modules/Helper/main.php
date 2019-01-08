@@ -33,6 +33,7 @@ class Helper {
 				case 'ban':
 					if ($limitation[2] <= time()) {
 						DB::update('users', [
+							'last_online' => time() - 3,
 							'limitation' => ''
 						], $user_selector);
 						break;
@@ -44,12 +45,28 @@ class Helper {
 					}
 			}
 			$data['limitation'] = $limitation;
+		} else {
+			$guest_selector = [
+				'nick = :0:',
+				'bind' => [$_SESSION['userdata']['nick']]
+			];
+
+			$guest = DB::find_first('guests', $guest_selector);
+			if ($guest) {
+				if ($guest['kick'] != '') {
+					DB::delete('guests', $guest_selector);
+					session_destroy();
+					exit(json_encode([
+						'limitation' => ['kick', $guest['kick']]
+					]));
+				}
+			}
 		}
 
 		if(isset($_GET['t']) && $_GET['t'] > 0) {
 			$data['msgs'] = DB::find('chat', [
 				'timestamp >= :0: ORDER BY id DESC',
-				'bind' => [time() - intval($_GET['t'])]
+				'bind' => [time() - intval($_GET['t']) - 1]
 			]);
 		} else {
 			global $_CONFIG;
@@ -81,13 +98,20 @@ class Helper {
 			], $user_selector);
 
 			// Get ignored list
-			$data['ignored'] = $_SESSION['userdata']['ignored'];
+			$data['ignored'] = implode(',', $_SESSION['userdata']['ignored']);
+		} else {
+			DB::update('guests', [
+				'last_online' => time()
+			], [
+				'nick = :0:',
+				'bind' => [$_SESSION['userdata']['nick']]
+			]);
 		}
 
-		// Get online users (last request 6 seconds ago)
+		// Get online users (last request 4 seconds ago)
 		$data['online'] = DB::find('users', [
 			'last_online > :0:',
-			'bind' => [time() - 6]
+			'bind' => [time() - 4]
 		]);
 		foreach($data['online'] as $ukey => $user) {
 			$data['online'][$ukey] = [
@@ -98,10 +122,16 @@ class Helper {
 				'status'      => $user['status']
 			];
 		}
-		
+
+		// Get online guests
+		$guests_online = DB::find('guests', [
+			'last_online > :0:',
+			'bind' => [time() - 4]
+		]);
+		foreach($guests_online as $gkey => $guest) $guests_online[$gkey] = $guest['nick'];
 		$data['online'][] = [
 			'id' => -1,
-			'list' => explode(',', DB::find_first('data', ['`key` = "guests"'])['val'])
+			'list' => $guests_online
 		];
 
 		$data['msgs'] = array_reverse($data['msgs']);
@@ -169,12 +199,19 @@ class Helper {
 		switch ($_GET['m']) {
 			case 'enter':
 				if ($_SESSION['userdata']['id'] == -1) {
-					DB::update('data', "`val` = CONCAT(val, '{$_SESSION['userdata']['nick']},')", ['`key` = "guests"']);
+					DB::insert('guests', [
+						'nick' => $_SESSION['userdata']['nick'],
+						'last_online' => time(),
+						'kick' => ''
+					]);
 				}
 				break;
 			case 'leave':
 				if ($_SESSION['userdata']['id'] == -1) {
-					DB::update('data', "`val` = REPLACE(val, '{$_SESSION['userdata']['nick']},', '')", ['`key` = "guests"']);
+					DB::delete('guests', [
+						'nick = :0:',
+						'bind' => [$_SESSION['userdata']['nick']]
+					]);
 				}
 				break;
 			case 'st':

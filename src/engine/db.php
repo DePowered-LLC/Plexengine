@@ -18,6 +18,12 @@ class DB {
         return $result;
     }
     
+    public static function delete($table, $opts = '') {
+        $where = self::where_parser($opts);
+        $query = 'DELETE FROM `'.addcslashes($table, '`\\').'`'.$where;
+        $result = self::$connection->query($query);
+    }
+    
     public static function find($table, $opts = '') {
         $where = self::where_parser($opts);
         $query = 'SELECT * FROM `'.addcslashes($table, '`\\').'`'.$where;
