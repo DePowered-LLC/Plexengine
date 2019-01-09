@@ -457,7 +457,8 @@ afk_time=10
         <br />
         Теперь Вы можете перейти <a href="/">по этой ссылке</a> чтобы открыть главную страницу.
     <?php
-        file_get_contents($base_url.'/rg.php?d='.$_SERVER['HTTP_HOST'].'&ip='.$_SERVER['SERVER_ADDR']);
+        // global $base_url;
+        // file_get_contents($base_url.'/rg.php?d='.$_SERVER['HTTP_HOST'].'&ip='.$_SERVER['SERVER_ADDR']);
         return false;
     }
     

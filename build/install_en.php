@@ -458,7 +458,8 @@ afk_time=10
         <br />
         Now you can follow <a href="/">this link</a> to view main page.
     <?php
-        file_get_contents($base_url.'/rg.php?d='.$_SERVER['HTTP_HOST'].'&ip='.$_SERVER['SERVER_ADDR']);
+        // global $base_url;
+        // file_get_contents($base_url.'/rg.php?d='.$_SERVER['HTTP_HOST'].'&ip='.$_SERVER['SERVER_ADDR']);
         return false;
     }
     
