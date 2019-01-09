@@ -20,10 +20,6 @@
 			</div>
 			<div id="menu">
 				<div>
-					<span class="item"><i class="chat_icon_alert" tooltip="| tool_alert |"></i></span>
-					<span class="item"><i class="chat_icon_users" tooltip="| tool_friends |"></i></span>
-				</div>
-				<div>
 					<span onclick="load_modal('rules')" class="item">| rules |</span>
 					<span class="item">
 						<i class="chat_icon_premium"></i>
@@ -36,7 +32,15 @@
 				</div>
 			</div>
 			<span class="separator"></span>
-			<div id="balance">| balance_text | {{ $_SESSION['userdata']['credits'] }} <i class="chat_icon_coin"></i></div>
+			<div id="balance">
+				<i class="chat_icon_wallet"></i>
+				| balance_text | {{ $_SESSION['userdata']['credits'] }}
+				<i class="chat_icon_coin"></i>
+			</div>
+			<div>
+				<span class="item" tooltip="| tool_alert |"><i class="chat_icon_alert"></i></span>
+				<span class="item" tooltip="| tool_friends |"><i class="chat_icon_message"></i></span>
+			</div>
 			<div class="user_block dropdown">
 				<span class="name">{{ $_SESSION['userdata']['nick'] }}</span>
 				<img src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.png" />

@@ -50,9 +50,9 @@ $(document).on('click', '#user_menu > .item', e => {
     var action = $(e.currentTarget).attr('do');
     switch(action) {
         case 'write':
-            if (uid == '-1') $('chat-send-to > input', chat.elem).val($(e.currentTarget).parent().attr('nick'));
-            else $('chat-send-to > input', chat.elem).val($(`#userlist .user[id="uid${uid}"]`).text().trim());
-            $('chat-input-wrapper > input').focus();
+            if (uid == '-1') $('#chat chat-send-to > input').val($(e.currentTarget).parent().attr('nick'));
+            else $('#chat chat-send-to > input').val($(`#userlist .user[id="uid${uid}"]`).text().trim());
+            $('#chat chat-input-wrapper > input').focus();
             break;
         case 'profile':
             open_profile(uid);
@@ -87,3 +87,9 @@ $(document).on('click', '#userlist .user', e => {
 $(document).on('click', '#userlist .user > [info]', e => {
     open_profile($(e.currentTarget).parent().attr('id').replace(/^uid/, ''));
 });
+
+if (sessionStorage.getItem('write_to')) {
+    $('#chat chat-send-to > input').val(sessionStorage.getItem('write_to'));
+    $('#chat chat-input-wrapper > input').focus();
+    sessionStorage.removeItem('write_to');
+}

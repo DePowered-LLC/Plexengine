@@ -361,12 +361,12 @@ input:focus, select:focus {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    background: -moz-radial-gradient(ellipse at center 20%, rgba(0, 0, 0, 0.65) 0, rgba(13, 15, 25, 0.95) 80%);
-    background: -webkit-radial-gradient(ellipse at center 20%, rgba(0, 0, 0, 0.65) 0, rgba(13, 15, 25, 0.95) 80%);
-    background: -o-radial-gradient(ellipse at center 20%, rgba(0, 0, 0, 0.65) 0, rgba(13, 15, 25, 0.95) 80%);
-    background: -ms-radial-gradient(ellipse at center 20%, rgba(0, 0, 0, 0.65) 0, rgba(13, 15, 25, 0.95) 80%);
-    background: radial-gradient(ellipse at center 20%, rgba(0, 0, 0, 0.65) 0, rgba(13, 15, 25, 0.95) 80%);
+    background: rgba(0,0,0,0.6);
+    background: -moz-radial-gradient(center 20%,ellipse cover,rgba(0,0,0,0.5) 0,#0d0f19 80%);
+    background: -webkit-radial-gradient(center 20%,ellipse cover,rgba(0,0,0,0.5) 0,#0d0f19 80%);
+    background: -o-radial-gradient(center 20%,ellipse cover,rgba(0,0,0,0.5) 0,#0d0f19 80%);
+    background: -ms-radial-gradient(center 20%,ellipse cover,rgba(0,0,0,0.5) 0,#0d0f19 80%);
+    background: radial-gradient(ellipse at center 20%,rgba(0,0,0,0.5) 0,#0d0f19 80%);
     z-index: 9999;
     padding: 55px 0;
     cursor: pointer;
@@ -498,6 +498,7 @@ input:focus, select:focus {
     height: 55px;
     background-color: #252932;
 }
+#header > * { display: inline-flex; }
 
 #header .separator,
 #header .separator_small {
@@ -560,7 +561,7 @@ input:focus, select:focus {
 #menu, #menu > div { display: flex; }
 #menu > div:not(:last-child) { margin-right: 25px; }
 
-#menu > div > .item {
+#header :not(.dropdown_container) > .item {
     display: flex;
     align-items: center;
     padding: 0 10px;
@@ -571,10 +572,10 @@ input:focus, select:focus {
     cursor: pointer;
     box-sizing: border-box;
 }
-#menu > div > .item:not(:last-child) { margin-right: 5px; }
+#header :not(.dropdown_container) > .item:not(:last-child) { margin-right: 5px; }
 
-#menu > div > .item:hover,
-#menu > div > .item:focus {
+#header :not(.dropdown_container) > .item:hover,
+#header :not(.dropdown_container) > .item:focus {
     background-color: #1b1f25;
 }
 
@@ -585,7 +586,8 @@ input:focus, select:focus {
     font-weight: 600;
     align-items: center;
 }
-#balance > i { margin-left: 5px; }
+#balance > i:first-child { margin-right: 10px; }
+#balance > i:last-child { margin-left: 5px; }
 
 .user_block {
     display: inline-block;
@@ -611,7 +613,7 @@ input:focus, select:focus {
 .user_block > .name {
     display: inline-block;
     line-height: 55px;
-    margin-right: 10px;
+    margin-right: 15px;
     vertical-align: top;
     font-weight: 600;
     font-size: 14px;
@@ -1076,9 +1078,9 @@ input:focus, select:focus {
     background-repeat: no-repeat;
 }
 
+.chat_icon_wallet      { background-position: calc(0  * -22px) calc(0 * -23px); width: 22px; height: 22px; }
 .chat_icon_more        { background-position: calc(0  * -22px) calc(1 * -23px); width: 18px; height: 4px;  }
 .chat_icon_female      { background-position: calc(0  * -22px) calc(2 * -23px); width: 16px; height: 16px; }
-.chat_icon_wallet      { background-position: calc(0  * -22px) calc(3 * -23px); width: 20px; height: 20px; }
 .chat_icon_attach      { background-position: calc(1  * -22px) calc(0 * -23px); width: 16px; height: 14px; }
 .chat_icon_chat        { background-position: calc(1  * -22px) calc(1 * -23px); width: 18px; height: 11px; }
 .chat_icon_male        { background-position: calc(1  * -22px) calc(2 * -23px); width: 16px; height: 16px; }
@@ -1090,10 +1092,10 @@ input:focus, select:focus {
 .chat_icon_brush       { background-position: calc(3  * -22px) calc(0 * -23px); width: 17px; height: 17px; }
 .chat_icon_na          { background-position: calc(3  * -22px) calc(1 * -23px); width: 18px; height: 11px; }
 .chat_icon_edit        { background-position: calc(3  * -22px) calc(2 * -23px); width: 20px; height: 20px; }
-.chat_icon_alert       { background-position: calc(3  * -22px) calc(3 * -23px); width: 16px; height: 17px; }
+.chat_icon_alert       { background-position: calc(3  * -22px) calc(3 * -23px); width: 22px; height: 21px; }
 .chat_icon_admin       { background-position: calc(4  * -22px) calc(0 * -23px); width: 12px; height: 15px; }
 .chat_icon_dnd         { background-position: calc(4  * -22px) calc(1 * -23px); width: 18px; height: 11px; }
-.chat_icon_users       { background-position: calc(4  * -22px) calc(3 * -23px); width: 19px; height: 17px; }
+.chat_icon_message     { background-position: calc(4  * -22px) calc(3 * -23px); width: 22px; height: 20px; }
 .chat_icon_sound_off   { background-position: calc(5  * -22px) calc(0 * -23px); width: 14px; height: 14px; }
 .chat_icon_sound_on    { background-position: calc(6  * -22px) calc(0 * -23px); width: 14px; height: 14px; }
 .chat_icon_off         { background-position: calc(6  * -22px) calc(3 * -23px); width: 15px; height: 17px; }

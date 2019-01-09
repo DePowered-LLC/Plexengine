@@ -89,10 +89,10 @@ class Auth {
         }
     }
 
-    public static function pofile_save() {
-        $fields = ['info', 'city', 'family_status', 'work', 'site'];
+    public static function profile_save() {
+        $fields = ['info', 'city', 'family_status', 'work', 'site', 'vk', 'inst', 'phone', 'skype'];
         foreach ($fields as $field) {
-            if (isset($_POST[$field])) $_SESSION['userdata']['about'][$field] = htmlspecialchars($_POST[$field]);
+            if (isset($_POST[$field])) $_SESSION['userdata']['about'][$field] = substr(htmlspecialchars($_POST[$field]), 0, 26);
             else if (isset($_SESSION['userdata']['about'][$field])) unset($_SESSION['userdata']['about'][$field]);
         }
 

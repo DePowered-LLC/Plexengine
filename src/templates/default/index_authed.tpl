@@ -1,12 +1,12 @@
 <div id="wrapper">
     <div class="main_block">
         <div class="box" id="vip_photos">
-            <span class="caption">VIP - Фотолиния</span>
+            <span class="caption">| mod_vip_photo |</span>
             <span class="close"></span>
             <div class="photoline">
                 <div class="add">
                     <img src="/public/img/icons/add_vip_photo.png" />
-                    Добавить
+                    | mod_vip_add |
                 </div>
             </div>
         </div>
@@ -155,12 +155,12 @@
 </div>
 
 <div id="user_menu">
-    <span do="profile" class="item">Профиль</span>
-    <span do="write" class="item">Написать</span>
-    <span do="ignore" class="item">Игнорировать</span>
+    <span do="profile" class="item">| profile |</span>
+    <span do="write" class="item">| write_to |</span>
+    <span do="ignore" class="item">| ignore |</span>
     {% if $_SESSION['userdata']['access'] == 'admin' %}
-    <span do="ban" class="item">Забанить</span>
-    <span do="kick" class="item">Кикнуть</span>
+    <span do="ban" class="item">| ban |</span>
+    <span do="kick" class="item">| kick |</span>
     {% endif %}
 </div>
 
