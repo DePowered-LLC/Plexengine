@@ -1,13 +1,6 @@
 ﻿/*
- █▀▄ █   █▀▀ █ █ █▀▀ █▄ █ ▄▀▀  ▀ █▄ █ █▀▀ 
- █ █ █ ▄ █▀▀ ▄▀▄ █▀▀ █ ▀█ █ ▀▌ █ █ ▀█ █▀▀ 
- █▀  ▀▀▀ ▀▀▀ ▀ ▀ ▀▀▀ ▀  ▀ ▀▀▀  ▀ ▀  ▀ ▀▀▀ 
-                             v0.3.2 Alpha
- * Chat Core
- * (C) DePowered LLC & PlexEngine 2018
- * All rights reserved
+@copy
  */
-$('body > div img[alt="www.000webhost.com"]').closest('div').remove();
 function change_lang(lng_code) {
     document.cookie = 'lng='+lng_code;
     window.location.reload();

@@ -363,7 +363,8 @@ $('#chat_admin [name="action"]').on('change', e => {
 
     var sound_mode = true;
     var loadedMsgList = [];
-    function insertMessages (msgList, is_first = false) {
+    var is_first = true;
+    function insertMessages (msgList) {
         var chat_list = $('#chat > chat-list');
         var is_scrolled = chat_list.innerHeight() + chat_list.scrollTop() + 2 < chat_list.prop('scrollHeight');
         var is_sound = false;
@@ -467,6 +468,7 @@ $('#chat_admin [name="action"]').on('change', e => {
             insertMessages(data.msgs, true);
             updateOnline(data.online, (data.ignored || '').split(','));
             data.smiles && updateSmiles(data.smiles);
+            is_first && (is_first = false);
         });
     })();
 

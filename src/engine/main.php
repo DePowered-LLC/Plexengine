@@ -127,7 +127,20 @@ if($url_parts[0] == 'public') {
             case 'js':  $mime = 'text/javascript'; break;
             default: $mime = mime_content_type($file_path); break;
         }
+
+        $file_hash = hash_file('md5', $file_path);
+        header('ETag: '.$file_hash);
+        if (isset($_SERVER['If-None-Match']) && $_SERVER['If-None-Match'] == $file_hash) {
+            http_response_code(304);
+            exit;
+        }
+
         header('Content-Type: '.$mime);
+        $seconds_to_cache = 3600;
+        $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+        header("Expires: $ts");
+        header("Pragma: cache");
+        header("Cache-Control: max-age=$seconds_to_cache");
         readfile($file_path);
         exit;
     } else {

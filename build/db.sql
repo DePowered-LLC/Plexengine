@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS `chat`;
-DROP TABLE IF EXISTS `data`;
+DROP TABLE IF EXISTS `guests`;
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE IF NOT EXISTS `chat` (
@@ -10,16 +10,14 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `timestamp` bigint(20) NOT NULL,
   `color` varchar(14) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=322 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `data` (
-  `key` varchar(32) NOT NULL,
-  `val` text NOT NULL,
-  UNIQUE KEY `key` (`key`)
+CREATE TABLE IF NOT EXISTS `guests` (
+  `nick` varchar(16) NOT NULL,
+  `last_online` bigint(20) NOT NULL,
+  `kick` text NOT NULL,
+  UNIQUE KEY `nick` (`nick`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `data` (`key`, `val`) VALUES
-('guests', '');
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -37,5 +35,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `verificated` tinyint(1) NOT NULL DEFAULT '0',
   `about` text NOT NULL,
   `limitation` text NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nick` (`nick`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
