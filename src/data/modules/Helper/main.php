@@ -1,5 +1,6 @@
 <?php
 load_db();
+load_view();
 
 class Helper {
 	public static function router() {
@@ -14,56 +15,50 @@ class Helper {
 			exit;
 		}
 
-		$user_selector = [
+		$user_table = $_SESSION['userdata']['id'] != -1 ? 'users' : 'guests';
+		$user_selector = $_SESSION['userdata']['id'] != -1 ? [
 			'id = :0:',
 			'bind' => [$_SESSION['userdata']['id']]
+		] : [
+			'nick = :0:',
+			'bind' => [$_SESSION['userdata']['nick']]
 		];
 
-		if ($_SESSION['userdata']['id'] != -1) {
-			$limitation = DB::find_first('users', $user_selector);
-			$limitation = $limitation['limitation'];
-			$limitation = explode(';', $limitation);
-			switch ($limitation[0]) {
-				case 'kick':
-					session_destroy();
-					DB::update('users', [
+		// Check user limitations
+		$limitation = DB::find_first($user_table, $user_selector);
+		$limitation = $limitation['limitation'];
+		$limitation = explode(';', $limitation);
+		switch ($limitation[0]) {
+			case 'kick':
+				session_destroy();
+				DB::update($user_table, [
+					'limitation' => ''
+				], $user_selector);
+				break;
+			case 'ban':
+				if ($limitation[2] <= time()) {
+					DB::update($user_table, [
 						'limitation' => ''
 					], $user_selector);
 					break;
-				case 'ban':
-					if ($limitation[2] <= time()) {
-						DB::update('users', [
-							'last_online' => time() - 3,
-							'limitation' => ''
-						], $user_selector);
-						break;
-					} else {
-						session_destroy();
-						exit(json_encode([
-							'limitation' => $limitation
-						]));
-					}
-			}
-			$data['limitation'] = $limitation;
-		} else {
-			$guest_selector = [
-				'nick = :0:',
-				'bind' => [$_SESSION['userdata']['nick']]
-			];
-
-			$guest = DB::find_first('guests', $guest_selector);
-			if ($guest) {
-				if ($guest['kick'] != '') {
-					DB::delete('guests', $guest_selector);
+				} else {
 					session_destroy();
 					exit(json_encode([
-						'limitation' => ['kick', $guest['kick']]
+						'limitation' => $limitation
 					]));
 				}
-			}
+			case 'mute':
+				if ($limitation[2] <= time()) {
+					DB::update($user_table, [
+						'limitation' => ''
+					], $user_selector);
+				}
+				break;
 		}
+		$data['limitation'] = $limitation;
 
 		if(isset($_GET['t']) && $_GET['t'] > 0) {
+			if ($_GET['t'] > 15) $_GET['t'] = 15;
 			$data['msgs'] = DB::find('chat', [
 				'timestamp >= :0: ORDER BY id DESC',
 				'bind' => [time() - intval($_GET['t']) - 1]
@@ -100,6 +95,7 @@ class Helper {
 			// Get ignored list
 			$data['ignored'] = implode(',', $_SESSION['userdata']['ignored']);
 		} else {
+			// var_dump('update_online for '.$_SESSION['userdata']['nick']);
 			DB::update('guests', [
 				'last_online' => time()
 			], [
@@ -119,7 +115,7 @@ class Helper {
 				'nick'        => $user['nick'],
 				'gender'      => $user['gender'],
 				'verificated' => $user['verificated'],
-				'status'      => $user['status']
+				'status'      => strpos($user['limitation'], 'mute') === 0 ? 'muted' : $user['status']
 			];
 		}
 
@@ -135,21 +131,47 @@ class Helper {
 		];
 
 		$data['msgs'] = array_reverse($data['msgs']);
+
+		$data['notifications'] = [];
+		if ($_SESSION['userdata']['id'] != -1) {
+			$data['notifications'] = DB::find('notifications', [
+				'user_id = :0: AND is_readed = false',
+				'bind' => [$_SESSION['userdata']['id']]
+			]);
+		}
+
 		exit(json_encode($data));
 	}
 
 	public static function send_msg() {
 		if(isset($_SESSION['userdata'])) {
-			$matches = [];
-			if (preg_match('/^(\w+),/', $_POST['message'], $matches)) {
-				if (in_array($matches[1], $_SESSION['userdata']['ignored'])) exit('ignored');
-				$to_user = DB::find_first('users', [
-					'nick = :0:',
-					'bind' => [$matches[1]]
-				]);
+			$user_table = $_SESSION['userdata']['id'] != -1 ? 'users' : 'guests';
+			$user_selector = $_SESSION['userdata']['id'] != -1 ? [
+				'id = :0:',
+				'bind' => [$_SESSION['userdata']['id']]
+			] : [
+				'nick = :0:',
+				'bind' => [$_SESSION['userdata']['nick']]
+			];
 
-				if ($to_user && in_array($_SESSION['userdata']['nick'], explode(',', $to_user['ignored']))) {
-					exit('ignored_to');
+			$limitation = DB::find_first($user_table, $user_selector)['limitation'];
+			if (strpos($limitation, 'mute') === 0) exit($limitation);
+
+			$matches = [];
+			global $_CONFIG;
+			$bot_answer = false;
+			if (preg_match('/^(['.$_CONFIG['nick_regexp'].']+),/', $_POST['message'], $matches)) {
+				if (in_array($matches[1], $_SESSION['userdata']['ignored'])) exit('ignored');
+				if ($matches[1] == View::lang('spy_nick')) $bot_answer = true;
+				else {
+					$to_user = DB::find_first('users', [
+						'nick = :0:',
+						'bind' => [$matches[1]]
+					]);
+	
+					if ($to_user && in_array($_SESSION['userdata']['nick'], explode(',', $to_user['ignored']))) {
+						exit('ignored_to');
+					}
 				}
 			}
 
@@ -163,13 +185,39 @@ class Helper {
 
 			$msg_lower = mb_strtolower($save['message'], 'UTF-8');
 			if (!isset($_SESSION['antispam'])) $_SESSION['antispam'] = [];
+			$antispam_counter = 0;
 			foreach ($_SESSION['antispam'] as $k => $m) {
 				if ($m['t'] < $save['timestamp'] - 120) {
 					unset($_SESSION['antispam'][$k]);
 					continue;
 				}
-
 				if ($m['msg'] == $msg_lower) exit('spam');
+				if ($m['t'] > time() - 5) $antispam_counter++;
+				if ($antispam_counter > 2) {
+					$kick_msg = View::lang('antispam');
+					if ($_SESSION['userdata']['id'] != -1) {
+						DB::update('users', [
+							'limitation' => 'kick;'.$kick_msg
+						], [
+							'nick = :0:',
+							'bind' => [$_SESSION['userdata']['nick']]
+						]);
+					} else {
+						DB::update('guests', [
+							'kick' => $kick_msg
+						], [
+							'nick = :0:',
+							'bind' => [$_SESSION['userdata']['nick']]
+						]);
+					}
+
+					DB::insert('chat', [
+						'user_id' => 0,
+						'timestamp' => time(),
+						'message' => 'kick;'.$_SESSION['userdata']['nick'].';'.$kick_msg
+					]);
+					exit('spam_rate');
+				}
 			}
 			
 			$bl_filer = explode(PHP_EOL, file_get_contents(DATA.'/bl_filter'));
@@ -187,7 +235,26 @@ class Helper {
 			$_SESSION['antispam'][] = [
 				't' => $save['timestamp'],
 				'msg' => $msg_lower
-			]; 
+			];
+
+			if ($_SESSION['userdata']['id'] != -1) {
+				$_SESSION['userdata']['points'] += 10;
+				DB::update('users', [
+					'points' => $_SESSION['userdata']['points']
+				], [
+					'id = :0:',
+					'bind' => [$_SESSION['userdata']['id']]
+				]);
+			}
+
+			if ($bot_answer) {
+				$answers = explode(PHP_EOL, file_get_contents(DATA.'/bot_msgs'));
+				DB::insert('chat', [
+					'user_id' => 0,
+					'timestamp' => time() + 1,
+					'message' => $_SESSION['userdata']['nick'].', '.$answers[rand(0, count($answers) - 1)]
+				]);
+			}
 		} else {
 			View::error(403);
 		}
@@ -196,29 +263,20 @@ class Helper {
 	public static function spy_msg($mode = null) {
 		if ($mode) $_GET['m'] = $mode;
 		if (!isset($_GET['m'])) exit;
+
+		$nick = $_SESSION['userdata']['nick'];
+		$nick = str_replace(';', '&#59', $nick);
+
 		switch ($_GET['m']) {
 			case 'enter':
-				if ($_SESSION['userdata']['id'] == -1) {
-					DB::insert('guests', [
-						'nick' => $_SESSION['userdata']['nick'],
-						'last_online' => time(),
-						'kick' => ''
-					]);
-				}
-				break;
 			case 'leave':
-				if ($_SESSION['userdata']['id'] == -1) {
-					DB::delete('guests', [
-						'nick = :0:',
-						'bind' => [$_SESSION['userdata']['nick']]
-					]);
-				}
 				break;
 			case 'st':
+				if ($_SESSION['userdata']['id'] == -1) exit('guest');
 				if ($_SESSION['userdata']['status'] == $_GET['v']) exit;
 				$is_timeout = DB::find_first('chat', [
 					'(message REGEXP :1:) AND timestamp >= :0:',
-					'bind' => [time() - 60, 'status;'.$_SESSION['userdata']['nick']]
+					'bind' => [time() - 60, 'status;'.$nick]
 				]);
 				if ($is_timeout != []) exit('timeout');
 				$_SESSION['userdata']['status'] = $_GET['v'];
@@ -232,7 +290,7 @@ class Helper {
 				DB::insert('chat', [
 					'user_id' => 0,
 					'timestamp' => time(),
-					'message' => 'status;'.$_SESSION['userdata']['nick'].';'.$_GET['v']
+					'message' => 'status;'.$nick.';'.$_GET['v']
 				]);
 				exit;
 			default:
@@ -242,19 +300,23 @@ class Helper {
 		DB::insert('chat', [
 			'user_id' => 0,
 			'timestamp' => time(),
-			'message' => $_GET['m'].';'.$_SESSION['userdata']['nick'].';'.$_SESSION['userdata']['country']
+			'message' => $_GET['m'].';'.$nick.';'.$_SESSION['userdata']['country']
 		]);
 	}
 
 	public static function ignore() {
-		$toIgnore = DB::find_first('users', [
-			'id = :0:',
-			'bind' => [$_GET['u']]
-		]);
+		if (isset($_GET['n'])) {
+			$nick = $_GET['n'];
+		} else {
+			$nick = DB::find_first('users', [
+				'id = :0:',
+				'bind' => [$_GET['u']]
+			])['nick'];
+		}
 
-		$i = array_search($toIgnore['nick'], $_SESSION['userdata']['ignored']);
+		$i = array_search($nick, $_SESSION['userdata']['ignored']);
 		if ($i === false) {
-			$_SESSION['userdata']['ignored'][] = $toIgnore['nick'];
+			$_SESSION['userdata']['ignored'][] = $nick;
 		} else {
 			unset($_SESSION['userdata']['ignored'][$i]);
 		}
@@ -264,6 +326,13 @@ class Helper {
 		], [
 			'id = :0:',
 			'bind' => [$_SESSION['userdata']['id']]
+		]);
+	}
+
+	public static function remove_notification() {
+		DB::delete('notifications', [
+			'id = :0: AND user_id = :1:',
+			'bind' => [$_GET['id'], $_SESSION['userdata']['id']]
 		]);
 	}
 }

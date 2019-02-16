@@ -3,7 +3,7 @@
     <head>
         <title>404 :: Plexengine</title>
         <meta charset="UTF-8" />
-        <style><?php include_once ENGINE.'/style.css'; ?></style>
+        <style><?php echo file_get_contents(ENGINE.'/style.css'); ?></style>
     </head>
     <body>
         <div class="container">
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="copyright">
-            &copy; 2018 <a href="https://depowered.ru">DePowered LLC</a> & Plexengine
+        &copy; 2018 <a href="http://dp.mayerdev.ru">DePowered LLC<sup>md</sup></a> & <a href="https://plexengine.com">Plexengine</a>
             <br />
             All Rights Reserved.
         </div>

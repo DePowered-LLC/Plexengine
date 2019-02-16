@@ -1,6 +1,6 @@
 <div id="about">
     <img src="/public/img/logo.png" />
-    <span id="version">v0.3.2 Alpha</span>
+    <span id="version">v0.4.2 Alpha</span>
 </div>
 
 <style>

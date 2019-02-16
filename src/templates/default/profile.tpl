@@ -37,7 +37,7 @@
         </style>
         {% else %}
         {% if isset($_SESSION['userdata']) %}
-        <img class="my_avatar" src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.png" />
+        <img avatar class="my_avatar" src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
         <div id="profile_free_gifts">
             <h1>| free |</h1>
             <span>| free_gift_info |</span>
@@ -52,9 +52,16 @@
         <img src="/public/covers/id{{ $GLOBALS['profile_data']['id'] }}.png" />
         <i edit="cover" class="chat_icon_edit"></i>
         <div id="profile_top">
-            <img width="180px" height="180px" src="/public/avatars/id{{ $GLOBALS['profile_data']['id'] }}.png" />
+            {% if $GLOBALS['profile_data']['last_online'] + 5 >= time() %}
+                <i online="{{ $GLOBALS['profile_data']['status'] }}" tooltip="{{ self::lang('status_'.$GLOBALS['profile_data']['status']) }}"></i>
+            {% endif %}
+            {% if isset($_SESSION['userdata']) && $GLOBALS['profile_data']['id'] == $_SESSION['userdata']['id'] %}
+            <img avatar width="180px" height="180px" src="/public/avatars/id{{ $GLOBALS['profile_data']['id'] }}.jpg" />
+            {% else %}
+            <img width="180px" height="180px" src="/public/avatars/id{{ $GLOBALS['profile_data']['id'] }}.jpg" />
+            {% endif %}
             <i edit="avatar" class="chat_icon_edit"></i>
-            <span id="profile_status"><b>| pr_info_myid |</b> http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $GLOBALS['profile_data']['id'] }}</span>
+            <span id="profile_status"><b>| pr_info_myid |</b> <a href="http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $GLOBALS['profile_data']['id'] }}" target="_blank">http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $GLOBALS['profile_data']['id'] }}</a></span>
             <div style="flex: 1 1 100%;">
                 <h1>
                     | pr_info | {{ $GLOBALS['profile_data']['nick'] }}
@@ -63,8 +70,16 @@
                     {% endif %}
                 </h1>
                 {% if $GLOBALS['profile_data']['last_online'] + 5 >= time() %}
-                <span online>| status_chat |</span>
+                <span>
+                    {% if isset($GLOBALS['profile_data']['about']['city']) %}
+                    {{ $GLOBALS['profile_data']['about']['city'] }},
+                    {% endif %}
+                    {{ $GLOBALS['profile_data']['zodiac'] }},
+                    | age | {{ $GLOBALS['profile_data']['age'] }}
+                </span>
+                {% if isset($_GET['short']) %}
                 <button onclick="write_fpr()" class="btn">| write_to |</button>
+                {% endif %}
                 {% else %}
                 <span>| user_was_online | {{ date('d.m.Y H:i:s', $GLOBALS['profile_data']['last_online']) }}</span>
                 {% endif %}
@@ -124,7 +139,7 @@
                     <br />
                     <button style="display: none;" class="btn" type="submit">| apply |</button>
                 </div>
-                <img src="/public/img/zodiac/{{ $GLOBALS['profile_data']['zodiac'] }}.png">
+                {# <img src="/public/img/zodiac/{{ $GLOBALS['profile_data']['zodiac'] }}.png"> #}
             </form>
             <form id="profile_contacts" tab-id="contacts" class="tab">
                 <div>
@@ -171,7 +186,7 @@
                 data.info = $about.val();
                 if (data.info.trim() == '') {
                     $about.parent().html('| pr_info_none |');
-                    delete data.info;
+                    data.info = 'none';
                 } else {
                     $about.parent().html(data.info);
                 }
@@ -179,14 +194,15 @@
                 $('#profile_about tr > td[edit]:last-child > input').each((key, field) => {
                     var val = $(field).val();
                     if (val.trim() == '') {
+                        data[$(field).parent().attr('edit')] = 'none';
                         $(field).parent().html('| pr_info_none |');
                     } else {
-                        $(field).parent().html(val);
                         data[$(field).parent().attr('edit')] = val;
+                        $(field).parent().html(val);
                     }
                 });
 
-                Object.keys(data).forEach(k => data[k].trim() == '' && delete data[k]);
+                Object.keys(data).forEach(k => data[k].trim() == '' && (data[k] = 'none'));
                 $.post('/modules/Auth/profile_save', data, res => {
                     $btn.removeAttr('disabled');
                     $btn.hide();
@@ -223,14 +239,15 @@
                     var $img = $('img', field).clone();
                     if (val.trim() == '') {
                         $(field).html('| pr_info_none |');
+                        data[$(field).attr('edit')] = 'none';
                     } else {
-                        $(field).html(val);
                         data[$(field).attr('edit')] = val;
+                        $(field).html(val);
                     }
                     $(field).prepend($img);
                 });
 
-                Object.keys(data).forEach(k => data[k].trim() == '' && delete data[k]);
+                Object.keys(data).forEach(k => data[k].trim() == '' && (data[k] = 'none'));
                 $.post('/modules/Auth/profile_save', data, res => {
                     $btn.removeAttr('disabled');
                     $btn.hide();
@@ -240,15 +257,18 @@
             });
 
             function write_fpr () {
-                if (window.location.pathname != '/') {
-                    sessionStorage.setItem('write_to', '{{ $GLOBALS['profile_data']['nick'] }}');
-                    window.location.pathname = '/';
-                } else {
+                // if (window.location.pathname != '/') {
+                //     sessionStorage.setItem('write_to', '{{ $GLOBALS['profile_data']['nick'] }}');
+                //     window.location.pathname = '/';
+                // } else {
                     $('#chat chat-send-to > input').val('{{ $GLOBALS['profile_data']['nick'] }}');
                     $('#chat chat-input-wrapper > input').focus();
                     close_modal('profile');
-                }
+                // }
             }
+            
+            $avatar = $('img[avatar]');
+            $avatar.attr('src', $avatar.attr('src').split('?')[0] + '?' + Math.random());
         </script>
 {% if !isset($_GET['short']) %}
     </body>

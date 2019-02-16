@@ -103,7 +103,7 @@ if($url_parts[0] == 'public') {
             $file_path = DATA.'/avatars/'.$url_parts[1];
             
             if (!file_exists($file_path)) {
-                $uid = substr(explode('.png', $url_parts[1])[0], 2);
+                $uid = substr(explode('.jpg', $url_parts[1])[0], 2);
                 if ($uid == '-1') $file_path = TEMPLATE.'/img/guest_avatar_full.png';
                 $u = DB::find_first('users', [
                     'id = :0:',
@@ -183,6 +183,7 @@ function load_db() {
 }
 
 function load_view() {
+    require_once 'utils.php';
     require_once ENGINE.'/view.php';
 }
 

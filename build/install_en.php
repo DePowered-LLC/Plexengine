@@ -414,6 +414,7 @@ message_limit=300
 messages_limit=15
 loaded_modules='Auth, Admin'
 afk_time=10
+exchange_rate=100
             ");
             foreach($_POST as $key => $val) {
                 $default_conf .= PHP_EOL;

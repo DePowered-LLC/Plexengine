@@ -3,33 +3,58 @@
 */
 
 // Chat popups
-$(document).on('click', '.chat_popup', e => {
-    var content = $('.chat_popup_content', e.target);
-    if (content.prop('offsetHeight') == 0 && content.prop('offsetWidth') == 0) {
-        content.show();
-        content.css('bottom', '100%');
+const openPopup = e => {
+    var $content = $('.chat_popup_content', e.target);
+    if (!$content.is(':visible')) {
+        $content.show();
+        $content.css('bottom', '100%');
         setTimeout(() => {
-            content.css('opacity', 1);
-            content.css('bottom', 'calc(100% + 8px)');
+            $content.css('opacity', 1);
+            $content.css('bottom', 'calc(100% + 8px)');
         }, 100);
-    } else {
-        content.css('opacity', 0);
-        content.css('bottom', '100%');
-        setTimeout(() => content.hide(), 300);
     }
+};
+
+$(document).on('mouseenter', '.chat_popup', openPopup);
+$(document).on('mousemove', '.chat_popup', openPopup);
+
+$(document).on('mouseleave', '.chat_popup', e => {
+    var $content = $(e.target).closest('.chat_popup').children('.chat_popup_content');
+    $content.css('opacity', 0);
+    $content.css('bottom', '100%');
+    setTimeout(() => $content.hide(), 300);
 });
 
-$(document).on('click', e => {
-    var popup = $(e.target).closest('.chat_popup');
-    $('.chat_popup_content').each((key, content) => {
-        var content = $(content);
-        if (!popup.has(content).length && content.is(':visible')) {
-            content.css('opacity', 0);
-            content.css('bottom', '100%');
-            setTimeout(() => content.hide(), 300);
+function build_html (struct) {
+    var result = '';
+    struct.forEach(tag => {
+        if (typeof tag != 'object') { result += tag; return; }
+        let content = typeof tag.content == 'object' ? build_html(tag.content) : tag.content;
+        let attr = '';
+        if (tag.attr) {
+            attr = ' ' + Object.keys(tag.attr).map(atr_name => atr_name + '="' + tag.attr[atr_name] + '"').join(' ');
+        }
+        if (!content) {
+            result += `<${tag.name}${attr}/>`;
+        } else {
+            result += `<${tag.name}${attr}>${content}</${tag.name}>`;
         }
     });
-});
+    return result;
+}
+
+function parseTime (time, sec = true) {
+    var date = new Date(time * 1000);
+    var timestamp = '';
+    timestamp += date.getDate().toString().padStart(2, 0);
+    timestamp += '.' + (date.getMonth() + 1).toString().padStart(2, 0);
+    timestamp += '.' + date.getFullYear();
+
+    timestamp += ' ' + date.getHours().toString().padStart(2, 0);
+    timestamp += ':' + date.getMinutes().toString().padStart(2, 0);
+    if (sec) timestamp += ':' + date.getSeconds().toString().padStart(2, 0);
+    return timestamp;
+}
 
 // Local API
 var chat = {
@@ -91,6 +116,63 @@ var chat = {
         $('#chat_color_example').attr('style', style);
     },
 
+    toggle_banlist () {
+        $('#chat_admin .content').slideToggle();
+        if ($('#chat_admin .content[banlist]').is(':visible')) {
+            $.get('/modules/Admin/banlist', res => {
+                $tbody = $('#chat_admin .content[banlist] tbody');
+                $('tr', $tbody).remove();
+                res = JSON.parse(res);
+                res.forEach(user => {
+                    var info = '';
+                    switch (user[0]) {
+                        case 'mute':
+                            info = 'Мут до ' + parseTime(user[1]);
+                            break;
+                        case 'ban':
+                            info = 'Бан до ' + parseTime(user[1]);
+                            break;
+                        case 'kick':
+                            info = 'Кик';
+                            break;
+                    }
+
+                    $tbody.append(build_html([{
+                        name: 'tr',
+                        content: [
+                            {
+                                name: 'td',
+                                content: user.nick
+                            },
+                            {
+                                name: 'td',
+                                content: info
+                            },
+                            {
+                                name: 'td',
+                                content: [{
+                                    name: 'button',
+                                    content: 'Разбанить',
+                                    attr: {
+                                        class: 'btn',
+                                        onclick: `chat.unban('${user.nick}')`
+                                    }
+                                }]
+                            }
+                        ]
+                    }]));
+                });
+            });
+        }
+    },
+
+    unban (nick) {
+        $.get('/modules/Admin/unban?nick=' + encodeURIComponent(nick), () => {
+            this.toggle_banlist();
+            this.toggle_banlist();
+        });
+    },
+
     toggle_admin (data) {
         if (data) {
             data.nick && $('#chat_admin [name="nick"]').val(data.nick);
@@ -104,17 +186,24 @@ var chat = {
 
     apply_admin () {
         if($('#chat_admin [name="reason"]').val().trim() == '') return alert(lang.enter_reason + '!');
+        if($('#chat_admin [name="nick"]').val().trim() == '') return alert(lang.enter_nick + '!');
         $.post('/modules/Admin/action', {
             nick: $('#chat_admin [name="nick"]').val(),
             action: $('#chat_admin [name="action"]').val(),
             reason:  $('#chat_admin [name="reason"]').val(),
             time1:  $('#chat_admin [name="time1"]').val(),
             time2:  $('#chat_admin [name="time2"]').val()
-        }, () => {
+        }, res => {
+            if (res == 'no_account') alert(lang.user_not_found);
             $('#chat_admin [name="nick"]').val('');
             $('#chat_admin [name="reason"]').val('');
         });
         chat.toggle_admin();
+    },
+
+    open_ignore_list () {
+        $.get('/modules/Auth/get_ignored')
+        open_modal('ignore_list');
     }
 };
 
@@ -131,7 +220,14 @@ $(document).on('click', '#chat .chat_color', e => {
 });
 
 $('#chat_admin [name="action"]').on('change', e => {
-    $('#chat_admin').attr('m', e.target.value);
+    switch (e.target.value) {
+        case 'kick':
+            $('#chat_admin').attr('no-time', true);
+            break;
+        default:
+            $('#chat_admin').removeAttr('no-time');
+            break;
+    }
 });
 
 (() => {
@@ -140,25 +236,7 @@ $('#chat_admin [name="action"]').on('change', e => {
 
     $('#chat_admin [name="time2"]').change(e => {
         if (e.target.value == 'inf') $('#chat_admin [name="time1"]').val(-1);
-    })
-
-    function build_html (struct) {
-        var result = '';
-        struct.forEach(tag => {
-            if (typeof tag != 'object') { result += tag; return; }
-            let content = typeof tag.content == 'object' ? build_html(tag.content) : tag.content;
-            let attr = '';
-            if (tag.attr) {
-                attr = ' ' + Object.keys(tag.attr).map(atr_name => atr_name + '="' + tag.attr[atr_name] + '"').join(' ');
-            }
-            if (!content) {
-                result += `<${tag.name}${attr}/>`;
-            } else {
-                result += `<${tag.name}${attr}>${content}</${tag.name}>`;
-            }
-        });
-        return result;
-    }
+    });
 
     function parseTimestamp(time) {
         time = new Date(time*1000);
@@ -176,12 +254,21 @@ $('#chat_admin [name="action"]').on('change', e => {
             this.gender = user.gender;
             this.nick = user.nick;
             this.verificated = user.verificated;
+            this._ignored = false;
+        }
+
+        get $el () { return $(document.getElementById('uid' + this.uid)); }
+
+        set ignored (val) {
+            if (val) this.$el.attr('ignored', true);
+            else this.$el.removeAttr('ignored');
+            this._ignored = val;
         }
 
         get status () { return this._status; }
         set status (val) {
             if (this._status == val) return;
-            $('#uid' + this.uid + ' [status]').attr('class', 'chat_icon_' + val);
+            $('[status]', this.$el).attr('class', 'chat_icon_' + val);
             this._status = val;
         }
 
@@ -190,7 +277,8 @@ $('#chat_admin [name="action"]').on('change', e => {
                 name: 'div',
                 attr: {
                     class: 'user',
-                    id: 'uid' + this.uid
+                    id: 'uid' + this.uid,
+                    ignored: this._ignored
                 },
                 content: [{
                         name: 'i',
@@ -208,6 +296,8 @@ $('#chat_admin [name="action"]').on('change', e => {
                         name: 'i',
                         attr: {
                             info: true,
+                            'load-modal': 'profile',
+                            'load-path': '/id' + this.uid + '?short',
                             class: 'chat_icon_info'
                         }
                     },
@@ -216,7 +306,7 @@ $('#chat_admin [name="action"]').on('change', e => {
                         name: 'i',
                         attr: {
                             class: 'chat_icon_verificated',
-                            style: 'margin: 3px; vertical-align: bottom;'
+                            style: 'margin: 4px; vertical-align: bottom;'
                         }
                     } : {}
                 ]
@@ -233,7 +323,7 @@ $('#chat_admin [name="action"]').on('change', e => {
 
         remove () {
             // if ($('#uid' + this.uid)[0]) {
-                $('#uid' + this.uid).remove();
+                this.$el.remove();
                 $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML--;
                 $('#userlist [category="all"] [count]')[0].innerHTML--;
             // }
@@ -242,7 +332,33 @@ $('#chat_admin [name="action"]').on('change', e => {
 
     var rendered = {};
     function updateOnline (list, ignored) {
-        // console.log(ignored);
+        var $table = $('[modal-name="ignore_list"] .content > table');
+        $table.html('');
+        if (ignored.length > 1 || ignored.length == 1 && ignored[0] != '') {
+            $table.append(ignored.map(nick => {
+                return build_html([{
+                    name: 'tr',
+                    content: [{
+                        name: 'td',
+                        content: nick
+                    }, {
+                        name: 'td',
+                        attr: { style: 'text-align: right' },
+                        content: [{
+                            name: 'button',
+                            attr: { class: 'btn', unignore: nick },
+                            content: lang.unignore
+                        }]
+                    }]
+                }]);
+            }));
+            $('.left_block > .chat_icon_ignore_list').attr('total', ignored.length);
+            $('[modal-name="ignore_list"] .content > [empty]').hide();
+        } else {
+            $('.left_block > .chat_icon_ignore_list').attr('total', 0);
+            $('[modal-name="ignore_list"] .content > [empty]').show();
+        }
+
         var renderCheck = Object.assign({}, rendered);
         list.forEach(user => {
             if (user.id == -1) {
@@ -261,11 +377,13 @@ $('#chat_admin [name="action"]').on('change', e => {
                 });
             } else if (user.id in rendered) {
                 rendered[user.id].status = user.status;
-                // rendered[user.id].ignored = user.nick;
+                rendered[user.id].ignored = !!~ignored.indexOf(user.nick);
                 delete renderCheck[user.id];
             } else {
                 const userBlock = new UserBlock(user);
                 userBlock.render();
+                userBlock.ignored = !!~ignored.indexOf(user.nick);
+                $('#userlist .nano').nanoScroller();
                 rendered[user.id] = userBlock;
                 delete renderCheck[user.id];
             }
@@ -319,7 +437,11 @@ $('#chat_admin [name="action"]').on('change', e => {
     function parseSpyMsg (msg) {
         var args = msg.message.split(';');
         msg.nick = lang.spy_nick;
+        if (args[1]) args[1] = args[1].split('&#59').join(';');
         switch (args[0]) {
+            case 'remove':
+                $('chat-message[msg_id="' + args[1] + '"]').remove();
+                return;
             case 'enter':
                 msg.message = lang.spy_join
                     .split('{nick}').join(args[1])
@@ -340,21 +462,18 @@ $('#chat_admin [name="action"]').on('change', e => {
                     .split('{reason}').join(args[2]);
                 msg.light = true;
                 break;
+            case 'mute':
+                msg.message = lang.spy_mute
+                    .split('{nick}').join(args[1])
+                    .split('{reason}').join(args[2])
+                    .split('{time}').join(parseTime(args[3]));
+                msg.light = true;
+                break;
             case 'ban':
-                var date = new Date(args[3]*1000);
-				var timestamp = '';
-				timestamp += date.getDate().toString().padStart(2, 0);
-				timestamp += '.' + (date.getMonth() + 1).toString().padStart(2, 0);
-				timestamp += '.' + date.getFullYear();
-
-				timestamp += ' ' + date.getHours().toString().padStart(2, 0);
-				timestamp += ':' + date.getMinutes().toString().padStart(2, 0);
-                timestamp += ':' + date.getSeconds().toString().padStart(2, 0);
-                
                 msg.message = lang.spy_ban
                     .split('{nick}').join(args[1])
                     .split('{reason}').join(args[2])
-                    .split('{time}').join(timestamp);
+                    .split('{time}').join(parseTime(args[3]));
                 msg.light = true;
                 break;
         }
@@ -374,17 +493,16 @@ $('#chat_admin [name="action"]').on('change', e => {
             if (loadedMsgList.includes(msg.id)) return;
             loadedMsgList.push(msg.id);
         
-            if (msg.user_id == 0) parseSpyMsg(msg);
-            else {
-                msg.message = msg.message.split('<').join('&lt;').split('>').join('&gt;');
-            }
+            if (msg.user_id == 0) msg = parseSpyMsg(msg);
+            else msg.message = msg.message.split('<').join('&lt;').split('>').join('&gt;');
+            if (!msg) return;
             
             if (msg.message.indexOf('') === 0) {
                 msg.message.replace('@')
             }
             
             msg.light = msg.light || false;
-            if (msg.message.search(/^\w+,/) !== -1) {
+            if (msg.message.search(/^[_a-zA-Z0-9А-Яа-яіІїЇєЄ;]+,/) !== -1) {
                 if (msg.message.startsWith(nick + ',')) {
                     msg.message = `<b>${nick}</b>${msg.message.slice(nick.length)}`;
                     msg.light = true;
@@ -407,8 +525,9 @@ $('#chat_admin [name="action"]').on('change', e => {
                 msg.color += '-webkit-text-fill-color: transparent;';
             }
 
-            // Parse smiles
+            // Parse smiles and links
             msg.message = msg.message.replace(/\[([0-9]+\/[0-9]+)\]/g, '<img src="/public/smiles/$1.png" />');
+            msg.message = msg.message.replace(/((\w|[:])+:\/\/(\w+.?)*(\/\w+)*\??(&?\w+=\w*)*)/, '<a href="/away?r=$1" target="_blank">$1</a>');
             chat_list.append(build_html([{
                 name: 'chat-message',
                 content: [
@@ -426,6 +545,21 @@ $('#chat_admin [name="action"]').on('change', e => {
                             style: msg.color
                         },
                         content: msg.message
+                    },
+                    access == 'admin' ? {
+                        name: 'i',
+                        attr: {
+                            class: 'close',
+                            remove: true,
+                            tooltip: lang.remove
+                        }
+                    } : '',
+                    {
+                        name: 'i',
+                        attr: {
+                            class: 'chat_icon_reply',
+                            tooltip: lang.reply
+                        }
                     }
                 ],
                 attr: { msg_id: msg.id, light: msg.light }
@@ -438,11 +572,22 @@ $('#chat_admin [name="action"]').on('change', e => {
         if (sound_mode && is_sound) $('#chat audio[message]')[0].play();
     }
     
+    $(document).on('click', '.notification > [delete]', e => {
+        $.get('/modules/Helper/remove_notification?id=' + $(e.target).attr('delete'), () => {
+            $(e.target).parent().remove();
+        });
+    });
+    
     // Receive data
     var lastUpdate;
-    (function update () {
+    function update () {
         var getURL = '/modules/Helper/load_data';
-        if (lastUpdate) getURL += '?t=' + (Math.floor(Date.now() / 1000) - lastUpdate);
+        if (lastUpdate) {
+            var t = (Math.floor(Date.now() / 1000) - lastUpdate);
+            if (t <= 0) return;
+            getURL += '?t=' + t;
+        }
+
         $.get(getURL, data => {
             try {
                 data = JSON.parse(data);
@@ -463,14 +608,61 @@ $('#chat_admin [name="action"]').on('change', e => {
             }
 
             lastUpdate = Math.floor(Date.now() / 1000);
-            setTimeout(update, 1500);
-
             insertMessages(data.msgs, true);
             updateOnline(data.online, (data.ignored || '').split(','));
             data.smiles && updateSmiles(data.smiles);
+
+            data.notifications = data.notifications.map(n => {
+                if ($('#n-' + n.id)[0]) return;
+
+                n.info = JSON.parse(n.info);
+                return build_html([{
+                    name: 'div',
+                    attr: {
+                        class: 'notification',
+                        id: 'n-' + n.id
+                    },
+                    content: [
+                        {
+                            name: 'img',
+                            attr: { src: '/public/img/icons/note.png' }
+                        },
+                        {
+                            name: 'p',
+                            content: (() => {
+                                switch (n.type) {
+                                    case 'profile_view':
+                                        return lang.notifi_viev_info.split('{user}').join('<b>' + n.info.sender_nick + '</b>');
+                                }
+                            })()
+                        },
+                        {
+                            name: 'span',
+                            attr: { delete: n.id },
+                            content: lang.delete
+                        },
+                        {
+                            name: 'span',
+                            content: parseTime(n.timestamp, false)
+                        } 
+                    ]
+                }]);
+            });
+            $('[notifications] > .sup').html(data.notifications.length);
+            if (!data.notifications.length) {
+                $('[notifications] > .sup').css('animation', '');
+                $('#no_notifications').show();
+            } else {
+                $('[notifications] > .sup').css('animation', 'pulse 1s infinite');
+                $('#no_notifications').hide();
+            }
+
+            $('#notifications').append(data.notifications);
             is_first && (is_first = false);
         });
-    })();
+    }
+    update();
+    setInterval(update, 1500);
 
     // Send message
     $('#chat').on('submit', () => {
@@ -485,8 +677,15 @@ $('#chat_admin [name="action"]').on('change', e => {
         if (to != '') { message = to + ', ' + message; }
         $.post('/modules/Helper/send_msg', { message, color: chat.current_color }, res => {
             if (res == 'spam') open_modal('spam');
-            if (res == 'ignored') open_modal('ignored');
-            if (res == 'ignored_to') open_modal('ignored_to');
+            else if (res.startsWith('mute')) {
+                res = res.split(';');
+                open_modal('limitation');
+                $('#lmodal [reason]').html(res[1]);
+				$('#lmodal [info]').html(lang.mute_info.replace('{time}', parseTime(res[2])));
+            }
+            else if (res == 'ignored') open_modal('ignored');
+            else if (res == 'ignored_to') open_modal('ignored_to');
+            else $('#balance > span').html((parseInt($('#balance > span').html()) + 10) + ' points');
         });
         $('#chat chat-message-limit').html(message_limit);
         return false;
@@ -496,9 +695,8 @@ $('#chat_admin [name="action"]').on('change', e => {
     $(document).on('click', '#chat chat-status-set', e => {
         var status = $(e.currentTarget).attr('status');
         $.get('/modules/Helper/spy_msg?m=st&v=' + status, res => {
-            res == 'timeout'
-                ? open_modal('status_spam')
-                : $('#chat chat-status > i').attr('class', 'chat_icon_' + status);
+            if (res == 'timeout') open_modal('status_spam')
+            else $('#chat chat-status > i').attr('class', 'chat_icon_' + status);
             // Close popup
             $(document).click();
         });
@@ -512,10 +710,10 @@ $('#chat_admin [name="action"]').on('change', e => {
     };
 
     // Toggle message audio
-    $('#chat chat-sounds').click(() => {
+    $('#chat_tools > [sound]').click(e => {
         sound_mode = !sound_mode;
         var mode = sound_mode ? 'off' : 'on';
-        $('#chat chat-sounds > i').attr('class', 'chat_icon_sound_' + mode);
-        $('#chat chat-sounds > span').html(lang['sounds_' + mode]);
+        $(e.target).attr('class', 'chat_icon_sound_' + mode);
+        $(e.target).attr('tooltip', lang['sounds_' + mode]);
     });
 })();

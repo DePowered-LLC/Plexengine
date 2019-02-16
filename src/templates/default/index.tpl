@@ -33,7 +33,10 @@
 		display: block;
 		font-size: 25px;
 		margin: 5px 0;
+    	font-weight: 500;
 	}
+	
+	#register_form { margin: 20px 0 45px 0; }
 </style>
 <div id="index_wrapper">
 	<span id="lang_change">
@@ -62,7 +65,7 @@
 				<button class="col-3 btn bg_purple" onclick="login()">| sign_in |</button>
 			</div>
 			<br />
-			<button class="row btn" onclick="open_modal('guest')">| sign_in_guest |</button>
+			<button class="row btn" open-modal="guest">| sign_in_guest |</button>
 		</div>
 		<br />
 	</div>
@@ -71,7 +74,7 @@
 		<h2><?php echo DB::count('users', 'id'); ?> | registered_in_chat |</h2>
 		<h2>| join_and_you |</h2>
 		<br />
-		<button style="width: 200px;" class="btn bg_green" onclick="open_modal('register')">| register |</button>
+		<button style="width: 200px;" class="btn bg_green" open-modal="register">| register |</button>
 	</div>
 	<br />
 	<span style="font-size: 13px;">2018 &copy; Powered on PlexEngine / Developed by DePowered LLC</span>
@@ -87,8 +90,7 @@
 			<span class="close"></span>
 		</div>
 		<div class="content row">
-			<br />
-			<br />
+
 			<div id="register_form" class="col-6">
 				<h4 class="text_red"></h4>
 				<input type="text" name="nick" placeholder="| your_nick |" />
@@ -156,8 +158,8 @@
 							<span class="option">30</span>
 							<span class="option">31</span>
 						</div>
-					</div><!--
-				 --><div class="select select_date">
+					</div>
+					<div class="select select_date">
 						<input type="hidden" name="birth_month" />
 						<span class="selected">| month |</span>
 						<div class="options">
@@ -174,8 +176,8 @@
 							<span class="option" value="11">| month_11 |</span>
 							<span class="option" value="12">| month_12 |</span>
 						</div>
-					</div><!--
-				 --><div class="select select_date">
+					</div>
+					<div class="select select_date">
 						<input type="hidden" name="birth_year" />
 						<span class="selected">| year |</span>
 						<div class="options"></div>
@@ -183,10 +185,7 @@
 				</div>
 				<button onclick="register()" class="col-12 btn bg_green">| register |</button>
 			</div>
-			<br />
-			<br />
-			<br />
-			<br />
+
 		</div>
 	</div>
 </div>
@@ -238,13 +237,13 @@
 <div id="lmodal" class="modal_wrapper" modal-name="limitation">
     <div class="modal">
         <div class="title">
-            Ограничение <span class="close"></span>
+            | limitation | <span class="close"></span>
         </div>
         <div class="content">
 			<br />
             <span info></span>
 			<br />
-            Причина: <span reason></span>
+            | reason |: <span reason></span>
 			<br />
 			<br />
         </div>
@@ -307,6 +306,7 @@
 	}
 	
 	function guest() {
+		$('#guest_form .text_red').html('');
 		$('#guest_form [onclick~="guest()"]').addClass('loading');		
 		$.post('/modules/Auth/guest', {
 			nick: $('#guest_form [name="nick"]').val(),
@@ -314,18 +314,21 @@
 			captcha: $('#guest_form [name="captcha"]').val()
 		}, result => {
 			switch(result) {
-				case 'enter_nick':
+				case 'nick_empty':
 					$('#guest_form .text_red').html('| enter_nick |');
 					break;
-				case 'long_nick':
+				case 'nick_wrong_length':
 					$('#guest_form .text_red').html('| long_nick |');
 					break;
-				case 'no_country':
+				case 'nick_used':
+					$('#guest_form .text_red').html('| nick_used |');
+					break;
+				case 'country_empty':
 					$('#guest_form .text_red').html('| no_country |');
 					break;
-				case 'wrong_captcha':
+				case 'captcha_empty':
+				case 'captcha_not_valid':
 					$('#guest_form .text_red').html('| wrong_captcha |');
-					captcha_key = '';
 					break;
 				case 'success':
 					document.cookie = 'tutorial=true';

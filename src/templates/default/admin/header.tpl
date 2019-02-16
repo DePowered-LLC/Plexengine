@@ -15,6 +15,5 @@
 			</div>
 			<div id="menu">
 				<a href="/admin" class="item">| adminpanel |</a>
-				<a href="/" class="item">На сайт</a>
 			</div>
 		</div>

@@ -23,6 +23,7 @@ class View {
                     $debug .= ($key + 1).$d.' '.$val;
                 }
             }
+            $debug = str_replace(ROOT, '', $debug);
             require_once 'errors/'.$err.'.php';
         }
         exit;
