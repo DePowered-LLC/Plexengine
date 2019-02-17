@@ -5,6 +5,7 @@
  * All rights reserved
  */
 // ob_start();
+namespace pe\engine;
 class View {
     public static function error($err, $debug = '') {
         // ob_end_clean();

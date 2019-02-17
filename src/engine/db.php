@@ -1,4 +1,7 @@
 <?php
+namespace pe\engine;
+use PDO;
+
 class DB {
     private static $connection;
     public static $insert_id;

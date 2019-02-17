@@ -373,6 +373,7 @@
                             <input min="1" max="31" style="min-width: 0; width: 120px;" placeholder="day" type="number" name="adm_birth1" value="<?php echo $_POST['adm_birth1']; ?>" />
                             .
                             <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="mon" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
+                            <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="year" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -415,13 +416,13 @@ messages_limit=15
 loaded_modules='Auth, Admin'
 afk_time=10
 exchange_rate=100
+nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
             ");
             foreach($_POST as $key => $val) {
                 $default_conf .= PHP_EOL;
                 $default_conf .= "$key='$val'";
             }
-            file_put_contents('plexengine.tmp/data/config.ini', $default_conf);
-            
+            file_put_contents('plexengine.tmp/data/config.ini', $default_conf);        
             header('Location: ?step=5');
             exit;
         }
@@ -444,6 +445,7 @@ exchange_rate=100
             }
         }
         rmdir('plexengine.tmp');
+        mkdir('data/avatars');
         unlink('db.sql');
         if($remove_installer) { unlink('index.php'); }
     ?>
@@ -487,9 +489,12 @@ exchange_rate=100
         
         #header {
             position: relative;
-            background-color: #262931;
+            background-color: #fff;
+            background-image: url('<?php echo $base_url ?>/bg_installer.gif');
+			background-repeat: no-repeat;
             border-bottom: 1px solid #dedede;
             padding: 10px 15px;
+		    height: 200px;
             color: #ffffff;
         }
         
@@ -498,36 +503,33 @@ exchange_rate=100
 			color: #262931;
         }
         
-        #logo {
-            display: inline-block;
-            width: 300px;
-            height: 103px;
-            background-image: url('<?php echo $base_url ?>/logo.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-        
         #version {
             display: flex;
             align-items: center;
             position: absolute;
-			right: 50px;
-			top: 45px;
+		    padding: 5px;
+			top: 130px;
+			color: #babcc1;
             margin: auto;
             text-align: right;
             font-size: 15px;
+			border: 2px dashed #dedede;
+			border-radius: 3px;
             line-height: 13px;
         }
         
         #version > b {
             font-size: 35px;
             margin-left: 10px;
-            color: #ff8c31;
+            color: #5ec700;
             line-height: 32px;
         }
         
-        #steps { display: flex; }
+        #steps { 
+			display: flex;
+			margin-top: 173px;
+		}
+		
         #steps > .step {
             position: relative;
             display: inline-block;
@@ -592,7 +594,7 @@ exchange_rate=100
         }
         td { padding: 2px 5px; }
         tr { border: 0; }
-        tr:not(:last-child) { border-bottom: 1px solid #ececec; }
+        tr:not(:last-child) { border-bottom: 1px dashed #2e323a; }
         
         code {
             display: inline-block;

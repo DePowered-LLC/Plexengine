@@ -26,6 +26,8 @@
                     }
                 </script>
                 <pre><?php echo $debug ?></pre>
+                {# Trace:
+                <pre><?php debug_print_backtrace(); ?></pre> #}
                 <?php endif; ?>
                 <b>Contact administrator and make them aware of this issue</b>
             </div>

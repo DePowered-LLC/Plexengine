@@ -2,31 +2,27 @@
 /*
 @copy
  */
+
+// Global values
+namespace pe\engine;
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
 define('ROOT', dirname(__DIR__));
+define('DATA', ROOT.'/data');
+$_CONFIG = parse_ini_file(DATA.'/config.ini');
+$_CONFIG['lang_delimiters'] = explode('...', $_CONFIG['lang_delimiters']);
 define('ENGINE', ROOT.'/engine');
 define('TEMPLATES', ROOT.'/templates');
-define('DATA', ROOT.'/data');
 define('CACHE', DATA.'/cache');
 define('LANG', ROOT.'/languages');
 define('MODULES', DATA.'/modules');
-
-$_CONFIG = parse_ini_file(DATA.'/config.ini');
-$_CONFIG['lang_delimiters'] = explode('...', $_CONFIG['lang_delimiters']);
-$_CONFIG['loaded_modules'] = explode(',', $_CONFIG['loaded_modules']);
-foreach($_CONFIG['loaded_modules'] as $key => $val) {
-    $_CONFIG['loaded_modules'][$key] = trim($val);
-}
 define('TEMPLATE', TEMPLATES.'/'.$_CONFIG['template_name']);
 
-$url = $_GET['__url'];
-if(trim($url) == '') { $url = 'index'; }
-$url_parts = explode('/', $url);
-unset($_GET['__url']);
+// Degugger
+require_once 'view.php';
 
-// ob_start();
+// TODO: merge with `View`
 function get_debug($errno = 0, $errstr = '') {
     // ob_end_clean();
     $error_codes = [
@@ -69,111 +65,112 @@ function get_debug($errno = 0, $errstr = '') {
 register_shutdown_function('get_debug');
 set_error_handler('get_debug');
 
+require_once 'autoloader.php';
+
+// Parsing request URL
+$url = $_GET['__url'];
+if(trim($url) == '') { $url = 'index'; }
+$url_parts = explode('/', $url);
+unset($_GET['__url']);
+
+// ob_start();
 session_start();
 if(!isset($_COOKIE['lng'])) { setcookie('lng', $_COOKIE['lng'] = $_CONFIG['default_lang']); }
-// try {
 
-foreach($_CONFIG['loaded_modules'] as $module_name) {
-    if(file_exists(MODULES.'/'.$module_name.'/main.php')) {
-        include_once MODULES.'/'.$module_name.'/main.php';
-        if(class_exists($module_name)) {
-            if(method_exists($module_name, 'sys_router')) {
-                call_user_func_array([$module_name, 'sys_router'], []);
-            }
-        } else {
-            throw new Exception('Module "'.$module_name.'" not found');
-        }
-    } else {
-        throw new Exception('Main file of module "'.$module_name.'" not found');
-    }
+// Activating modules
+$_MODULES = [];
+foreach (explode(',', $_CONFIG['enabled_modules']) as $module_name) {
+    global $module_name;
+    Router::context('pe\\modules\\'.$module_name, function () {
+        global $module_name, $_MODULES;
+        $module_class = 'pe\\modules\\'.$module_name.'\\Main';
+        $module = new $module_class();
+        $_MODULES[$module_name] = $module;
+    });
 }
 
-if($url_parts[0] == 'public') {
-    array_shift($url_parts);
-    switch ($url_parts[0]) {
-        case 'smiles':
-            array_shift($url_parts);
-            $file_path = DATA.'/smiles/'.implode('/', $url_parts);
-            break;
-        case 'covers':
-            $file_path = DATA.'/covers/'.$url_parts[1];
-            if (!file_exists($file_path)) $file_path = TEMPLATE.'/img/no_cover'.(isset($_GET['s'])?'':'_profile').'.png';
-            break;
-        case 'avatars':
-            $file_path = DATA.'/avatars/'.$url_parts[1];
+// #region old-routes
+// if($url_parts[0] == 'public') {
+//     array_shift($url_parts);
+//     switch ($url_parts[0]) {
+//         case 'smiles':
+//             array_shift($url_parts);
+//             $file_path = DATA.'/smiles/'.implode('/', $url_parts);
+//             break;
+//         case 'covers':
+//             $file_path = DATA.'/covers/'.$url_parts[1];
+//             if (!file_exists($file_path)) $file_path = TEMPLATE.'/img/no_cover'.(isset($_GET['s'])?'':'_profile').'.png';
+//             break;
+//         case 'avatars':
+//             $file_path = DATA.'/avatars/'.$url_parts[1];
             
-            if (!file_exists($file_path)) {
-                $uid = substr(explode('.jpg', $url_parts[1])[0], 2);
-                if ($uid == '-1') $file_path = TEMPLATE.'/img/guest_avatar_full.png';
-                $u = DB::find_first('users', [
-                    'id = :0:',
-                    'bind' => [$uid]
-                ]);
-                if ($u) $file_path = TEMPLATE.'/img/'.$u['gender'].'_avatar_full.png';
-            }
-            break;
-        default:
-            $file_path = TEMPLATE.'/'.implode('/', $url_parts);
-            break;
-    }
+//             if (!file_exists($file_path)) {
+//                 $uid = substr(explode('.jpg', $url_parts[1])[0], 2);
+//                 if ($uid == '-1') $file_path = TEMPLATE.'/img/guest_avatar_full.png';
+//                 $u = DB::find_first('users', [
+//                     'id = :0:',
+//                     'bind' => [$uid]
+//                 ]);
+//                 if ($u) $file_path = TEMPLATE.'/img/'.$u['gender'].'_avatar_full.png';
+//             }
+//             break;
+//         default:
+//             $file_path = TEMPLATE.'/'.implode('/', $url_parts);
+//             break;
+//     }
     
-    $ext_deny = ['tpl'];
-    $file_ext = explode('.', $file_path);
-    $file_ext = $file_ext[count($file_ext)-1];
+//     $ext_deny = ['tpl'];
+//     $file_ext = explode('.', $file_path);
+//     $file_ext = $file_ext[count($file_ext)-1];
 
-    if(!in_array($file_ext, $ext_deny) && file_exists($file_path) && is_file($file_path)) {
-        switch(explode('.', $url_parts[count($url_parts)-1])[1]) {
-            case 'css': $mime = 'text/css';        break;
-            case 'js':  $mime = 'text/javascript'; break;
-            default: $mime = mime_content_type($file_path); break;
-        }
+//     if(!in_array($file_ext, $ext_deny) && file_exists($file_path) && is_file($file_path)) {
+//         switch(explode('.', $url_parts[count($url_parts)-1])[1]) {
+//             case 'css': $mime = 'text/css';        break;
+//             case 'js':  $mime = 'text/javascript'; break;
+//             default: $mime = mime_content_type($file_path); break;
+//         }
 
-        $file_hash = hash_file('md5', $file_path);
-        header('ETag: '.$file_hash);
-        if (isset($_SERVER['If-None-Match']) && $_SERVER['If-None-Match'] == $file_hash) {
-            http_response_code(304);
-            exit;
-        }
+//         $file_hash = hash_file('md5', $file_path);
+//         header('ETag: '.$file_hash);
+//         if (isset($_SERVER['If-None-Match']) && $_SERVER['If-None-Match'] == $file_hash) {
+//             http_response_code(304);
+//             exit;
+//         }
 
-        header('Content-Type: '.$mime);
-        $seconds_to_cache = 3600;
-        $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
-        header("Expires: $ts");
-        header("Pragma: cache");
-        header("Cache-Control: max-age=$seconds_to_cache");
-        readfile($file_path);
-        exit;
-    } else {
-        require_once 'view.php';
-        View::error(404);
-    }
-} elseif($url_parts[0] == 'modules') {
-    $module_name = $url_parts[1];
-    if(file_exists(MODULES.'/'.$module_name.'/main.php')) {
-        require_once MODULES.'/'.$module_name.'/main.php';
-        if(class_exists($module_name)) {
-            if(method_exists($module_name, 'router')) {
-                array_shift($url_parts);
-                array_shift($url_parts);
-                call_user_func_array([$module_name, 'router'], []);
-                exit;
-            } else {
-                throw new Exception('Router of module "'.$module_name.'" not found');
-            }
-        } else {
-            throw new Exception('Module "'.$module_name.'" not found');
-        }
-    } else {
-        throw new Exception('Main file of module "'.$module_name.'" not found');
-    }
-}
+//         header('Content-Type: '.$mime);
+//         $seconds_to_cache = 3600;
+//         $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+//         header("Expires: $ts");
+//         header("Pragma: cache");
+//         header("Cache-Control: max-age=$seconds_to_cache");
+//         readfile($file_path);
+//         exit;
+//     } else View::error(404);
+// } elseif($url_parts[0] == 'modules') {
+//     $module_name = $url_parts[1];
+//     if(file_exists(MODULES.'/'.$module_name.'/main.php')) {
+//         require_once MODULES.'/'.$module_name.'/main.php';
+//         if(class_exists($module_name)) {
+//             if(method_exists($module_name, 'router')) {
+//                 array_shift($url_parts);
+//                 array_shift($url_parts);
+//                 call_user_func_array([$module_name, 'router'], []);
+//                 exit;
+//             } else {
+//                 throw new Exception('Router of module "'.$module_name.'" not found');
+//             }
+//         } else {
+//             throw new Exception('Module "'.$module_name.'" not found');
+//         }
+//     } else {
+//         throw new Exception('Main file of module "'.$module_name.'" not found');
+//     }
+// }
+// #endregion old-routes
 
-require_once 'noienedge.php';
-require_once 'db.php';
-require_once 'view.php';
-
+require_once 'DB.php';
 function load_db() {
-    require_once ENGINE.'/db.php';
+    require_once ENGINE.'/DB.php';
     global $_CONFIG;
     $e = DB::connect($_CONFIG['mysql_host'], $_CONFIG['mysql_user'], $_CONFIG['mysql_pass'], $_CONFIG['mysql_db']);
     if($e) {
@@ -188,11 +185,9 @@ function load_view() {
 }
 
 DB::connect($_CONFIG['mysql_host'], $_CONFIG['mysql_user'], $_CONFIG['mysql_pass'], $_CONFIG['mysql_db']);
-View::load($url);
+Router::dispatch($url);
+// View::load($url);
 
 if($_CONFIG['cache']) {
     exit(preg_replace('/>([ ]+)</', '><', str_replace(array("\r", "\n"), '', ob_get_clean())));
 }
-// } catch(Exception $e) {
-//     get_debug();
-// }
