@@ -21,30 +21,29 @@
 
     function step_0() { ?>
         <div id="welcome">
-            <h1>Script Installation Wizard</h1>
-            Welcome to the Plexngine Installation Wizard. This wizard will help you install the script in two minutes. However, despite this, we strongly recommend you familiarize with documentation about working with engine. <a href="https://plexengine.com/doc" target="_blank"><b>Documentation</b></a>
+            <h1>Майстер установки скрипта</h1>
+            Ласкаво просимо в майстер установки Plexngine. Даний майстер допоможе Вам встановити скрипт всього за декілька хвилин. Однак, не дивлячись на це, ми наполегливо рекомендуємо Вам ознайомитися з документацією по роботі з двигуном. <a href="https://plexengine.com/doc" target="_blank"><b>Документація</b></a>
             <br />
             <br />
-            During installation was created database structure, administrator account and configuration file with basic system settings.
+            Під час встановлення буде створена структура бази даних, аккаунт адміністратора та конфігураційний файл з базовими налаштуваннями системи.
             <br />
             <br />
-            Wishing you a pleasant work, <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> и <b>DePowered LLC <sup>md</sup></b>
+            Бажаємо Вам приємної роботи, <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> та <b>DePowered LLC <sup>md</sup></b>
         </div>
     <?php }
     
     function step_1() { ?>
         <div id="license">
-            Официальный сайт ядра где можно всегда скачать свежую версию: <a href="https://plexengine.com" target="_blank"><b>https://plexengine.com</b></a>
+            Офіційний сайт ядра де можна завжди скачати свіжу версію: <a href="https://plexengine.com" target="_blank"><b>https://plexengine.com</b></a>
             <br />
-            Техническую поддержку можно получить в нашей группе Вконтакте: <a href="https://vk.com/plexengine" target="_blank"><b>vk.com/plexengine</b></a>
-            <br />
-            <br />
-            Скрипт является полностью бесплатным, и распространяется по лицензии <b>MIT</b> с открытым исходным кодом.
-            Название Plexengine, а также входящие в данный продукт скрипты являются собственностью <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> и <b>DePowered LLC <sup>md</sup></b>, за исключением случаев, когда для компонента системы применяется другой тип лицензии. Программный продукт защищен законом об авторских правах. <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> не несет никакой ответственности за содержание сайтов, создаваемых пользователем при помощи скрипта Plexengine.
+            Технічну підтримку можна отримати в нашій групі Вконтакте: <a href="https://vk.com/plexengine" target="_blank"><b>vk.com/plexengine</b></a>
             <br />
             <br />
-            (translate plz)
-            <input type="checkbox" id="agree" /> I agree to the terms of the license
+			Скрипт є повністю безкоштовним, і поширюється по ліцензії <b>MIT</b> з відкритим вихідним кодом.
+            Назва Plexengine, а також вхідні до даного продукту скрипти є власністю <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> и <b>DePowered LLC <sup>md</sup></b>, за винятком випадків, коли для компонента системи застосовується інший тип ліцензії. Програмний продукт захищений законом про авторські права. <a href="https://niceweb.in.ua" target="_blank"><b>NiceWeb Design</b></a> не несе ніякої відповідальності за зміст сайтів, що створюються користувачем за допомогою скрипта Plexengine.
+            <br />
+            <br />
+            <input type="checkbox" id="agree" /> Я приймаю умови ліцензії
             <script>
                 document.addEventListener('DOMContentLoaded', () => { 
                     document.querySelector('.next').style.display = 'none';
@@ -65,11 +64,11 @@
         <table>
             <tbody>
                 <tr>
-                    <td>PHP version 5.4+</td>
+                    <td>Версія PHP 5.4+</td>
                     <?php
                     $version = explode('.', PHP_VERSION);
                     if($version[0] <= 5 && $version[1] < 4): ?>
-                        <td>Install PHP 5.4 or greater</td>
+                        <td>Встановіть PHP 5.4 або вище</td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
                     <?php else: ?>
@@ -78,9 +77,9 @@
                     <?php endif; ?>
                 </tr>
                 <tr>
-                    <td>Access to our web site</td>
+                    <td>Доступ до нашого сайту</td>
                     <?php if(!$pe_version): ?>
-                        <td>Grant access to <code><?php echo $base_url; ?></code> in your firewall</td>
+                        <td>Дозвольте доступ до <code><?php echo $base_url; ?></code> в Вашому фаєрволі</td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
                     <?php else: ?>
@@ -89,9 +88,9 @@
                     <?php endif; ?>
                 </tr>
                 <tr>
-                    <td>PHP module ZipArchive installed</td>
+                    <td>PHP модуль ZipArchive встановлений</td>
                     <?php if(!class_exists('ZipArchive')): ?>
-                        <td>Enable <code>php_zip</code> in <code>php.ini</code></td>
+                        <td>Включіть <code>php_zip</code> в <code>php.ini</code></td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
                     <?php else: ?>
@@ -100,17 +99,17 @@
                     <?php endif; ?>
                 </tr>
                 <tr>
-                    <td>Apache mod_rewrite enabled</td>
+                    <td>Apache mod_rewrite включений</td>
                     <?php
                     if(!isset($_GET['rewrite_work']) && !in_array('mod_rewrite', apache_get_modules())): ?>
                         <td>
-                            Enable Apache mod_rewrite.
+                            Включіть Apache mod_rewrite.
                             <br>
-                            Execute <code>a2enmod rewrite</code> in terminal
-                            and replace <code>AllowOverride None</code> to <code>AllowOverride All</code>
-                            in file <code>/etc/apache2/apache2.conf</code> (specify for your OS).
+                            Виконайте <code>a2enmod rewrite</code> в терміналі
+                            та замініть <code>AllowOverride None</code> на <code>AllowOverride All</code>
+                            в файлі <code>/etc/apache2/apache2.conf</code> (залежить від вашої ОС).
                             <br>
-                            If you have already do this, try to delete the <code>.htaccess</code> file in directory with installer.
+                            Якщо ви вже зробили це, то спробуйте видалити файл <code>.htaccess</code> в директорії з інсталятором.
                         </td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
@@ -120,13 +119,13 @@
                     <?php endif; ?>
                 </tr>
                 <tr>
-                    <td>OpenSSL cast5-ecb cipher method is available</td>
+                    <td>Доступний метод шифрування OpenSSL cast5-ecb</td>
                     <?php
                     if(!in_array('cast5-ecb', openssl_get_cipher_methods())): ?>
                         <td>
-                            Add/enable OpenSSL cast5-ecb cipher method.
+                            Додайте/включіть метод шифрування OpenSSL cast5-ecb.
                             <br>
-                            Reinstalling PHP can help.
+                            Перевстановлення PHP може допомогти.
                         </td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
@@ -147,13 +146,13 @@
         <table>
             <tbody>
                 <tr>
-                    <td>Downloading archive</td>
+                    <td>Завантаження архіву</td>
                     <?php
                     if(file_put_contents('plexengine.zip', fopen($base_url.'/v'.$pe_version.'.zip', 'r')) === false): ?>
                         <td>
-                            Check access for write in this directory.
+                            Перевірте дозвіл на запис в даній директорії.
                             <br />
-                            You can download archive from <code><?php echo $base_url.'/v'.$pe_version.'.zip'; ?></code> to this directory and rename archive to <code>plexengine.zip</code>.
+                            Ви можете завантажити архів за посиланням <code><?php echo $base_url.'/v'.$pe_version.'.zip'; ?></code> в данну директорію та перейменувати його в <code>plexengine.zip</code>.
                         </td>
                         <td><div class="icon err"></div></td>
                         <?php $is_error = true; ?>
@@ -163,7 +162,7 @@
                     <?php endif; ?>
                 </tr>
                 <tr>
-                    <td>Unpacking archive</td>
+                    <td>Розпакування архіву</td>
                     <?php
                     $archive = new ZipArchive;
                     if(($zip_err = $archive->open('plexengine.zip')) === true):
@@ -177,15 +176,15 @@
                         <td>
                             <?php
                                 switch($zip_err) {
-                                    case ZipArchive::ER_EXISTS: echo 'Files already exists.'; break;
-                                    case ZipArchive::ER_INCONS: echo 'Incompatible ZIP archive.'; break;
-                                    case ZipArchive::ER_INVAL: echo 'Invalid argument.'; break;
-                                    case ZipArchive::ER_MEMORY: echo 'Memory error.'; break;
-                                    case ZipArchive::ER_NOENT: echo 'File <code>plexengine.zip</code> not founded.'; break;
-                                    case ZipArchive::ER_NOZIP: echo 'Archive <code>plexengine.zip</code> broken.'; break;
-                                    case ZipArchive::ER_OPEN: echo 'Can`t read file.'; break;
-                                    case ZipArchive::ER_READ: echo 'Read file error.'; break;
-                                    default: echo 'Unknown error.'; break;
+                                    case ZipArchive::ER_EXISTS: echo 'Файл вже існує.'; break;
+                                    case ZipArchive::ER_INCONS: echo 'Непідтримуваний ZIP архів.'; break;
+                                    case ZipArchive::ER_INVAL: echo 'Невірні аргументи.'; break;
+                                    case ZipArchive::ER_MEMORY: echo 'Помилка памяті.'; break;
+                                    case ZipArchive::ER_NOENT: echo 'Файл <code>plexengine.zip</code> не знайдено.'; break;
+                                    case ZipArchive::ER_NOZIP: echo 'Архів <code>plexengine.zip</code> пошкоджено.'; break;
+                                    case ZipArchive::ER_OPEN: echo 'Неможливо відкрити файл.'; break;
+                                    case ZipArchive::ER_READ: echo 'Неможливо прочитати файл.'; break;
+                                    default: echo 'Невідома помилка.'; break;
                                 }
                             ?>
                         </td>
@@ -213,14 +212,14 @@
             <table>
                 <tbody>
                     <tr>
-                        <th colspan="2">General</th>
+                        <th colspan="2">Основне</th>
                     </tr>
                     <tr>
-                        <td>Site name</td>
+                        <td>Назва чату</td>
                         <td><input type="text" name="site_name" value="<?php echo $_POST['site_name']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>Default language</td>
+                        <td>Стандартна мова</td>
                         <td>
                             <select name="default_lang">
                                 <?php 
@@ -247,7 +246,7 @@
                     ?>
                         <tr>
                             <td colspan="2">
-                                <div class="icon err"></div> MySQL test error!
+                                <div class="icon err"></div> Помилка перевірки MySQL!
                                 <br />
                                 <?php echo $e->getMessage(); ?>
                             </td>
@@ -266,7 +265,7 @@
                                     ?>
                                     <tr>
                                         <td colspan="2">
-                                            <div class="icon err"></div> MySQL import error in <code><?php echo $sql_query; ?></code> execution.
+                                            <div class="icon err"></div> Помилка імпорту MySQL при виконанні запиту <code><?php echo $sql_query; ?></code>.
                                             <br />
                                             #<?php echo $connection->errorInfo()[1]; ?> <?php echo $connection->errorInfo()[2]; ?>
                                         </td>
@@ -279,24 +278,24 @@
                         }
                     ?>
                     <tr>
-                        <td>Host</td>
+                        <td>Хост</td>
                         <td><input type="text" name="mysql_host" value="<?php echo $_POST['mysql_host']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>User</td>
+                        <td>Користувач</td>
                         <td><input type="text" name="mysql_user" value="<?php echo $_POST['mysql_user']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>Password</td>
+                        <td>Пароль</td>
                         <td><input type="password" name="mysql_pass" value="<?php echo $_POST['mysql_pass']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>Database</td>
+                        <td>База даних</td>
                         <td><input type="text" name="mysql_db" value="<?php echo $_POST['mysql_db']; ?>" /></td>
                     </tr>
                     
                     <tr>
-                        <th colspan="2">Administrator account</th>
+                        <th colspan="2">Акаунт адміністратора</th>
                     </tr>
                     <?php
                         if($is_post && $connection) {
@@ -312,14 +311,14 @@
                                 $is_error = true;
                             ?>
                             <tr>
-                                <td colspan="2"><div class="icon err"></div> Fill all fields.</td>
+                                <td colspan="2"><div class="icon err"></div> Заповніть всі поля.</td>
                             </tr>
                             <?php
                             } else {
                                 $err = '';
-                                if(!filter_var($_POST['adm_email'], FILTER_VALIDATE_EMAIL)) $err = 'Invalid format of E-Mail.';
-                                elseif(strlen($_POST['adm_nick']) > 16) $err = 'Nickname can`t be longer than 16 chars.';
-                                elseif($_POST['adm_pass'] != $_POST['adm_passr']) $err = 'Passwords doesn`t match.';
+                                if(!filter_var($_POST['adm_email'], FILTER_VALIDATE_EMAIL)) $err = 'Невірний формат E-Mail.';
+                                elseif(strlen($_POST['adm_nick']) > 16) $err = 'Нік не може превищувати 16 символів.';
+                                elseif($_POST['adm_pass'] != $_POST['adm_passr']) $err = 'Паролі не співпадають.';
 
                                 if ($err != '') {
                                     $is_error = true;
@@ -337,7 +336,7 @@
                                     ?>
                                     <tr>
                                         <td colspan="2">
-                                            <div class="icon err"></div> MySQL error while query execution <code><?php echo $sql_query; ?></code>.
+                                            <div class="icon err"></div> Помилка MySQL при виконанні запиту <code><?php echo $sql_query; ?></code>.
                                             <br />
                                             #<?php echo $connection->errorInfo()[1]; ?> <?php echo $connection->errorInfo()[2]; ?>
                                         </td>
@@ -353,37 +352,36 @@
                         <td><input type="email" name="adm_email" value="<?php echo $_POST['adm_email']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>Nickname</td>
+                        <td>Нікнейм</td>
                         <td><input type="text" name="adm_nick" value="<?php echo $_POST['adm_nick']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td>Password</td>
+                        <td>Пароль</td>
                         <td><input type="password" name="adm_pass" /></td>
                     </tr>
                     <tr>
-                        <td>Password repeat</td>
+                        <td>Повтор паролю</td>
                         <td><input type="password" name="adm_passr" /></td>
                     </tr>
                     <tr>
-                        <td>Date of birth</td>
+                        <td>Дата народження</td>
                         <td>
-                            <input min="1" max="31" style="min-width: 0; width: 120px;" placeholder="day" type="number" name="adm_birth1" value="<?php echo $_POST['adm_birth1']; ?>" />
+                            <input min="1" max="31" style="min-width: 0; width: 120px;" placeholder="день" type="number" name="adm_birth1" value="<?php echo $_POST['adm_birth1']; ?>" />
                             .
-                            <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="mon" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
-                            <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="year" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
+                            <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="міс" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
                         </td>
                     </tr>
                     <tr>
-                        <td>Gender</td>
+                        <td>Стать</td>
                         <td>
                             <select name="adm_gender">
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                                <option value="male">Чоловіча</option>
+                                <option value="female">Жіноча</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <td>Country</td>
+                        <td>Країна</td>
                         <td>
                             <select name="adm_country">
                                 <option value="RU">Россия</option>
@@ -419,7 +417,8 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
                 $default_conf .= PHP_EOL;
                 $default_conf .= "$key='$val'";
             }
-            file_put_contents('plexengine.tmp/data/config.ini', $default_conf);        
+            file_put_contents('plexengine.tmp/data/config.ini', $default_conf);
+            
             header('Location: ?step=5');
             exit;
         }
@@ -430,7 +429,7 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
         $remove_installer = true;
         $pe_files = scandir('plexengine.tmp');
         if(!$pe_files) {
-            echo '<div class="icon err"></div> Directory <code>plexengine.tmp</code> doesn`t exists!<br />';
+            echo '<div class="icon err"></div> Директорія <code>plexengine.tmp</code> не існує!<br />';
             $remove_installer = false;
         }
         array_shift($pe_files);
@@ -438,7 +437,7 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
         foreach($pe_files as $file) {
             if(!rename('plexengine.tmp/'.$file, './'.$file)) {
                 $remove_installer = false;
-                echo '<div class="icon err"></div> Can`t move file from <code>plexengine.tmp/'.$file.'</code> to current directory!<br />';
+                echo '<div class="icon err"></div> Неможливо перемістити файл з <code>plexengine.tmp/'.$file.'</code> в поточну директорію!<br />';
             }
         }
         rmdir('plexengine.tmp');
@@ -446,17 +445,17 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
         unlink('db.sql');
         if($remove_installer) { unlink('index.php'); }
     ?>
-        Installation successfully completed.
+        Установка успішно завершена.
         <br />
-        Congratulations, chat has been successfully installed on your server.
+        Вітаємо, чат бул успішно встановлений на Ваш сервер.
         <br />
-        <b>File</b> <code>index.php</code> <?php
+        <b>Файл</b> <code>index.php</code> <?php
             echo $remove_installer?
-            '<b>was removed</b> by security reasons.':
-            '<b>not removed</b>, because some operations failed.';
+            '<b>був видалений</b> з міркувань безпеки.':
+            '<b>не видалений</b> тому що, деякі операції були неуспішні.';
         ?>
         <br />
-        Now you can follow <a href="/">this link</a> to view main page.
+        Тепер Ви можете перейти <a href="/">по цьому посиланню</a> щоб відкрити головну сторінку.
     <?php
          global $base_url;
          file_get_contents($base_url.'/rg.php?d='.$_SERVER['HTTP_HOST'].'&ip='.$_SERVER['SERVER_ADDR']);
@@ -471,7 +470,7 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Plexengine Installer</title>
+        <title>Установщик Plexengine</title>
         <meta charset="UTF-8" />
         <style>
         @import url('https://fonts.googleapis.com/css?family=Mukta+Mahee');
@@ -701,15 +700,15 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
         <div id="header">
             <div id="logo"></div>
             <div id="version">
-                <span>Actual<br>version</span>
+                <span>Актуальна<br />версія</span>
                 <b><?php echo $pe_version; ?></b>
             </div>
             <div id="steps">
-                <span class="step" <?php active(1); ?>><b>1</b> License agreement</span>
-                <span class="step" <?php active(2); ?>><b>2</b> Checking</span>
-                <span class="step" <?php active(3); ?>><b>3</b> Installing</span>
-                <span class="step" <?php active(4); ?>><b>4</b> Configurating</span>
-                <span class="step" <?php active(5); ?>><b>5</b> Done</span>
+                <span class="step" <?php active(1); ?>><b>1</b> Ліцензія</span>
+                <span class="step" <?php active(2); ?>><b>2</b> Перевірка</span>
+                <span class="step" <?php active(3); ?>><b>3</b> Встановлення</span>
+                <span class="step" <?php active(4); ?>><b>4</b> Конфіг</span>
+                <span class="step" <?php active(5); ?>><b>5</b> Готово</span>
             </div>
         </div>
         <div id="wrapper">
@@ -718,9 +717,9 @@ nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'
             <button class="next" onclick="<?php
                 $err_do = "window.location.href = '?step=".++$_GET['step']."';";
                 echo $is_error?
-                    "if(prompt('Please, fix all errors!\\nSystem can work unstable!\\nType \'\'OK\'\' to continue.') == 'OK') { ".$err_do." }":
+                    "if(prompt('Будь ласка, виправте всі помилки!\\nСистема може працювати нестабільно!\\nВведіть \'\'OK\'\', щоб продовжити.') == 'OK') { ".$err_do." }":
                     $err_do
-            ?>">Next</button>
+            ?>">Дальше</button>
             <?php endif; ?>
         </div>
     </body>
