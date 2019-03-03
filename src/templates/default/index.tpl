@@ -4,141 +4,242 @@
 	{% include common.footer %}
 {% else %}
 {% include common.header %}
-<div id="index_wrapper">
+<div id="top">
+	<img src="/public/img/logo.png" />
 	<span id="lang_change">
+		| language |
 		<div class="dropdown">
-				<span class="name link" style="line-height: 25px;">| language_name |</span>
-				<div class="dropdown_container">
-					{% for $lang_code, $lang_name in self::get_languages() %}
-					<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
-					{% endfor %}
-				</div>
+			<span class="name link" style="line-height: 25px;">| language_name |</span>
+			<div class="dropdown_container">
+				{% for $lang_code, $lang_name in self::get_languages() %}
+				<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
+				{% endfor %}
 			</div>
+		</div>
 	</span>
-	<div>
-		<img id="big_logo" src="/public/img/logo.png" />
+</div>
+
+<div id="index_wrapper">
+	<div style="flex: 2;">
+		<h2 style="text-align: left;">| index_mine_title |</h2>
+		<h1>| already | {{ DB::count('users', 'id') }} | registered_in_chat |</h1>
+		<h2>| join_and_you |</h2>
+		<button class="btn btn-green-o" open-modal="register">| register |</button>
+
+		<div id="new_users">
+			<img src="/uploads/avatars/id-1.jpg" />
+			<img src="/uploads/avatars/id-1.jpg" />
+			<img src="/uploads/avatars/id-1.jpg" />
+			<img src="/uploads/avatars/id-1.jpg" />
+			<img src="/uploads/avatars/id-1.jpg" />
+		</div>
 	</div>
-	<div>
-		<Форма>
+	<hr />
+	<div id="login_form" style="flex: 1;">
+		<h2>| enter_to_chat |</h2>
+		<h3>| enter_auth_data |</h3>
+		<h4 class="text_red" style="margin: 3px 0;">&nbsp;</h4>
+		<div class="input_wrapper">
+			<input required name="login" type="text" />
+			<span class="label">| login |</span>
+		</div>
+		<div class="input_wrapper">
+			<input required name="pass" type="password" />
+			<span class="label">| password |</span>
+		</div>
+		<button class="row btn" onclick="login()">| sign_in |</button>
+		<span class="row link-muted">| forgot_password |</span>
+		<div class="muted">ИЛИ</div>
+		<button class="row btn btn-o" open-modal="guest">| sign_in_guest |</button>
 	</div>
 </div>
 
+<div id="copyrights">
+	&copy; {{ $_CONFIG['site_name'] }}. All rights reserved.
+	<span>&copy; 2018 - 2019 Powered on engine <a href="https://plexengine.com" target="_blank">Plexengige</a></span>
+</div>
+
 <style>
-	body { background-color: #fff; }
-	.box { border: 0; }
-	
-	#index_wrapper {
-		margin: 0 170px;
-		width: auto;
-		margin-top: 70px;
+/* TODO: refactor this */
+body { background-color: #fff; }
+
+#top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 120px;
+    padding-bottom: 0;
+}
+#top > img { height: 73px; }
+
+#index_wrapper {
+    display: flex;
+    margin: 0 !important;
+    width: auto;
+    padding: 20px 120px;
+    min-height: calc(100vh - 225px);
+    padding-bottom: 45px;
+    justify-content: space-between;
+    text-align: center;
+    color: #2f2f2f;
+}
+
+#index_wrapper > hr {
+    margin: 0 60px;
+    height: auto;
+    background-color: #e5e5e5;
+    width: 1px;
+    border: none;
+}
+
+#index_wrapper > * {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+}
+
+h1 {
+	font-size: 45px;
+	margin: 0;
+	font-weight: 500;
+	color: #777;
+}
+
+h3 {
+    margin: 0;
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.input_wrapper {
+	position: relative;
+	margin-bottom: 15px;
+}
+
+.input_wrapper > input {
+    border-radius: 25px;
+    padding: 25px 20px;
+    font-size: 13px;
+	color: #808080;
+	margin: 0;
+    padding-bottom: 15px;
+}
+
+.input_wrapper > .label {
+    position: absolute;
+    left: 20px;
+    top: 12px;
+    font-size: 14px;
+	color: #8a8a8a;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.input_wrapper > input:valid ~ .label,
+.input_wrapper > input:focus ~ .label {
+    top: 2px;
+    left: 15px;
+}
+
+.input_wrapper > input:valid ~ .label:after,
+.input_wrapper > input:focus ~ .label:after {
+    content: ':';
+}
+
+#index_wrapper .btn {
+    font-size: 22px;
+    border-radius: 25px;
+}
+
+.btn-o {
+    border: 1px solid #4a76a8;
+    background-color: #fff;
+    color: #4a76a8;
+	box-shadow: none !important;
+	transition: 0.15s;
+}
+.btn-o:hover, .btn-o:focus { background-color: #4a76a8; color: #fff; }
+
+.btn-green-o {
+    margin: auto;
+    border: 1px solid #5fb053;
+    background-color: #fff;
+    color: #5fb053;
+	box-shadow: none !important;
+	transition: 0.15s;
+}
+.btn-green-o:hover, .btn-green-o:focus { background-color: #5fb053; color: #fff; }
+
+.link-muted {
+    color: #777;
+    text-decoration: underline dotted;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+#new_users {
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+#new_users > img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    border-radius: 100%;
+    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 15px 0;
+}
+
+#lang_change > .dropdown {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.muted {
+    color: #555;
+    font-size: 11px;
+    margin: 10px 0;
+}
+
+@media all and (max-width: 990px) {
+    #index_wrapper { flex-direction: column; }
+    #login_form { margin-top: 35px; }   
+}
+
+@media all and (max-width: 655px) {
+    #new_users { display: none; }
+}
+
+#copyrights {
+    display: flex;
+    background-color: #fff;
+    color: #4a4a4a;
+    padding: 15px 120px;
+	font-size: 14px;
+    justify-content: space-between;
+}
+
+#copyrights a {
+    color: #639fce;
+    text-decoration: underline;
+}
+
+@media (max-width: 850px) {
+    #top, #index_wrapper, #copyrights {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+	#copyrights {
+		justify-content: left;
+		flex-direction: column;
 	}
-	
-	#login_form {
-		width: 100%;
-		padding: 0 40px;
-		box-sizing: border-box;
-		text-align: center;
-	}
-	
-	.btn.bg_purple { text-align: center; }
-	
-	.link {
-		margin: 0;
-		line-height: 36px;
-		font-size: 15px;
-	}
-	
-	h2 {
-		display: block;
-		font-size: 25px;
-		margin: 5px 0;
-    	font-weight: 500;
-	}
-	
-	#register_form { margin: 20px 0 45px 0; }
+}
 </style>
-
-
-
-
-
-{# <style>
-	body { background-color: #fff; }
-	.box { border: 0; }
-	
-	#index_wrapper {
-		margin: 0 170px;
-		width: auto;
-		margin-top: 70px;
-	}
-	
-	#login_form {
-		width: 100%;
-		padding: 0 40px;
-		box-sizing: border-box;
-		text-align: center;
-	}
-	
-	.btn.bg_purple { text-align: center; }
-	
-	.link {
-		margin: 0;
-		line-height: 36px;
-		font-size: 15px;
-	}
-	
-	h2 {
-		display: block;
-		font-size: 25px;
-		margin: 5px 0;
-    	font-weight: 500;
-	}
-	
-	#register_form { margin: 20px 0 45px 0; }
-</style>
-<div id="index_wrapper">
-	<span id="lang_change">
-		<div class="dropdown">
-				<span class="name link" style="line-height: 25px;">| language_name |</span>
-				<div class="dropdown_container">
-					{% for $lang_code, $lang_name in self::get_languages() %}
-					<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
-					{% endfor %}
-				</div>
-			</div>
-	</span>
-	<div style="display: inline-block; width: 38%;">
-		<img id="big_logo" src="/public/img/logo.png" />
-		<div id="login_form" class="box">
-			<span class="title">| enter_to_chat |</span>
-			<span class="post_title">| enter_auth_data |</span>
-			<br />
-			<h4 class="text_red" style="margin: 3px 0;">&nbsp;</h4>
-			<input name="login" type="text" placeholder="| login |" />
-			<div class="input_text">
-				<input name="pass" type="password" placeholder="| password |" />
-			</div>
-			<div class="row" style="font-size: 0;">
-				<span class="col-9 link">| forgot_password |</span>
-				<button class="col-3 btn bg_purple" onclick="login()">| sign_in |</button>
-			</div>
-			<br />
-			<button class="row btn" open-modal="guest">| sign_in_guest |</button>
-		</div>
-		<br />
-	</div>
-	<div style="display: inline-block; text-align: center; width: calc(62% - 50px); margin-left: 45px; vertical-align: top;">
-		<img src="/public/img/main_page.png" style="display: block; width: calc(100% - 40px); margin: auto; margin-bottom: 15px;" />
-		<h2><?php echo DB::count('users', 'id'); ?> | registered_in_chat |</h2>
-		<h2>| join_and_you |</h2>
-		<br />
-		<button style="width: 200px;" class="btn bg_green" open-modal="register">| register |</button>
-	</div>
-	<br />
-	<span style="font-size: 13px;">2018 &copy; Powered on PlexEngine / Developed by DePowered LLC</span>
-	<br />
-	<br />
-</div> #}
 
 <!-- Registration modal -->
 <div class="modal_wrapper" modal-name="register">
@@ -297,7 +398,7 @@
         <div class="title">
             | limitation | <span class="close"></span>
         </div>
-        <div class="content">
+        <div class="content" style="text-align: center;">
 			<br />
             <span info></span>
 			<br />

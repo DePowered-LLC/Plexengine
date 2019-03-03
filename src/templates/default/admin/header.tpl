@@ -10,7 +10,7 @@
 		<div id="header">
 			<img id="logo" src="/public/img/logo.png" />
 			<div id="user_block">
-				<img src="/public/img/no_photo.png" />
+				<img src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
 				<span class="name">{{ $_SESSION['userdata']['nick'] }}</span>
 			</div>
 			<div id="menu">

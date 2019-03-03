@@ -134,7 +134,7 @@
         <div class="title">
             | limitation | <span class="close"></span>
         </div>
-        <div class="content">
+        <div class="content" style="text-align: center;">
 			<br />
             <span info></span>
 			<br />

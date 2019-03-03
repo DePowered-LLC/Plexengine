@@ -25,15 +25,12 @@ b, h4 { font-weight: 500; }
 #big_logo {
     display: block;
     max-width: 100%;
-    margin: auto;
     max-height: 210px;
-    margin-bottom: 15px;
+    height: 170px;
+    margin: 0 auto;
 }
 
 #lang_change {
-    position: fixed;
-    top: 15px;
-    right: 170px;
     font-size: 13px;
     color: #828282;
 }
@@ -293,7 +290,7 @@ input:focus, select:focus {
 .btn {
     display: inline-block;
     border: none;
-    background-color: #4598e6;
+    background-color: #4a76a8;
     color: #fff;
     font-size: 14px;
     font-weight: 400;
@@ -403,6 +400,10 @@ input:focus, select:focus {
     overflow-y: overlay;
     justify-content: center;
     align-items: center;
+}
+
+.modal_wrapper > .modal > .content {
+    padding-bottom: 15px;
 }
 
 .modal_wrapper > .modal {
@@ -1087,13 +1088,13 @@ input:focus, select:focus {
     position: absolute;
     right: 0;
     top: calc(100% + 7px);
-    background-color: #252932;
+    background-color: #ffffff;
     display: none;
     min-width: 200px;
     width: max-content;
     padding: 5px 0;
     border-radius: 3px;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 0 10px 0, rgba(255, 255, 255, 0.7) 0 0 15px 0;
+    border: 1px solid #f2f2f2;
     z-index: 999;
     cursor: default;
 }
@@ -1109,14 +1110,15 @@ input:focus, select:focus {
     right: 15px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid #252932;
+    border-bottom: 5px solid #ffffff;
+    filter: drop-shadow(#f2f2f2 0 -1px 0);
 }
 
 .dropdown>.dropdown_container>.item {
     display: block;
     text-align: left;
     text-decoration: none;
-    color: #fff;
+    color: #000;
     font-size: 14px;
     padding: 10px 15px;
     cursor: pointer;
@@ -1131,7 +1133,7 @@ input:focus, select:focus {
 .dropdown>.dropdown_container>.item:hover,
 .dropdown>.dropdown_container>.item:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .dropdown>.dropdown_container>hr {
@@ -1321,9 +1323,7 @@ input:focus, select:focus {
     align-content: baseline;
     justify-content: space-between;
 }
-
-chat-input-wrapper > input:focus { outline: none; }
-chat-input-wrapper[focus] { box-shadow: #254d7b 0 0 0 2px; }
+input:focus { outline: none !important; }
 
 #chat chat-send-to, #chat chat-input-wrapper {
     display: flex;
@@ -1704,19 +1704,6 @@ chat-timestamp { font-size: 13px; }
         display: block !important;
         width: 100% !important;
         margin-left: 0 !important;
-    }
-}
-
-@media all and (max-width: 870px) {
-    #index_wrapper {
-        margin: 0 50px;
-        margin-top: 50px;
-    }
-
-    #lang_change {
-        position: static;
-        display: block;
-        float: right;
     }
 }
 
