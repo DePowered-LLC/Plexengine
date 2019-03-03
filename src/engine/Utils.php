@@ -1,4 +1,5 @@
 <?php
+namespace pe\engine;
 class Utils {
     private static $is_case_sensitive = false;
     private static $is_utf = false;

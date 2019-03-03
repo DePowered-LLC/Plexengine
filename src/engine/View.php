@@ -1,14 +1,13 @@
 <?php
 /*
- * Plexengine
- * (C) DePowered LLC & Plexengine 2018
- * All rights reserved
+@copy
  */
 // ob_start();
 namespace pe\engine;
 class View {
+    // TODO: Error pages template
     public static function error($err, $debug = '') {
-        // ob_end_clean();
+        ob_end_clean();
         global $_CONFIG;
         $tpl_path = TEMPLATE.'/errors/'.$err.'.tpl';
         if(file_exists($tpl_path)) {
@@ -30,7 +29,7 @@ class View {
         exit;
     }
     
-    public static function load($tpl) {
+    public static function load ($tpl, $vars = []) {
         $tpl_path = TEMPLATE.'/'.$tpl.'.tpl';
         if(!file_exists(CACHE)) { mkdir(CACHE, 0777); }
         $cache_path = CACHE.'/'.str_replace('/', '_', $tpl).'.php';
@@ -46,7 +45,7 @@ class View {
                 $tpl_cont = file_get_contents($tpl_path);
                 $bom = pack('H*', 'EFBBBF');
                 $tpl_cont = preg_replace("/^$bom/", '', $tpl_cont);
-                echo self::parse($tpl_cont, $tpl);
+                echo self::parse($tpl_cont, $tpl, $vars);
             } else {
                 self::error(404, '[Template] '.$tpl_path);
             }
@@ -54,83 +53,53 @@ class View {
     }
     
     private static $last_tpl_cont = '';
-    private static function parse($tpl_cont, $tpl) {
-        $tpl_cont_part = explode('{%', $tpl_cont);
-        array_shift($tpl_cont_part);
-        foreach($tpl_cont_part as $func_str) {
-            $result = '';
-            $func_str = explode('%}', $func_str)[0];
-            $func_args = explode(' ', trim($func_str));
-            switch($func_args[0]) {
-                case 'include':
-                    $inc_path = str_replace('\'', '', $func_args[1]);
-                    $inc_path = addcslashes($inc_path, '"\\');
-                    $result = 'self::load("'.$inc_path.'");';
-                    break;
-                case 'if':
-                    array_shift($func_args);
-                    $if = implode(' ', $func_args);
-                    $result = 'if('.$if.'):';
-                    break;
-                case 'else':
-                    $result = 'else:';
-                    break;
-                case 'endif':
-                    $result = 'endif;';
-                    break;
-                case 'for':
-                    array_shift($func_args);
-                    $st = implode(' ', $func_args);
-                    
-                    $in_var = trim(explode('in', $st)[1]);
-                    
-                    $out_vars = explode(',', explode('in', $st)[0]);
-                    foreach($out_vars as $key => $val) {
-                        $out_vars[$key] = trim($val);
-                    }
-                    $out_vars = implode(' => ', $out_vars);
-                    
-                    $result = 'foreach('.$in_var.' as '.$out_vars.'):';
-                    break;
-                case 'endfor':
-                    $result = 'endforeach;';
-                    break;
-            }
-            $tpl_cont = str_replace('{%'.$func_str.'%}', '<?php '.$result.' ?>', $tpl_cont);
-        }
-        
-        $tpl_cont_part = explode('{{', $tpl_cont);
-        array_shift($tpl_cont_part);
-        foreach($tpl_cont_part as $part) {
-            $part = explode('}}', $part)[0];
-            $tpl_cont = str_replace('{{'.$part.'}}', '<?php echo '.trim($part).'; ?>', $tpl_cont);
-        }
-        
-        $tpl_cont_part = explode('{#', $tpl_cont);
-        array_shift($tpl_cont_part);
-        foreach($tpl_cont_part as $part) {
-            $part = explode('#}', $part)[0];
-            $tpl_cont = str_replace('{#'.$part.'#}', '', $tpl_cont);
-        }
-        
-        global $_CONFIG;
-        $tpl_cont_part = explode($_CONFIG['lang_delimiters'][0], $tpl_cont);
-        array_shift($tpl_cont_part);
-        foreach($tpl_cont_part as $key => $part) {
-            if($key & 1) { continue; }
-            $part = explode($_CONFIG['lang_delimiters'][1], $part)[0];
-            $tpl_cont = str_replace($_CONFIG['lang_delimiters'][0].$part.$_CONFIG['lang_delimiters'][1], '<?php echo self::lang("'.trim($part).'"); ?>', $tpl_cont);
-        }
-        
+    private static function parse($tpl_cont, $tpl, $_vars) {
+        // Removing comments
+        $tpl_cont = preg_replace('/{#(?:.|\n)*?#}/', '', $tpl_cont);
+        // Parsing include statements
+        $tpl_cont = preg_replace_callback('/{% *include ([^ ]+) *%}/', function ($matches) {
+            return '<?php self::load("'.str_replace('.', '/', $matches[1]).'"); ?>';
+        }, $tpl_cont);
+        $tpl_cont = preg_replace_callback('/{% *module (.+) *%}/', function ($matches) {
+            return '<?php use pe\\modules\\'.str_replace('.', '\\', $matches[1]).'; ?>';
+        }, $tpl_cont);
+        // Parsing if statements
+        $tpl_cont = preg_replace('/{% *(if|elseif) (.+?) *%}/', '<?php $1($2): ?>', $tpl_cont);
+        $tpl_cont = preg_replace('/{% *else *%}/', '<?php else: ?>', $tpl_cont);
+        $tpl_cont = preg_replace('/{% *endif *%}/', '<?php endif; ?>', $tpl_cont);
+        // Parsing for statements
+        $tpl_cont = preg_replace('/{% *for ([^,]+) *, *(.+)? in (.+) *%}/', '<?php foreach($3 as $1 => $2): ?>', $tpl_cont);
+        $tpl_cont = preg_replace('/{% *for ([^,]+) * in (.+) *%}/', '<?php foreach($2 as $1): ?>', $tpl_cont);
+        $tpl_cont = preg_replace('/{% *endfor *%}/', '<?php endforeach; ?>', $tpl_cont);
+        // Parsing template variables
+        $tpl_cont = preg_replace('/{{ *([^}]+) *}}/', '<?php echo $1; ?>', $tpl_cont);
+        // Parsing language variables
+        $tpl_cont = preg_replace('/\| *((?:-|\w)+) *\|/', '<?php echo self::lang("$1"); ?>', $tpl_cont);
+
+        // Passing template variables
+        global $vars, $_CONFIG;
+        $vars = new ViewVarsStore($_vars);
+
+        // Executing template
         ob_start();
         self::$last_tpl_cont = htmlspecialchars($tpl_cont);
-        eval('?>'.$tpl_cont);
+        try {
+        eval('
+            namespace pe\\engine;
+            global $vars;
+            ?>
+            '.$tpl_cont);
+        } catch (\Exception $e) {
+            // TODO: Noral view debugger
+            exit($e);
+        }
         $result = ob_get_clean();
         if(preg_match('/(Error|Notice|Warning):/i', trim($result))) {
             self::error(500, 'Error in executing template'.PHP_EOL.htmlspecialchars($tpl_cont).PHP_EOL.PHP_EOL.'Result:'.PHP_EOL.$result);
             exit;
         }
         
+        // Saving parsed template to cache if it enabled
         if($_CONFIG['cache']) {
             $cache_path = CACHE.'/'.str_replace('/', '_', $tpl).'.php';
             if(!file_exists($cache_path)) {
@@ -165,4 +134,11 @@ class View {
         }
         return $result;
     }
+}
+
+class ViewVarsStore {
+	private $vars = [];
+	function __construct ($vars) { $this->vars = $vars; }
+	function __isset ($var) { return isset($this->vars[$var]); }
+	function __get ($var) { return $this->vars[$var]; }
 }

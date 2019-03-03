@@ -18,7 +18,7 @@
             <span class="close" tooltip="| hide |" t-left></span>
             <div class="photoline">
                 <div class="add">
-                    <img avatar src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+                    <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
                     {# | mod_vip_add | #}
                 </div>
             </div>
@@ -171,7 +171,7 @@
 
 <div class="modal_wrapper modal-tooltip" modal-name="my_profile" t-right-bottom>
     <div class="modal">
-        <div class="content">{% include 'my_profile' %}</div>
+        <div class="content">{% include my_profile %}</div>
     </div>
 </div>
 <div class="modal_wrapper" modal-name="ignore_list">
@@ -236,7 +236,7 @@ $max_file = file_upload_max_size() / 1024 / 1024;
         {% if $_SESSION['userdata']['id'] != -1 %}
         <div id="upload_photo" class="content">
             <div>
-                <img avatar src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+                <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
                 {{ str_replace('{size}', $max_file, View::lang('pr_photo_info')) }}
             </div>
             <div class="upload_wrapper">

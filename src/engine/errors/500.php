@@ -3,7 +3,7 @@
     <head>
         <title>500 :: Plexengine</title>
         <meta charset="UTF-8" />
-        <style><?php echo file_get_contents(ENGINE.'/style.css'); ?></style>
+        <style><?php echo file_get_contents(ENGINE.'/errors/style.css'); ?></style>
     </head>
     <body>
         <div class="container">
@@ -27,7 +27,7 @@
                 </script>
                 <pre><?php echo $debug ?></pre>
                 {# Trace:
-                <pre><?php debug_print_backtrace(); ?></pre> #}
+                <pre><?php //debug_print_backtrace(); ?></pre> #}
                 <?php endif; ?>
                 <b>Contact administrator and make them aware of this issue</b>
             </div>

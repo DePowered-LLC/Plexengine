@@ -1,10 +1,68 @@
 {% if isset($_SESSION['userdata']) %}
-	{% include 'common/header' %}
-	{% include 'index_authed' %}
-	{% include 'common/footer' %}
+	{% include common.header %}
+	{% include index_authed %}
+	{% include common.footer %}
 {% else %}
-{% include 'common/header' %}
+{% include common.header %}
+<div id="index_wrapper">
+	<span id="lang_change">
+		<div class="dropdown">
+				<span class="name link" style="line-height: 25px;">| language_name |</span>
+				<div class="dropdown_container">
+					{% for $lang_code, $lang_name in self::get_languages() %}
+					<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
+					{% endfor %}
+				</div>
+			</div>
+	</span>
+	<div>
+		<img id="big_logo" src="/public/img/logo.png" />
+	</div>
+	<div>
+		<Форма>
+	</div>
+</div>
+
 <style>
+	body { background-color: #fff; }
+	.box { border: 0; }
+	
+	#index_wrapper {
+		margin: 0 170px;
+		width: auto;
+		margin-top: 70px;
+	}
+	
+	#login_form {
+		width: 100%;
+		padding: 0 40px;
+		box-sizing: border-box;
+		text-align: center;
+	}
+	
+	.btn.bg_purple { text-align: center; }
+	
+	.link {
+		margin: 0;
+		line-height: 36px;
+		font-size: 15px;
+	}
+	
+	h2 {
+		display: block;
+		font-size: 25px;
+		margin: 5px 0;
+    	font-weight: 500;
+	}
+	
+	#register_form { margin: 20px 0 45px 0; }
+</style>
+
+
+
+
+
+{# <style>
 	body { background-color: #fff; }
 	.box { border: 0; }
 	
@@ -80,7 +138,7 @@
 	<span style="font-size: 13px;">2018 &copy; Powered on PlexEngine / Developed by DePowered LLC</span>
 	<br />
 	<br />
-</div>
+</div> #}
 
 <!-- Registration modal -->
 <div class="modal_wrapper" modal-name="register">
@@ -203,7 +261,7 @@
 				<h4 class="text_red" style="font-size: 16px; margin: 3px 0;"></h4>
 				<div class="col-6" style="width: 185px !important; margin-top: 10px; padding-right: 40px; box-sizing: content-box;">
 					<div style="position: relative; cursor: pointer;" onclick="captcha.src = captcha.src.split('#')[0]+'#'+Math.random()" tooltip="Нажмите, чтобы обновить каптчу">
-						<img id="captcha" src="/modules/Auth/captcha.png" style="width: 185px; image-rendering: -webkit-optimize-contrast;" />
+						<img id="captcha" src="/auth/captcha" style="width: 185px; image-rendering: -webkit-optimize-contrast;" />
 						<i class="chat_icon_update" style="position: absolute; right: 5px; bottom: 5px;"></i>
 					</div>
 					<input type="text" name="captcha" maxlength="5" placeholder="Введите код с картинки" />
@@ -250,7 +308,7 @@
     </div>
 </div>
 
-{% include 'common/footer' %}
+{% include common.footer %}
 <script>
 	if (sessionStorage.getItem('limitation')) {
 		open_modal('limitation');
@@ -286,7 +344,7 @@
 	
 	function login() {
 		$('#login_form [onclick~="login()"]').addClass('loading');
-		$.post('/modules/Auth/login', {
+		$.post('/auth/login', {
 			login: $('#login_form [name="login"]').val(),
 			pass: $('#login_form [name="pass"]').val()
 		}, result => {
@@ -308,7 +366,7 @@
 	function guest() {
 		$('#guest_form .text_red').html('');
 		$('#guest_form [onclick~="guest()"]').addClass('loading');		
-		$.post('/modules/Auth/guest', {
+		$.post('/auth/guest', {
 			nick: $('#guest_form [name="nick"]').val(),
 			country: $('#guest_form [name="country"]').val(),
 			captcha: $('#guest_form [name="captcha"]').val()
@@ -341,7 +399,7 @@
 	
 	function register() {
 		$('#register_form [onclick~="register()"]').addClass('loading');
-		$.post('/modules/Auth/register', {
+		$.post('/auth/register', {
 			email: $('#register_form [name="email"]').val(),
 			nick: $('#register_form [name="nick"]').val(),
 			pass: $('#register_form [name="pass"]').val(),

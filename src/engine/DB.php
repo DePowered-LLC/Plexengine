@@ -9,7 +9,7 @@ class DB {
     public static function connect($host, $user, $pass, $db) {
         try {
             self::$connection = new PDO('mysql:dbname='.$db.';host='.$host, $user, $pass);
-        } catch(PDOException  $e) {
+        } catch(PDOException $e) {
             return $e;
         }
     }

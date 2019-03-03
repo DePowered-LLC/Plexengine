@@ -15,10 +15,12 @@ class Main {
         }
 
         Router::add('get', '/public/{file:.*}', 'Resources.getPublic');
-        Router::add('get', '/uploads/{type:.*}/{file:.*}', 'Resources.getAvatar');
-        Router::add('get', '/id{uid:-?[0-9]+}', 'Auth.profile');
-        // Router::context('pe\\engine', function () {
-            Router::add('get', '/{path:.*}', 'Resources.loadView');
-        // });
+        Router::add('get', '/uploads/{type:.*}/{file:.*}', 'Resources.getUpload');
+        Router::module('get', '/auth/<action>', 'Auth');
+        Router::module('get', '/profile/<action>', 'Profile');
+        Router::module('get', '/helper/<action>', 'Helper');
+        Router::module('get', '/notifications/<action>', 'Notifications');
+        Router::add('get', '/id{uid:-?[0-9]+}', 'Profile.view');
+        Router::add('get', '/{path:.*}', 'Resources.loadView');
     }
 }

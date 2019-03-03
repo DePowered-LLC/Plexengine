@@ -202,7 +202,7 @@ var chat = {
     },
 
     open_ignore_list () {
-        $.get('/modules/Auth/get_ignored')
+        $.get('/auth/get_ignored')
         open_modal('ignore_list');
     }
 };
@@ -314,19 +314,15 @@ $('#chat_admin [name="action"]').on('change', e => {
         }
 
         render () {
-            // if (!$('#uid' + this.uid)[0]) {
-                $('#userlist [category="' + this.gender + '"] > .content').append(this.html);
-                $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML++;
-                $('#userlist [category="all"] [count]')[0].innerHTML++;
-            // }
+            $('#userlist [category="' + this.gender + '"] > .content').append(this.html);
+            $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML++;
+            $('#userlist [category="all"] [count]')[0].innerHTML++;
         }
 
         remove () {
-            // if ($('#uid' + this.uid)[0]) {
-                this.$el.remove();
-                $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML--;
-                $('#userlist [category="all"] [count]')[0].innerHTML--;
-            // }
+            this.$el.remove();
+            $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML--;
+            $('#userlist [category="all"] [count]')[0].innerHTML--;
         }
     }
 
@@ -400,12 +396,12 @@ $('#chat_admin [name="action"]').on('change', e => {
         Object.keys(smiles).forEach((smile_group, key) => {
             $('#smiles').append('<div class="smile_group" smile_group="'+smile_group+'"></div>');
             smiles[smile_group].forEach(smile_text => {
-                $('#smiles > [smile_group="'+smile_group+'"]').append('<img src="/public/smiles/'+smile_text+'.png" onclick="chat.add_to_msg(\' ['+smile_text+']\');" />');
+                $('#smiles > [smile_group="'+smile_group+'"]').append('<img src="/uploads/smiles/'+smile_text+'.png" onclick="chat.add_to_msg(\' ['+smile_text+']\');" />');
                 if(key !== 1) {
                     $('#smiles > [smile_group="'+smile_group+'"]').hide();
                 }
             });
-            packs_list.append(`<img src="/public/smiles/${smile_group}/icon.png" smile_group="${smile_group}">`);
+            packs_list.append(`<img src="/uploads/smiles/${smile_group}/icon.png" smile_group="${smile_group}">`);
         });
     }
 
@@ -526,7 +522,7 @@ $('#chat_admin [name="action"]').on('change', e => {
             }
 
             // Parse smiles and links
-            msg.message = msg.message.replace(/\[([0-9]+\/[0-9]+)\]/g, '<img src="/public/smiles/$1.png" />');
+            msg.message = msg.message.replace(/\[([0-9]+\/[0-9]+)\]/g, '<img src="/uploads/smiles/$1.png" />');
             msg.message = msg.message.replace(/((\w|[:])+:\/\/(\w+.?)*(\/\w+)*\??(&?\w+=\w*)*)/, '<a href="/away?r=$1" target="_blank">$1</a>');
             chat_list.append(build_html([{
                 name: 'chat-message',
@@ -573,7 +569,7 @@ $('#chat_admin [name="action"]').on('change', e => {
     }
     
     $(document).on('click', '.notification > [delete]', e => {
-        $.get('/modules/Helper/remove_notification?id=' + $(e.target).attr('delete'), () => {
+        $.get('/notifications/remove?id=' + $(e.target).attr('delete'), () => {
             $(e.target).parent().remove();
         });
     });
@@ -581,7 +577,7 @@ $('#chat_admin [name="action"]').on('change', e => {
     // Receive data
     var lastUpdate;
     function update () {
-        var getURL = '/modules/Helper/load_data';
+        var getURL = '/helper/load_data';
         if (lastUpdate) {
             var t = (Math.floor(Date.now() / 1000) - lastUpdate);
             if (t <= 0) return;
@@ -675,7 +671,7 @@ $('#chat_admin [name="action"]').on('change', e => {
         input.val('');
         // TODO: message limit
         if (to != '') { message = to + ', ' + message; }
-        $.post('/modules/Helper/send_msg', { message, color: chat.current_color }, res => {
+        $.post('/helper/send_msg', { message, color: chat.current_color }, res => {
             if (res == 'spam') open_modal('spam');
             else if (res.startsWith('mute')) {
                 res = res.split(';');
@@ -694,7 +690,7 @@ $('#chat_admin [name="action"]').on('change', e => {
     // Change status
     $(document).on('click', '#chat chat-status-set', e => {
         var status = $(e.currentTarget).attr('status');
-        $.get('/modules/Helper/spy_msg?m=st&v=' + status, res => {
+        $.get('/helper/spy_msg?m=st&v=' + status, res => {
             if (res == 'timeout') open_modal('status_spam')
             else $('#chat chat-status > i').attr('class', 'chat_icon_' + status);
             // Close popup
@@ -704,7 +700,7 @@ $('#chat_admin [name="action"]').on('change', e => {
 
     window.onbeforeunload = () => {
         $.get({
-            url: '/modules/Helper/spy_msg?m=leave',
+            url: '/helper/spy_msg?m=leave',
             async: false
         });
     };

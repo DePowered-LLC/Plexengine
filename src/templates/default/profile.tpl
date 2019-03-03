@@ -1,11 +1,13 @@
 ﻿<?php
     function getAbout($field) {
-        if (isset($GLOBALS['profile_data']['about'][$field])) return $GLOBALS['profile_data']['about'][$field];
+        global $vars;
+        if (isset($vars->profile['about'][$field])) return $vars->profile['about'][$field];
         else return View::lang('pr_info_none');
     }
 
     function getAccessLang() {
-        switch ($GLOBALS['profile_data']['access']) {
+        global $vars;
+        switch ($vars->profile['access']) {
             case 'admin':   $l = 'info_administrator'; break;
             case 'premium': $l = 'pr_info_vip';        break;
             case 'user':    $l = 'pr_info_user';       break;
@@ -26,7 +28,7 @@
 {% else %}
         <i class="close"></i>
 {% endif %}
-        {% if !isset($GLOBALS['profile_data']) %}
+        {% if !isset($vars->profile) %}
         <h1 style="font-size: 32px;">| no_profile |</h1>
         <p style="font-size: 16px;">| no_profile_info |</p>
         <style>
@@ -37,7 +39,7 @@
         </style>
         {% else %}
         {% if isset($_SESSION['userdata']) %}
-        <img avatar class="my_avatar" src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+        <img avatar class="my_avatar" src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
         <div id="profile_free_gifts">
             <h1>| free |</h1>
             <span>| free_gift_info |</span>
@@ -46,46 +48,46 @@
         {% else %}
         <style>[profile] > body { margin: 15px auto; }</style>
         {% endif %}
-        {% if !isset($_SESSION['userdata']) or $_SESSION['userdata']['id'] != $GLOBALS['profile_data']['id'] %}
+        {% if !isset($_SESSION['userdata']) or $_SESSION['userdata']['id'] != $vars->profile['id'] %}
         <style>i[edit] { display: none; }</style>
         {% endif %}
-        <img src="/public/covers/id{{ $GLOBALS['profile_data']['id'] }}.png" />
+        <img src="/uploads/covers/id{{ $vars->profile['id'] }}.png" />
         <i edit="cover" class="chat_icon_edit"></i>
         <div id="profile_top">
-            {% if $GLOBALS['profile_data']['last_online'] + 5 >= time() %}
-                <i online="{{ $GLOBALS['profile_data']['status'] }}" tooltip="{{ self::lang('status_'.$GLOBALS['profile_data']['status']) }}"></i>
+            {% if $vars->profile['last_online'] + 5 >= time() %}
+                <i online="{{ $vars->profile['status'] }}" tooltip="{{ self::lang('status_'.$vars->profile['status']) }}"></i>
             {% endif %}
-            {% if isset($_SESSION['userdata']) && $GLOBALS['profile_data']['id'] == $_SESSION['userdata']['id'] %}
-            <img avatar width="180px" height="180px" src="/public/avatars/id{{ $GLOBALS['profile_data']['id'] }}.jpg" />
+            {% if isset($_SESSION['userdata']) && $vars->profile['id'] == $_SESSION['userdata']['id'] %}
+            <img avatar width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
             {% else %}
-            <img width="180px" height="180px" src="/public/avatars/id{{ $GLOBALS['profile_data']['id'] }}.jpg" />
+            <img width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
             {% endif %}
             <i edit="avatar" class="chat_icon_edit"></i>
-            <span id="profile_status"><b>| pr_info_myid |</b> <a href="http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $GLOBALS['profile_data']['id'] }}" target="_blank">http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $GLOBALS['profile_data']['id'] }}</a></span>
+            <span id="profile_status"><b>| pr_info_myid |</b> <a href="http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}" target="_blank">http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}</a></span>
             <div style="flex: 1 1 100%;">
                 <h1>
-                    | pr_info | {{ $GLOBALS['profile_data']['nick'] }}
-                    {% if $GLOBALS['profile_data']['verificated'] == 1 %}
+                    | pr_info | {{ $vars->profile['nick'] }}
+                    {% if $vars->profile['verificated'] == 1 %}
                     <i tooltip="| verifed_info |" class="chat_icon_verificated"></i>
                     {% endif %}
                 </h1>
-                {% if $GLOBALS['profile_data']['last_online'] + 5 >= time() %}
+                {% if $vars->profile['last_online'] + 5 >= time() %}
                 <span>
-                    {% if isset($GLOBALS['profile_data']['about']['city']) %}
-                    {{ $GLOBALS['profile_data']['about']['city'] }},
+                    {% if isset($vars->profile['about']['city']) %}
+                    {{ $vars->profile['about']['city'] }},
                     {% endif %}
-                    {{ $GLOBALS['profile_data']['zodiac'] }},
-                    | age | {{ $GLOBALS['profile_data']['age'] }}
+                    {{ $vars->profile['zodiac'] }},
+                    | age | {{ $vars->profile['age'] }}
                 </span>
                 {% if isset($_GET['short']) %}
                 <button onclick="write_fpr()" class="btn">| write_to |</button>
                 {% endif %}
                 {% else %}
-                <span>| user_was_online | {{ date('d.m.Y H:i:s', $GLOBALS['profile_data']['last_online']) }}</span>
+                <span>| user_was_online | {{ date('d.m.Y H:i:s', $vars->profile['last_online']) }}</span>
                 {% endif %}
                 <div class="access">
-                    <i class="chat_icon_{{ $GLOBALS['profile_data']['access'] }}1"></i>
-                    <b>{{ $GLOBALS['profile_data']['nick'] }}</b>
+                    <i class="chat_icon_{{ $vars->profile['access'] }}1"></i>
+                    <b>{{ $vars->profile['nick'] }}</b>
                     <span>{{ getAccessLang() }}</span>
                 </div>
             </div>
@@ -94,11 +96,11 @@
             <div no-gifts>
                 <i></i>
                 <span>
-                    {{ $GLOBALS['profile_data']['nick'] }}
-                    {% if $GLOBALS['profile_data']['gender'] == 'male' %}| pr_info_to_gift_male |{% endif %}
-                    {% if $GLOBALS['profile_data']['gender'] == 'female' %}| pr_info_to_gift_female |{% endif %}
+                    {{ $vars->profile['nick'] }}
+                    {% if $vars->profile['gender'] == 'male' %}| pr_info_to_gift_male |{% endif %}
+                    {% if $vars->profile['gender'] == 'female' %}| pr_info_to_gift_female |{% endif %}
                 </span>
-                {# <span>| pr_info_sh_all |</span> #}
+                <!-- <span>| pr_info_sh_all |</span> -->
             </div>
         </div>
         <div class="tabs">
@@ -117,7 +119,7 @@
                     <table>
                         <tr>
                             <td>| pr_info_date |</td>
-                            <td>{{ $GLOBALS['profile_data']['date_of_birth'] }}</td>
+                            <td>{{ $vars->profile['date_of_birth'] }}</td>
                         </tr>
                         <tr>
                             <td>| pr_info_city |</td>
@@ -139,7 +141,6 @@
                     <br />
                     <button style="display: none;" class="btn" type="submit">| apply |</button>
                 </div>
-                {# <img src="/public/img/zodiac/{{ $GLOBALS['profile_data']['zodiac'] }}.png"> #}
             </form>
             <form id="profile_contacts" tab-id="contacts" class="tab">
                 <div>
@@ -203,7 +204,7 @@
                 });
 
                 Object.keys(data).forEach(k => data[k].trim() == '' && (data[k] = 'none'));
-                $.post('/modules/Auth/profile_save', data, res => {
+                $.post('/auth/profile_save', data, res => {
                     $btn.removeAttr('disabled');
                     $btn.hide();
                     $('#profile_about').removeAttr('editing');
@@ -248,7 +249,7 @@
                 });
 
                 Object.keys(data).forEach(k => data[k].trim() == '' && (data[k] = 'none'));
-                $.post('/modules/Auth/profile_save', data, res => {
+                $.post('/auth/profile_save', data, res => {
                     $btn.removeAttr('disabled');
                     $btn.hide();
                     $('#profile_contacts').removeAttr('editing');
@@ -257,14 +258,9 @@
             });
 
             function write_fpr () {
-                // if (window.location.pathname != '/') {
-                //     sessionStorage.setItem('write_to', '{{ $GLOBALS['profile_data']['nick'] }}');
-                //     window.location.pathname = '/';
-                // } else {
-                    $('#chat chat-send-to > input').val('{{ $GLOBALS['profile_data']['nick'] }}');
-                    $('#chat chat-input-wrapper > input').focus();
-                    close_modal('profile');
-                // }
+                $('#chat chat-send-to > input').val('{{ $vars->profile['nick'] }}');
+                $('#chat chat-input-wrapper > input').focus();
+                close_modal('profile');
             }
             
             $avatar = $('img[avatar]');

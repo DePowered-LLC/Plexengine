@@ -17,7 +17,7 @@ $(document).on('click', e => {
 });
 
 $(document).on('click', '[modal-name="ignore_list"] .content > table button[unignore]', e => {
-    $.get('/modules/Helper/ignore?n=' + $(e.target).attr('unignore'));
+    $.get('/helper/ignore?n=' + $(e.target).attr('unignore'));
 });
 
 $(document).on('click', '#user_menu > .item', e => {
@@ -33,7 +33,7 @@ $(document).on('click', '#user_menu > .item', e => {
             load_modal('profile', '/id' + uid + '?short');
             break;
         case 'ignore':
-            $.get('/modules/Helper/ignore?u=' + uid);
+            $.get('/helper/ignore?u=' + uid);
             var $user = $(`#userlist .user[id="uid${uid}"]`);
             $user.attr('ignored', $user.attr('ignored') == 'true' ? 'false' : 'true');
             break;
@@ -162,7 +162,7 @@ $('#upload_photo_preview [upload]').click(e => {
 
     $.post({
         type: 'POST',
-        url: '/modules/Auth/upload_photo',
+        url: '/profile/upload_photo',
         data,
         cache: false,
         contentType: false,

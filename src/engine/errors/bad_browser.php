@@ -4,7 +4,7 @@
         <title>Plexengine</title>
         <meta charset="UTF-8" />
         <style>
-            <?php echo file_get_contents(ENGINE.'/style.css'); ?>
+            <?php echo file_get_contents(ENGINE.'/errors/style.css'); ?>
             [b] {
                 display: inline-block;
                 margin: 0 10px;

@@ -2,13 +2,13 @@
 /*
 @copy
  */
-
 // Global values
 namespace pe\engine;
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
 define('ROOT', dirname(__DIR__));
+define('UPLOADS', ROOT.'/uploads');
 define('DATA', ROOT.'/data');
 $_CONFIG = parse_ini_file(DATA.'/config.ini');
 $_CONFIG['lang_delimiters'] = explode('...', $_CONFIG['lang_delimiters']);
@@ -19,12 +19,9 @@ define('LANG', ROOT.'/languages');
 define('MODULES', DATA.'/modules');
 define('TEMPLATE', TEMPLATES.'/'.$_CONFIG['template_name']);
 
-// Degugger
-require_once 'view.php';
-
-// TODO: merge with `View`
+// TODO: merge with `View` or autoloader/utils
 function get_debug($errno = 0, $errstr = '') {
-    // ob_end_clean();
+    require_once ENGINE.'/View.php';
     $error_codes = [
         'E_USER_DEPRECATED' => '[Script] Deprecated construction',
         'E_DEPRECATED' => 'Deprecated construction',
@@ -58,12 +55,10 @@ function get_debug($errno = 0, $errstr = '') {
     }
     
     $error_text = htmlspecialchars($error_type.PHP_EOL.'File: '.$e['file'].PHP_EOL.'Line: '.$e['line'].PHP_EOL.PHP_EOL.$error_message.PHP_EOL.PHP_EOL.$trace);
-    
-    require_once ENGINE.'/view.php';
     View::error(500, $error_text);
 }
-register_shutdown_function('get_debug');
-set_error_handler('get_debug');
+register_shutdown_function('pe\\engine\\get_debug');
+set_error_handler('pe\\engine\\get_debug');
 
 require_once 'autoloader.php';
 
@@ -89,105 +84,12 @@ foreach (explode(',', $_CONFIG['enabled_modules']) as $module_name) {
     });
 }
 
-// #region old-routes
-// if($url_parts[0] == 'public') {
-//     array_shift($url_parts);
-//     switch ($url_parts[0]) {
-//         case 'smiles':
-//             array_shift($url_parts);
-//             $file_path = DATA.'/smiles/'.implode('/', $url_parts);
-//             break;
-//         case 'covers':
-//             $file_path = DATA.'/covers/'.$url_parts[1];
-//             if (!file_exists($file_path)) $file_path = TEMPLATE.'/img/no_cover'.(isset($_GET['s'])?'':'_profile').'.png';
-//             break;
-//         case 'avatars':
-//             $file_path = DATA.'/avatars/'.$url_parts[1];
-            
-//             if (!file_exists($file_path)) {
-//                 $uid = substr(explode('.jpg', $url_parts[1])[0], 2);
-//                 if ($uid == '-1') $file_path = TEMPLATE.'/img/guest_avatar_full.png';
-//                 $u = DB::find_first('users', [
-//                     'id = :0:',
-//                     'bind' => [$uid]
-//                 ]);
-//                 if ($u) $file_path = TEMPLATE.'/img/'.$u['gender'].'_avatar_full.png';
-//             }
-//             break;
-//         default:
-//             $file_path = TEMPLATE.'/'.implode('/', $url_parts);
-//             break;
-//     }
-    
-//     $ext_deny = ['tpl'];
-//     $file_ext = explode('.', $file_path);
-//     $file_ext = $file_ext[count($file_ext)-1];
+// Connecting to DB
+$dbErr = DB::connect($_CONFIG['mysql_host'], $_CONFIG['mysql_user'], $_CONFIG['mysql_pass'], $_CONFIG['mysql_db']);
+if($dbErr) View::error(500, $dbErr->getMessage());
 
-//     if(!in_array($file_ext, $ext_deny) && file_exists($file_path) && is_file($file_path)) {
-//         switch(explode('.', $url_parts[count($url_parts)-1])[1]) {
-//             case 'css': $mime = 'text/css';        break;
-//             case 'js':  $mime = 'text/javascript'; break;
-//             default: $mime = mime_content_type($file_path); break;
-//         }
-
-//         $file_hash = hash_file('md5', $file_path);
-//         header('ETag: '.$file_hash);
-//         if (isset($_SERVER['If-None-Match']) && $_SERVER['If-None-Match'] == $file_hash) {
-//             http_response_code(304);
-//             exit;
-//         }
-
-//         header('Content-Type: '.$mime);
-//         $seconds_to_cache = 3600;
-//         $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
-//         header("Expires: $ts");
-//         header("Pragma: cache");
-//         header("Cache-Control: max-age=$seconds_to_cache");
-//         readfile($file_path);
-//         exit;
-//     } else View::error(404);
-// } elseif($url_parts[0] == 'modules') {
-//     $module_name = $url_parts[1];
-//     if(file_exists(MODULES.'/'.$module_name.'/main.php')) {
-//         require_once MODULES.'/'.$module_name.'/main.php';
-//         if(class_exists($module_name)) {
-//             if(method_exists($module_name, 'router')) {
-//                 array_shift($url_parts);
-//                 array_shift($url_parts);
-//                 call_user_func_array([$module_name, 'router'], []);
-//                 exit;
-//             } else {
-//                 throw new Exception('Router of module "'.$module_name.'" not found');
-//             }
-//         } else {
-//             throw new Exception('Module "'.$module_name.'" not found');
-//         }
-//     } else {
-//         throw new Exception('Main file of module "'.$module_name.'" not found');
-//     }
-// }
-// #endregion old-routes
-
-require_once 'DB.php';
-function load_db() {
-    require_once ENGINE.'/DB.php';
-    global $_CONFIG;
-    $e = DB::connect($_CONFIG['mysql_host'], $_CONFIG['mysql_user'], $_CONFIG['mysql_pass'], $_CONFIG['mysql_db']);
-    if($e) {
-        require_once ENGINE.'/view.php';
-        View::error(500, $e->getMessage());
-    }
-}
-
-function load_view() {
-    require_once 'utils.php';
-    require_once ENGINE.'/view.php';
-}
-
-DB::connect($_CONFIG['mysql_host'], $_CONFIG['mysql_user'], $_CONFIG['mysql_pass'], $_CONFIG['mysql_db']);
+// Dispatching request
 Router::dispatch($url);
-// View::load($url);
-
 if($_CONFIG['cache']) {
     exit(preg_replace('/>([ ]+)</', '><', str_replace(array("\r", "\n"), '', ob_get_clean())));
 }

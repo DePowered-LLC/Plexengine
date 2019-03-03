@@ -63,10 +63,10 @@
 			</div>
 			<div class="user_block dropdown">
 				<span class="name">{{ $_SESSION['userdata']['nick'] }}</span>
-				<img avatar src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+				<img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
 				<div class="dropdown_container">
-					<img id="user_cover" src="/public/covers/id{{ $_SESSION['userdata']['id'] }}.png?s" />
-					<img id="user_avatar" avatar src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+					<img id="user_cover" src="/uploads/covers/id{{ $_SESSION['userdata']['id'] }}.png?s" />
+					<img id="user_avatar" avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
 					<div id="user_adata">
 						<span id="user_nick">{{ $_SESSION['userdata']['nick'] }}</span>
 						{% if $_SESSION['userdata']['id'] == -1 %}
@@ -75,7 +75,7 @@
 						<span id="user_id">id{{ $_SESSION['userdata']['id'] }}</span>
 						{% endif %}
 					</div>
-					<a href="/modules/Auth/logout" id="user_logout"><i class="chat_icon_off"></i></a>
+					<a href="/auth/logout" id="user_logout"><i class="chat_icon_off"></i></a>
 					<hr />
 					<div class="item dropdown">
 						<i class="chat_icon_settings"></i> | language |

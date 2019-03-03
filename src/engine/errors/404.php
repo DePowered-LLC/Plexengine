@@ -3,7 +3,7 @@
     <head>
         <title>404 :: Plexengine</title>
         <meta charset="UTF-8" />
-        <style><?php echo file_get_contents(ENGINE.'/style.css'); ?></style>
+        <style><?php echo file_get_contents(ENGINE.'/errors/style.css'); ?></style>
     </head>
     <body>
         <div class="container">

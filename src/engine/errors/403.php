@@ -3,7 +3,7 @@
     <head>
         <title>403 :: Plexengine</title>
         <meta charset="UTF-8" />
-        <style><?php echo file_get_contents(ENGINE.'/style.css'); ?></style>
+        <style><?php echo file_get_contents(ENGINE.'/errors/style.css'); ?></style>
     </head>
     <body>
         <div class="container">
@@ -18,6 +18,11 @@
                     <li>Click the <strong>Back button</strong> to return to your previously visited page</li>
                     <li>If you were linked to this page, contact the administrator and make them aware of this issue.</li>
                 </ul>
+                <?php if($_CONFIG['debug']): ?>
+                <br />
+                Debug data:
+                <pre><?php echo $debug; ?></pre>
+                <?php endif; ?>
             </div>
         </div>
         <div class="copyright">

@@ -1,3 +1,4 @@
+{% module System.Auth %}
 <form id="chat">
     <div id="chat_heading">Рандомный текст чисто для теста</div>
     <div id="chat_tools">
@@ -8,7 +9,7 @@
     <chat-list></chat-list>
     <chat-send>
         <chat-send-to>
-            <img avatar src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+            <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
             <b>>></b>
             <input placeholder="| to |" />
             <input type="checkbox" tooltip="| chat_to_clear |">
@@ -188,7 +189,7 @@
     $(document).click(() => {
         clearTimeout(afk_timeout);
         setTimeout(() => {
-            window.location.href = '/modules/Auth/logout';
+            window.location.href = '/auth/logout';
         }, {{ $_CONFIG['afk_time'] }}*60*1000);
     });*/
 </script>

@@ -1,14 +1,11 @@
 <?php
-load_db();
-load_view();
+namespace pe\modules\System;
+use pe\engine\Utils;
+use pe\engine\View;
+use pe\engine\DB;
 
 class Helper {
-	public static function router() {
-		global $url_parts;
-		self::{$url_parts[0]}();
-	}
-
-	public static function load_data() {
+	public static function load_data($params) {
 		$data = [];
 		if (!isset($_SESSION['userdata'])) {
 			View::error(403, 'No read access');
@@ -70,12 +67,12 @@ class Helper {
 
 			// Get smile packs
 			$data['smiles'] = [];
-			$smile_packs = scandir(DATA.'/smiles');
+			$smile_packs = scandir(UPLOADS.'/smiles');
 			array_shift($smile_packs);
 			array_shift($smile_packs);
 			foreach($smile_packs as $pack_id) {
 				$data['smiles'][$pack_id] = [];
-				$smile_list = scandir(DATA.'/smiles/'.$pack_id);
+				$smile_list = scandir(UPLOADS.'/smiles/'.$pack_id);
 				array_shift($smile_list);
 				array_shift($smile_list);
 				foreach($smile_list as $smile_id) {
@@ -261,12 +258,12 @@ class Helper {
 	}
 
 	public static function spy_msg($mode = null) {
-		if ($mode) $_GET['m'] = $mode;
+		if ($mode && !isset($mode['action'])) $_GET['m'] = $mode;
 		if (!isset($_GET['m'])) exit;
-
+		
 		$nick = $_SESSION['userdata']['nick'];
 		$nick = str_replace(';', '&#59', $nick);
-
+		
 		switch ($_GET['m']) {
 			case 'enter':
 			case 'leave':
@@ -326,13 +323,6 @@ class Helper {
 		], [
 			'id = :0:',
 			'bind' => [$_SESSION['userdata']['id']]
-		]);
-	}
-
-	public static function remove_notification() {
-		DB::delete('notifications', [
-			'id = :0: AND user_id = :1:',
-			'bind' => [$_GET['id'], $_SESSION['userdata']['id']]
 		]);
 	}
 }

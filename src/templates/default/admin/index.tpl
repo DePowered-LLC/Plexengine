@@ -1,3 +1,3 @@
-{% include 'admin/header' %}
+{% include admin.header %}
 test content
-{% include 'admin/footer' %}
+{% include admin.footer %}

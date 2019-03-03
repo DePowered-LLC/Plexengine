@@ -1,5 +1,5 @@
 <div id="wallet-top-block">
-    <img src="/public/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+    <img src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
     <h1>{{ $_SESSION['userdata']['nick'] }}, | points_iya | {{ $_SESSION['userdata']['credits'] }} | coins |</h1>
     <span>| points_info |</span>
     <b>| points_yh | <i>{{ $_SESSION['userdata']['points'] }}</i> | points |</b>
@@ -28,7 +28,7 @@
     function exchange() {
         $('#wallet-footer > button').addClass('loading');
         var val = $('#wallet-footer input[name="points"]').val();
-        $.get('/modules/Auth/exchange?v=' + val, res => {
+        $.get('/profile/exchange?v=' + val, res => {
             if (res == 'no_points') alert('| no_points |');
             else if (res == 'success') {
                 load_modal('wallet', null, $('[load-modal="wallet"]'));

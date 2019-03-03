@@ -28,7 +28,7 @@ function parseInfo($n) {
 
 <script>
 $('.notification > [delete]').click(e => {
-    $.get('/modules/Helper/remove_notification?id=' + $(e.target).attr('delete'), res => {
+    $.get('/helper/remove_notification?id=' + $(e.target).attr('delete'), res => {
         $(e.target).parent().remove();
         $('[notifications]').click();
     });
