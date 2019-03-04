@@ -191,22 +191,12 @@ class Helper {
 				if ($m['msg'] == $msg_lower) exit('spam');
 				if ($m['t'] > time() - 5) $antispam_counter++;
 				if ($antispam_counter > 2) {
-					$kick_msg = View::lang('antispam');
-					if ($_SESSION['userdata']['id'] != -1) {
-						DB::update('users', [
-							'limitation' => 'kick;'.$kick_msg
-						], [
-							'nick = :0:',
-							'bind' => [$_SESSION['userdata']['nick']]
-						]);
-					} else {
-						DB::update('guests', [
-							'kick' => $kick_msg
-						], [
-							'nick = :0:',
-							'bind' => [$_SESSION['userdata']['nick']]
-						]);
-					}
+					DB::update($user_table, [
+						'limitation' => 'kick;'.View::lang('antispam')
+					], [
+						'nick = :0:',
+						'bind' => [$_SESSION['userdata']['nick']]
+					]);
 
 					DB::insert('chat', [
 						'user_id' => 0,
@@ -257,7 +247,7 @@ class Helper {
 		}
 	}
 
-	public static function spy_msg($mode = null) {
+	public static function spy_msg ($mode = null) {
 		if ($mode && !isset($mode['action'])) $_GET['m'] = $mode;
 		if (!isset($_GET['m'])) exit;
 		

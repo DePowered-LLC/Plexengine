@@ -76,6 +76,7 @@ if(!isset($_COOKIE['lng'])) { setcookie('lng', $_COOKIE['lng'] = $_CONFIG['defau
 $_MODULES = [];
 foreach (explode(',', $_CONFIG['enabled_modules']) as $module_name) {
     global $module_name;
+    $module_name = trim($module_name);
     Router::context('pe\\modules\\'.$module_name, function () {
         global $module_name, $_MODULES;
         $module_class = 'pe\\modules\\'.$module_name.'\\Main';

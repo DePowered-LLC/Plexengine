@@ -284,6 +284,22 @@ $max_file = file_upload_max_size() / 1024 / 1024;
     {% endif %}
 </div>
 
+<div id="lmodal" class="modal_wrapper" modal-name="limitation">
+    <div class="modal">
+        <div class="title">
+            | limitation | <span class="close"></span>
+        </div>
+        <div class="content" style="text-align: center;">
+			<br />
+            <span info></span>
+			<br />
+            | reason |: <span reason></span>
+			<br />
+			<br />
+        </div>
+    </div>
+</div>
+
 <script>
     var afk_time = {{ $_CONFIG['afk_time'] }};
 </script>

@@ -306,6 +306,7 @@
                              || (!isset($_POST['adm_pass']) || trim($_POST['adm_pass']) == '')
                              || (!isset($_POST['adm_birth1']) || trim($_POST['adm_birth1']) == '')
                              || (!isset($_POST['adm_birth2']) || trim($_POST['adm_birth2']) == '')
+                             || (!isset($_POST['adm_birth3']) || trim($_POST['adm_birth3']) == '')
                              || (!isset($_POST['adm_gender']) || trim($_POST['adm_gender']) == '')
                              || (!isset($_POST['adm_country']) || trim($_POST['adm_country']) == '')
                             ) {
@@ -330,7 +331,7 @@
                                 <?php
                                 } else {
                                     $sql_query = "INSERT INTO `users` (`email`, `nick`, `pass`, `date_of_birth`, `access`, `gender`, `status`, `ignored`, `credits`, `country`, `last_online`, `verificated`, `about`, `limitation`)";
-                                    $sql_query .= "VALUES ('".$_POST['adm_email']."', '".$_POST['adm_nick']."', '".md5(sha1($_POST['adm_pass']))."', '".$_POST['adm_birth1']."_".$_POST['adm_birth2']."', 'admin', '".$_POST['adm_gender']."', 'chat', '', 0, '".$_POST['adm_country']."', 0, 1, '{}', '')";
+                                    $sql_query .= "VALUES ('".$_POST['adm_email']."', '".$_POST['adm_nick']."', '".md5(sha1($_POST['adm_pass']))."', '".$_POST['adm_birth1']."_".$_POST['adm_birth2']."_".$_POST['adm_birth3']."', 'admin', '".$_POST['adm_gender']."', 'chat', '', 0, '".$_POST['adm_country']."', 0, 1, '{}', '')";
 
                                     if(!$connection->query($sql_query)) {
                                         $is_error = true;
@@ -370,7 +371,8 @@
                             <input min="1" max="31" style="min-width: 0; width: 120px;" placeholder="day" type="number" name="adm_birth1" value="<?php echo $_POST['adm_birth1']; ?>" />
                             .
                             <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="mon" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
-                            <input min="1" max="12" style="min-width: 0; width: 120px;" placeholder="year" type="number" name="adm_birth2" value="<?php echo $_POST['adm_birth2']; ?>" />
+                            .
+                            <input style="min-width: 0; width: 120px;" placeholder="year" type="number" name="adm_birth3" value="<?php echo $_POST['adm_birth3']; ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -410,7 +412,7 @@ cache=true
 lang_delimiters='|...|'
 message_limit=300
 messages_limit=15
-loaded_modules='Auth, Admin'
+enabled_modules='Admin, System'
 afk_time=10
 exchange_rate=100
 nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'

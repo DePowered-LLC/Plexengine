@@ -119,7 +119,7 @@ var chat = {
     toggle_banlist () {
         $('#chat_admin .content').slideToggle();
         if ($('#chat_admin .content[banlist]').is(':visible')) {
-            $.get('/modules/Admin/banlist', res => {
+            $.get('/admin/banlist', res => {
                 $tbody = $('#chat_admin .content[banlist] tbody');
                 $('tr', $tbody).remove();
                 res = JSON.parse(res);
@@ -167,7 +167,7 @@ var chat = {
     },
 
     unban (nick) {
-        $.get('/modules/Admin/unban?nick=' + encodeURIComponent(nick), () => {
+        $.get('/admin/unban?nick=' + encodeURIComponent(nick), () => {
             this.toggle_banlist();
             this.toggle_banlist();
         });
@@ -187,7 +187,7 @@ var chat = {
     apply_admin () {
         if($('#chat_admin [name="reason"]').val().trim() == '') return alert(lang.enter_reason + '!');
         if($('#chat_admin [name="nick"]').val().trim() == '') return alert(lang.enter_nick + '!');
-        $.post('/modules/Admin/action', {
+        $.post('/admin/action', {
             nick: $('#chat_admin [name="nick"]').val(),
             action: $('#chat_admin [name="action"]').val(),
             reason:  $('#chat_admin [name="reason"]').val(),

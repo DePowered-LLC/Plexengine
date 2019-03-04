@@ -58,7 +58,7 @@ class Resources {
             case 'avatars':
                 if ($params['file'] == 'id-1.jpg') $path = TEMPLATE.'/img/guest_avatar_full.png';
                 else if (!file_exists($path)) {
-                    $uid = preg_replace('/^id(-?[0-9]+)$/', '$1', $params['file']);
+                    $uid = preg_replace('/^id(-?[0-9]+).jpg$/', '$1', $params['file']);
                     $u = DB::find_first('users', [
                         'id = :0:',
                         'bind' => [$uid]
@@ -70,26 +70,5 @@ class Resources {
         self::load($path);
     }
 
-    public static function loadView ($params) {
-        /*$average = 0;
-        $tests = 500;
-        for ($testN = 0; $testN < $tests; $testN++) {
-            $tpl_cont = file_get_contents(TEMPLATE.'/index_authed.tpl');
-            $s = microtime(true);
-            $tpl_cont = preg_replace('/{{ ?([^}]+) ?}}/', '<?php echo $1; ?>', $tpl_cont);
-            
-            $tpl_cont_part = explode('{{', $tpl_cont);
-            array_shift($tpl_cont_part);
-            foreach($tpl_cont_part as $part) {
-                $part = explode('}}', $part)[0];
-                $tpl_cont = str_replace('{{'.$part.'}}', '<?php echo '.trim($part).'; ?>', $tpl_cont);
-            }
-            
-            $e = microtime(true);
-            $average += (($e-$s)*1000);
-        }
-        $average = $average / $tests;
-        echo 'Average execution time for '.$tests.' tests is '.$average.'ms';*/
-        View::load($params['path']);
-    }
+    public static function loadView ($params) { View::load($params['path']); }
 }

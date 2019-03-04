@@ -3,17 +3,21 @@ namespace pe\engine;
 class Router {
     private static $context = '';
     private static $routes = [];
-    public static function add ($type, $pattern, $method) {
+    public static function add ($type, $pattern, $method, $override = false) {
         $method = explode('.', $method);
         $pattern = ltrim($pattern, '/');
         $pattern = str_replace('/', '\\/', $pattern);
         $pattern = preg_replace('/{(\w+):([^{}]*)}/', '(?P<$1>$2)', $pattern);
         $pattern = '/^'.$pattern.'/';
-        self::$routes[] = [
+        $route = [
             'pattern' => $pattern,
             'callback' => [self::$context.'\\'.$method[0], $method[1]],
             'addv' => array_slice(func_get_args(), 3)
         ];
+        
+        // TODO: Make normal loading
+        if ($override) array_unshift(self::$routes, $route);
+        else self::$routes[] = $route;
     }
 
     private static $tmp;

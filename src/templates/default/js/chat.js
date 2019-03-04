@@ -82,7 +82,7 @@ $('#userlist .nano-content').on('scroll', e => {
 
 $(document).on('click', 'chat-message > [remove]', e => {
     var $msg = $(e.target).parent();
-    $.get('/modules/Admin/remove_msg?id=' + $msg.attr('msg_id'), res => {
+    $.get('/admin/remove_msg?id=' + $msg.attr('msg_id'), res => {
         if (res == 'sys') alert('This is system message.');
         else { $msg.remove(); $('.tooltip').remove(); }
     });

@@ -129,22 +129,6 @@
     </div>
 </div>
 
-<div id="lmodal" class="modal_wrapper" modal-name="limitation">
-    <div class="modal">
-        <div class="title">
-            | limitation | <span class="close"></span>
-        </div>
-        <div class="content" style="text-align: center;">
-			<br />
-            <span info></span>
-			<br />
-            | reason |: <span reason></span>
-			<br />
-			<br />
-        </div>
-    </div>
-</div>
-
 <script>
     var nick = '{{ $_SESSION['userdata']['nick'] }}';
     var message_limit = '{{ $_CONFIG['message_limit'] }}';

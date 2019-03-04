@@ -72,7 +72,7 @@ class View {
         $tpl_cont = preg_replace('/{% *for ([^,]+) * in (.+) *%}/', '<?php foreach($2 as $1): ?>', $tpl_cont);
         $tpl_cont = preg_replace('/{% *endfor *%}/', '<?php endforeach; ?>', $tpl_cont);
         // Parsing template variables
-        $tpl_cont = preg_replace('/{{ *([^}]+) *}}/', '<?php echo $1; ?>', $tpl_cont);
+        $tpl_cont = preg_replace('/{{ *(.+?) *}}/', '<?php echo $1; ?>', $tpl_cont);
         // Parsing language variables
         $tpl_cont = preg_replace('/\| *((?:-|\w)+) *\|/', '<?php echo self::lang("$1"); ?>', $tpl_cont);
 
@@ -90,7 +90,7 @@ class View {
             ?>
             '.$tpl_cont);
         } catch (\Exception $e) {
-            // TODO: Noral view debugger
+            // TODO: Normal view debugger
             exit($e);
         }
         $result = ob_get_clean();
