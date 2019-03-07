@@ -29,84 +29,72 @@ class View {
         exit;
     }
     
-    public static function load ($tpl, $vars = []) {
-        $tpl_path = TEMPLATE.'/'.$tpl.'.tpl';
-        if(!file_exists(CACHE)) { mkdir(CACHE, 0777); }
-        $cache_path = CACHE.'/'.str_replace('/', '_', $tpl).'.php';
-        global $_CONFIG;
-        if(file_exists($cache_path) && $_CONFIG['cache']) {
-            try {
-                include $cache_path;
-            } catch(Exception $e) {
-                self::error(500, 'Error in executing template'.PHP_EOL.get_debug($e));
-            }
-        } else {
-            if(file_exists($tpl_path)) {
-                $tpl_cont = file_get_contents($tpl_path);
-                $bom = pack('H*', 'EFBBBF');
-                $tpl_cont = preg_replace("/^$bom/", '', $tpl_cont);
-                echo self::parse($tpl_cont, $tpl, $vars);
-            } else {
-                self::error(404, '[Template] '.$tpl_path);
-            }
-        }
-    }
-    
-    private static $last_tpl_cont = '';
-    private static function parse($tpl_cont, $tpl, $_vars) {
-        // Removing comments
-        $tpl_cont = preg_replace('/{#(?:.|\n)*?#}/', '', $tpl_cont);
-        // Parsing include statements
-        $tpl_cont = preg_replace_callback('/{% *include ([^ ]+) *%}/', function ($matches) {
-            return '<?php self::load("'.str_replace('.', '/', $matches[1]).'"); ?>';
-        }, $tpl_cont);
-        $tpl_cont = preg_replace_callback('/{% *module (.+) *%}/', function ($matches) {
-            return '<?php use pe\\modules\\'.str_replace('.', '\\', $matches[1]).'; ?>';
-        }, $tpl_cont);
-        // Parsing if statements
-        $tpl_cont = preg_replace('/{% *(if|elseif) (.+?) *%}/', '<?php $1($2): ?>', $tpl_cont);
-        $tpl_cont = preg_replace('/{% *else *%}/', '<?php else: ?>', $tpl_cont);
-        $tpl_cont = preg_replace('/{% *endif *%}/', '<?php endif; ?>', $tpl_cont);
-        // Parsing for statements
-        $tpl_cont = preg_replace('/{% *for ([^,]+) *, *(.+)? in (.+) *%}/', '<?php foreach($3 as $1 => $2): ?>', $tpl_cont);
-        $tpl_cont = preg_replace('/{% *for ([^,]+) * in (.+) *%}/', '<?php foreach($2 as $1): ?>', $tpl_cont);
-        $tpl_cont = preg_replace('/{% *endfor *%}/', '<?php endforeach; ?>', $tpl_cont);
-        // Parsing template variables
-        $tpl_cont = preg_replace('/{{ *(.+?) *}}/', '<?php echo $1; ?>', $tpl_cont);
-        // Parsing language variables
-        $tpl_cont = preg_replace('/\| *((?:-|\w)+) *\|/', '<?php echo self::lang("$1"); ?>', $tpl_cont);
-
+    private static $last_tpl_cont = '[No template]';
+    public static function load ($tpl, $_vars = []) {
         // Passing template variables
         global $vars, $_CONFIG;
         $vars = new ViewVarsStore($_vars);
 
-        // Executing template
         ob_start();
-        self::$last_tpl_cont = htmlspecialchars($tpl_cont);
+
+        // Executing template
+        $tpl_cont = self::parse($tpl);
+        self::$last_tpl_cont = $tpl_cont;
+        
         try {
-        eval('
-            namespace pe\\engine;
-            global $vars;
-            ?>
-            '.$tpl_cont);
+            eval('namespace pe\\engine; global $vars; ?>'.$tpl_cont);
         } catch (\Exception $e) {
-            // TODO: Normal view debugger
-            exit($e);
+            ob_end_clean();
+            self::error(500, 'Error while executing template'.PHP_EOL.$e->getMessage().PHP_EOL.'  at line '.$e->getCode().PHP_EOL.htmlspecialchars($tpl_cont));
         }
+
         $result = ob_get_clean();
+
+        // TODO: Refactor this
         if(preg_match('/(Error|Notice|Warning):/i', trim($result))) {
             self::error(500, 'Error in executing template'.PHP_EOL.htmlspecialchars($tpl_cont).PHP_EOL.PHP_EOL.'Result:'.PHP_EOL.$result);
-            exit;
-        }
+        } else echo $result;
+    }
+    
+    private static function parse ($tpl) {
+        $cache_path = CACHE.'/'.str_replace('/', '_', $tpl).'.php';
+        if(!file_exists(CACHE)) { mkdir(CACHE, 0777); }
         
-        // Saving parsed template to cache if it enabled
-        if($_CONFIG['cache']) {
-            $cache_path = CACHE.'/'.str_replace('/', '_', $tpl).'.php';
-            if(!file_exists($cache_path)) {
+        global $_CONFIG;
+        if ($_CONFIG['cache'] && file_exists($cache_path)) return file_get_contents($cache_path);
+        else {
+            $tpl_path = TEMPLATE.'/'.$tpl.'.tpl';
+            if(file_exists($tpl_path)) {
+                // Removing UTF-8 BOM
+                $tpl_cont = file_get_contents($tpl_path);
+                $tpl_cont = preg_replace("/^".pack('H*', 'EFBBBF')."/", '', $tpl_cont);
+                // Removing comments
+                $tpl_cont = preg_replace('/{#(?:.|\n)*?#}/', '', $tpl_cont);
+                // Parsing include statements
+                $tpl_cont = preg_replace_callback('/{% *include ([^ ]+) *%}/', function ($matches) {
+                    return '<?php self::load("'.str_replace('.', '/', $matches[1]).'"); ?>';
+                }, $tpl_cont);
+                $tpl_cont = preg_replace_callback('/{% *module (.+) *%}/', function ($matches) {
+                    return '<?php use pe\\modules\\'.str_replace('.', '\\', $matches[1]).'; ?>';
+                }, $tpl_cont);
+                // Parsing if statements
+                $tpl_cont = preg_replace('/{% *(if|elseif) (.+?) *%}/', '<?php $1($2): ?>', $tpl_cont);
+                $tpl_cont = preg_replace('/{% *else *%}/', '<?php else: ?>', $tpl_cont);
+                $tpl_cont = preg_replace('/{% *endif *%}/', '<?php endif; ?>', $tpl_cont);
+                // Parsing for statements
+                $tpl_cont = preg_replace('/{% *for ([^,]+) *, *(.+)? in (.+) *%}/', '<?php foreach($3 as $1 => $2): ?>', $tpl_cont);
+                $tpl_cont = preg_replace('/{% *for ([^,]+) * in (.+) *%}/', '<?php foreach($2 as $1): ?>', $tpl_cont);
+                $tpl_cont = preg_replace('/{% *endfor *%}/', '<?php endforeach; ?>', $tpl_cont);
+                // Parsing template variables
+                $tpl_cont = preg_replace('/{{ *(.+?) *}}/', '<?php echo $1; ?>', $tpl_cont);
+                // Parsing language variables
+                $tpl_cont = preg_replace('/\| *((?:-|\w)+) *\|/', '<?php echo self::lang("$1"); ?>', $tpl_cont);
+
+                // Caching
                 file_put_contents($cache_path, $tpl_cont);
-            }
+                return $tpl_cont;
+            } else self::error(404, '[Template] '.$tpl_path);
         }
-        return $result;
     }
     
     private static $lang_data = [];

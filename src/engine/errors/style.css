@@ -71,4 +71,5 @@ pre {
     display: block;
     border-radius: 3px;
     white-space: pre-wrap;
+    font-family: monospace;
 }

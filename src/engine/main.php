@@ -59,6 +59,10 @@ function get_debug($errno = 0, $errstr = '') {
 }
 register_shutdown_function('pe\\engine\\get_debug');
 set_error_handler('pe\\engine\\get_debug');
+set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line) {
+    // TODO: REFAAAAAAAACTOOOOOOOOOOOOOOOOOOR!!!!
+    throw new \ErrorException ($err_msg, 0, $err_severity, $err_file, $err_line);
+}, E_NOTICE);
 
 require_once 'autoloader.php';
 
