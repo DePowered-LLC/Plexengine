@@ -271,7 +271,7 @@ $max_file = file_upload_max_size() / 1024 / 1024;
     </div>
 </div>
 
-<div id="user_menu" class="tooltip tooltip-top">
+<div id="user_menu" class="tooltip tooltip-bottom">
     <span do="profile" class="item">| profile |</span>
     <span do="write" class="item">| write_to |</span>
     {% if $_SESSION['userdata']['id'] != -1 %}

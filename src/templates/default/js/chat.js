@@ -25,9 +25,10 @@ $(document).on('click', '#user_menu > .item', e => {
     var action = $(e.currentTarget).attr('do');
     switch(action) {
         case 'write':
-            if (uid == '-1') $('#chat chat-send-to > input').val($(e.currentTarget).parent().attr('nick'));
-            else $('#chat chat-send-to > input').val($(`#userlist .user[id="uid${uid}"]`).text().trim());
-            $('#chat chat-input-wrapper > input').focus();
+            chat.receiver = uid == '-1'
+                ? $(e.currentTarget).parent().attr('nick')
+                : $(`#userlist .user[id="uid${uid}"]`).text().trim();
+            $('#chat-send-input').focus();
             break;
         case 'profile':
             load_modal('profile', '/id' + uid + '?short');
@@ -62,13 +63,6 @@ $(document).on('click', '#userlist .user', e => {
         $('#user_menu').css('top', e.pageY);
 	}
 });
-
-if (sessionStorage.getItem('write_to')) {
-    $('#chat chat-send-to > input').val(sessionStorage.getItem('write_to'));
-    $('#chat chat-input-wrapper > input').focus();
-    sessionStorage.removeItem('write_to');
-}
-
 
 $('#userlist .nano-content').on('scroll', e => {
     $('.category', e.currentTarget).each((key, cbox) => {

@@ -146,36 +146,57 @@ $(document).on('mouseouver', '.dropdown > .dropdown_container', e => {
 	}
 });
 
-var tooltip = 0;
-$(document).on('mouseenter', '[tooltip]', function () {
-	$(this).attr('ltid', tooltip);
-	var side = 'top';
-	if ($(this).attr('t-right') != undefined) side = 'right';
-	else if ($(this).attr('t-left') != undefined) side = 'left';
-	$('body').append('<div tid="' + tooltip + '" class="tooltip tooltip-' + side + '">' + $(this).attr('tooltip') + '</div>');
-	var $tooltip = $('[tid="' + tooltip + '"]');
+function update_tooltip (that, msg, side = 'bottom') {
+	var $that = $(that);
+	var $tooltip = $('[tid="' + $that.attr('ltid') + '"]');
+	$tooltip.html(msg);
+	var $helper = $('<i helper>');
+	$tooltip.append($helper);
 	
 	var styles = { opacity: 1 };
 	switch (side) {
 		case 'top':
-			styles.left = $(this).offset().left + $(this).outerWidth() / 2 - $tooltip.outerWidth() / 2;
-			styles.top = $(this).offset().top + $(this).outerHeight();
+			styles.left = $that.offset().left + $that.outerWidth() / 2 - $tooltip.outerWidth() / 2;
+			styles.top = $that.offset().top- $tooltip.outerHeight();
+			styles.marginTop = -8;
+			break;
+		case 'bottom':
+			styles.left = $that.offset().left + $that.outerWidth() / 2 - $tooltip.outerWidth() / 2;
+			styles.top = $that.offset().top + $that.outerHeight();
 			styles.marginTop = 8;
 			break;
 		case 'right':
-			styles.left = $(this).offset().left + $(this).outerWidth();
-			styles.top = $(this).offset().top + $(this).outerHeight() / 2 - $tooltip.outerHeight() / 2;
+			styles.left = $that.offset().left + $(this).outerWidth();
+			styles.top = $that.offset().top + $(this).outerHeight() / 2 - $tooltip.outerHeight() / 2;
 			styles.marginLeft = 8;
 			break;
 		case 'left':
-			styles.left = $(this).offset().left - $tooltip.outerWidth();
-			styles.top = $(this).offset().top + $(this).outerHeight() / 2 - $tooltip.outerHeight() / 2;
+			styles.left = $that.offset().left - $tooltip.outerWidth();
+			styles.top = $that.offset().top + $that.outerHeight() / 2 - $tooltip.outerHeight() / 2;
 			styles.marginLeft = -8;
 			break;
 	}
-
-	$(this).on('click', () => $tooltip.html($(this).attr('tooltip')));
+	
+	if (styles.left < 5) {
+		$helper.css({
+			left: styles.left - 5,
+			right: -styles.left + 5
+		});
+		styles.left = 5;
+	}
 	$tooltip.css(styles);
+}
+
+var tooltip = 0;
+$(document).on('mouseenter', '[tooltip]', function () {
+	$(this).attr('ltid', tooltip);
+	var side = 'bottom';
+	if ($(this).attr('t-right') != undefined) side = 'right';
+	else if ($(this).attr('t-top') != undefined) side = 'top';
+	else if ($(this).attr('t-left') != undefined) side = 'left';
+	$('body').append('<div tid="' + tooltip + '" class="tooltip tooltip-' + side + '"></div>');
+	update_tooltip(this, $(this).attr('tooltip'), side);
+	$(this).on('click', () => $tooltip.html($(this).attr('tooltip')));
 	tooltip++;
 	return false;
 })

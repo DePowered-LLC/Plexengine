@@ -61,41 +61,45 @@
 					<span class="item">| report |</span>
 				</div>
 			</div>
-			<div class="user_block dropdown">
-				<span class="name">{{ $_SESSION['userdata']['nick'] }}</span>
-				<img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-				<div class="dropdown_container">
-					<img id="user_cover" src="/uploads/covers/id{{ $_SESSION['userdata']['id'] }}.png?s" />
-					<img id="user_avatar" avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-					<div id="user_adata">
-						<span id="user_nick">{{ $_SESSION['userdata']['nick'] }}</span>
-						{% if $_SESSION['userdata']['id'] == -1 %}
-						<span id="user_id">Без профиля</span>
-						{% else %}
-						<span id="user_id">id{{ $_SESSION['userdata']['id'] }}</span>
-						{% endif %}
-					</div>
-					<a href="/auth/logout" id="user_logout"><i class="chat_icon_off"></i></a>
-					<hr />
-					<div class="item dropdown">
-						<i class="chat_icon_settings"></i> | language |
-						<div class="dropdown_container">
-							{% for $lang_code, $lang_name in self::get_languages() %}
-							<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
-							{% endfor %}
+
+			<div>
+				<div class="user_block dropdown">
+					<span class="name">{{ $_SESSION['userdata']['nick'] }}</span>
+					<img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+					<div class="dropdown_container">
+						<img id="user_cover" src="/uploads/covers/id{{ $_SESSION['userdata']['id'] }}.png?s" />
+						<img id="user_avatar" avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+						<div id="user_adata">
+							<span id="user_nick">{{ $_SESSION['userdata']['nick'] }}</span>
+							{% if $_SESSION['userdata']['id'] == -1 %}
+							<span id="user_id">Без профиля</span>
+							{% else %}
+							<span id="user_id">id{{ $_SESSION['userdata']['id'] }}</span>
+							{% endif %}
 						</div>
+						<a href="/auth/logout" id="user_logout"><i class="chat_icon_off"></i></a>
+						<hr />
+						<div class="item dropdown">
+							<i class="chat_icon_settings"></i> | language |
+							<div class="dropdown_container">
+								{% for $lang_code, $lang_name in self::get_languages() %}
+								<span class="item" onclick="change_lang('{{ $lang_code }}')">{{ $lang_name }}</span>
+								{% endfor %}
+							</div>
+						</div>
+						<hr />
+						<div id="chat_color" class="item">
+							<span style="background-color: #c8d5e6;"></span>
+							<span style="background-color: #e2d1e4;"></span>
+							<span style="background-color: #0183c1;"></span>
+							<span style="background-color: #cb4383;"></span>
+							| chat_color |
+						</div>
+						<hr />
+						<a class="item" href="javascript:void(0);" load-modal="about_dev"><i class="chat_icon_settings"></i> | about_developer |</a>
 					</div>
-					<hr />
-					<div id="chat_color" class="item">
-						<span style="background-color: #c8d5e6;"></span>
-						<span style="background-color: #e2d1e4;"></span>
-						<span style="background-color: #0183c1;"></span>
-						<span style="background-color: #cb4383;"></span>
-						| chat_color |
-					</div>
-					<hr />
-					<a class="item" href="javascript:void(0);" load-modal="about_dev"><i class="chat_icon_settings"></i> | about_developer |</a>
 				</div>
+				<a href="/auth/logout" style="font-weight: 500; color: #a2a2a2;" class="item">| logout |</a>
 			</div>
 		</div>
 	{% endif %}
