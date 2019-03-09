@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="copyright">
-            &copy; 2018 <a href="http://dp.mayerdev.ru">DePowered LLC<sup>md</sup></a> & <a href="https://plexengine.com">Plexengine</a>
+            &copy; 2018 <a href="http://dp.mayerdev.ru">DePowered LLC<sup>md</sup></a> & <a href="https://plexengine.ru">Plexengine</a>
             <br />
             All Rights Reserved.
         </div>

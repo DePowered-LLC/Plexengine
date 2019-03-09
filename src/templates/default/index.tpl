@@ -56,7 +56,7 @@
 
 <div id="copyrights">
 	&copy; {{ $_CONFIG['site_name'] }}. All rights reserved.
-	<span>&copy; 2018 - 2019 Powered on engine <a href="https://plexengine.com" target="_blank">Plexengige</a></span>
+	<span>&copy; 2018 - 2019 Powered on engine <a href="https://plexengine.ru" target="_blank">Plexengine</a></span>
 </div>
 
 <style>

@@ -140,7 +140,17 @@ class Helper {
 		exit(json_encode($data));
 	}
 
-	public static function send_msg() {
+	public static function load_msg () {
+		$msg = DB::find_first('chat', [
+			'id = :0:',
+			'bind' => [$_GET['id']]
+		]);
+
+		if (!$msg) exit('no_message');
+		else exit(json_encode($msg));
+	}
+
+	public static function send_msg () {
 		if(isset($_SESSION['userdata'])) {
 			$user_table = $_SESSION['userdata']['id'] != -1 ? 'users' : 'guests';
 			$user_selector = $_SESSION['userdata']['id'] != -1 ? [
@@ -157,7 +167,8 @@ class Helper {
 			$matches = [];
 			global $_CONFIG;
 			$bot_answer = false;
-			if (preg_match('/^(['.$_CONFIG['nick_regexp'].']+),/', $_POST['message'], $matches)) {
+			if (preg_match('/^(['.$_CONFIG['nick_regexp'].']+) >> (.*)/', $_POST['message'], $matches)) {
+				if (trim($matches[2]) == '') exit;
 				if (in_array($matches[1], $_SESSION['userdata']['ignored'])) exit('ignored');
 				if ($matches[1] == View::lang('spy_nick')) $bot_answer = true;
 				else {

@@ -273,8 +273,8 @@ i[edit="avatar"] {
     transition: 0.3s;
 }
 
-.tooltip-top { margin-top: 10px; }
-.tooltip-top:before {
+.tooltip-bottom { margin-top: 10px; }
+.tooltip-bottom:before {
     content: '';
     position: absolute;
     margin: auto;

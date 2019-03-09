@@ -259,7 +259,7 @@
 
             function write_fpr () {
                 $('#chat chat-send-to > input').val('{{ $vars->profile['nick'] }}');
-                $('#chat chat-input-wrapper > input').focus();
+                $('#chat-send-input').focus();
                 close_modal('profile');
             }
             

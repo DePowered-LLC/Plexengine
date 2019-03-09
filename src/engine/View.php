@@ -91,7 +91,7 @@ class View {
                 $tpl_cont = preg_replace('/\| *((?:-|\w)+) *\|/', '<?php echo self::lang("$1"); ?>', $tpl_cont);
 
                 // Caching
-                file_put_contents($cache_path, $tpl_cont);
+                if ($_CONFIG['cache']) file_put_contents($cache_path, $tpl_cont);
                 return $tpl_cont;
             } else self::error(404, '[Template] '.$tpl_path);
         }

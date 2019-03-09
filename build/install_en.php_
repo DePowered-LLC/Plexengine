@@ -11,7 +11,7 @@
         exit;
     }
     
-    $base_url = 'http://plexengine.com/cdn/installer';
+    $base_url = 'http://plexengine.ru/cdn/installer';
     $pe_version = file_get_contents($base_url.'/version');
     if(!isset($_GET['step'])) { $_GET['step'] = 0; }
 
@@ -22,7 +22,7 @@
     function step_0() { ?>
         <div id="welcome">
             <h1>Script Installation Wizard</h1>
-            Welcome to the Plexngine Installation Wizard. This wizard will help you install the script in two minutes. However, despite this, we strongly recommend you familiarize with documentation about working with engine. <a href="https://plexengine.com/doc" target="_blank"><b>Documentation</b></a>
+            Welcome to the Plexngine Installation Wizard. This wizard will help you install the script in two minutes. However, despite this, we strongly recommend you familiarize with documentation about working with engine. <a href="https://plexengine.ru/doc" target="_blank"><b>Documentation</b></a>
             <br />
             <br />
             During installation was created database structure, administrator account and configuration file with basic system settings.
@@ -34,7 +34,7 @@
     
     function step_1() { ?>
         <div id="license">
-            Официальный сайт ядра где можно всегда скачать свежую версию: <a href="https://plexengine.com" target="_blank"><b>https://plexengine.com</b></a>
+            Официальный сайт ядра где можно всегда скачать свежую версию: <a href="https://plexengine.ru" target="_blank"><b>https://plexengine.ru</b></a>
             <br />
             Техническую поддержку можно получить в нашей группе Вконтакте: <a href="https://vk.com/plexengine" target="_blank"><b>vk.com/plexengine</b></a>
             <br />
