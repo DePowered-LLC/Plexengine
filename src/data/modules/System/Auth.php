@@ -32,9 +32,10 @@ class Auth {
         $priv = [
             'admin',
             'premium',
-            'user'
+            'user',
+            'none'
         ];
-        return array_search($_SESSION['userdata']['access'], $priv) <= array_search($required, $priv);
+        return array_search(isset($_SESSION['userdata']) ? $_SESSION['userdata']['access'] : 'none', $priv) <= array_search($required, $priv);
     }
     
     public static function login() {

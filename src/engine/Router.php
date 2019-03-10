@@ -53,8 +53,8 @@ class Router {
         foreach (self::$routes as $route) {
             $matches = [];
             if (preg_match($route['pattern'], $path, $matches)) {
-                call_user_func_array($route['callback'], array_merge([$matches], $route['addv']));
-                exit;
+                $r = call_user_func_array($route['callback'], array_merge([$matches], $route['addv']));
+                if ($r !== false) exit;
             }
         }
 
