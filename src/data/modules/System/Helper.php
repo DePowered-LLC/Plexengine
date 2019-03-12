@@ -4,7 +4,7 @@ use pe\engine\Utils;
 use pe\engine\View;
 use pe\engine\DB;
 
-class Helper {
+class Helper extends StaticEventEmitter {
 	public static function load_data($params) {
 		$data = [];
 		if (!isset($_SESSION['userdata'])) {
@@ -56,15 +56,20 @@ class Helper {
 
 		if(isset($_GET['t']) && $_GET['t'] > 0) {
 			if ($_GET['t'] > 15) $_GET['t'] = 15;
-			$data['msgs'] = DB::find('chat', [
+			$result = self::emit('load_messages', $_GET['t']);
+			if ($result) $data['msgs'] = $result;
+			else $data['msgs'] = DB::find('chat', [
 				'timestamp >= :0: ORDER BY id DESC',
 				'bind' => [time() - intval($_GET['t']) - 1]
 			]);
 		} else {
 			global $_CONFIG;
 			self::spy_msg('enter');
-			$data['msgs'] = DB::find('chat', 'ORDER BY id DESC LIMIT 0,'.$_CONFIG['messages_limit']);
 
+			$result = self::emit('load_messages', -1);
+			if ($result) $data['msgs'] = $result;
+			else $data['msgs'] = DB::find('chat', 'ORDER BY id DESC LIMIT 0,'.$_CONFIG['messages_limit']);
+			
 			// Get smile packs
 			$data['smiles'] = [];
 			$smile_packs = scandir(UPLOADS.'/smiles');

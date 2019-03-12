@@ -1,3 +1,3 @@
 {% include common.header %}
-* paste room select here *
+<button onclick="$.get('/rooms/apply?id=1')">Сменить комнату</button>
 {% include common.footer %}

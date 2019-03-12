@@ -1398,7 +1398,7 @@ chat-user-name {
     font-weight: 500;
 }
 
-chat-user-name ~ b {
+chat-message > chat-user-name ~ b {
     margin-left: -5px;
     margin-right: 5px;
 }

@@ -99,7 +99,7 @@
 						<a class="item" href="javascript:void(0);" load-modal="about_dev"><i class="chat_icon_settings"></i> | about_developer |</a>
 					</div>
 				</div>
-				<a href="/auth/logout" style="font-weight: 500; color: #a2a2a2;" class="item">| logout |</a>
+				<a id="logout_btn" href="/auth/logout" style="font-weight: 500; color: #a2a2a2;" class="item">| logout |</a>
 			</div>
 		</div>
 	{% endif %}

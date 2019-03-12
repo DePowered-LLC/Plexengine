@@ -738,7 +738,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
         var status = $(e.currentTarget).attr('status');
         $.get('/helper/spy_msg?m=st&v=' + status, res => {
             if (res == 'timeout') open_modal('status_spam')
-            else $('#chat chat-status > i').attr('class', 'chat_icon_' + status);
+            else $('#chat-status > i').attr('class', 'chat_icon_' + status);
             // Close popup
             $(document).click();
         });
