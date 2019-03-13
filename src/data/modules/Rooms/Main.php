@@ -10,7 +10,9 @@ class Main {
     public function __construct () {
         Router::add('get', '/index', 'Main._select');
         Router::add('get', '/rooms/apply', 'Main.apply');
+
         Helper::on('load_messages', ['pe\\modules\\Rooms\\Main', '_load_messages']);
+        Helper::on('send_message', ['pe\\modules\\Rooms\\Main', '_send_message']);
     }
 
     public static function _select () {
@@ -35,6 +37,33 @@ class Main {
     }
 
     public static function _load_messages ($time) {
-        return [0];
+        $chat_table = 'room'.$_SESSION['userdata']['room'].'_chat';
+        DB::model($chat_table, [
+            'id' => [
+                'type' => 'int(11)',
+                'increment' => true,
+                'unique' => true
+            ],
+            'user_id' => 'int(11)',
+            'nick' => 'varchar(32)',
+            'message' => 'text',
+            'timestamp' => 'bigint(20)',
+            'color' => 'varchar(14)'
+        ]);
+
+        global $_CONFIG;
+        if ($time != -1) {
+            return DB::find($chat_table, [
+                'timestamp >= :0: ORDER BY id DESC',
+                'bind' => [time() - $time - 1]
+            ]);
+        } else {
+            return DB::find($chat_table, 'ORDER BY id DESC LIMIT 0,'.$_CONFIG['messages_limit']);
+        }
+    }
+
+    public static function _send_message ($data) {
+        DB::insert('room'.$_SESSION['userdata']['room'].'_chat', $data);
+        return true;
     }
 }

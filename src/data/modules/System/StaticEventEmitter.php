@@ -12,7 +12,7 @@ class StaticEventEmitter {
         if (isset(self::$_triggers[$event])) {
             foreach (self::$_triggers[$event] as $cb) {
                 $returned = call_user_func_array($cb, array_slice(func_get_args(), 1));
-                if ($returned) return $returned;
+                if ($returned !== null && $returned !== false) return $returned;
             }
         }
     }

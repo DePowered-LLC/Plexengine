@@ -4,7 +4,8 @@
 		<title>{{ $_CONFIG['site_name'] }}</title>
 		<meta charset="UTF-8" />
 		<link rel="stylesheet" href="/public/css/admin.css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script defer src="/public/js/admin.js"></script>
 	</head>
 	<body>
 		<div id="header">
@@ -15,5 +16,9 @@
 			</div>
 			<div id="menu">
 				<a href="/admin" class="item">| adminpanel |</a>
+				{% for $path, $name in $vars->menus %}
+					<a href="/admin/{{ $path }}" class="item">{{ $name }}</a>
+				{% endfor %}
+				<a href="javascript:window.close()" class="item">Выйти</a>
 			</div>
 		</div>

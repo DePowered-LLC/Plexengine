@@ -57,7 +57,7 @@ class Helper extends StaticEventEmitter {
 		if(isset($_GET['t']) && $_GET['t'] > 0) {
 			if ($_GET['t'] > 15) $_GET['t'] = 15;
 			$result = self::emit('load_messages', $_GET['t']);
-			if ($result) $data['msgs'] = $result;
+			if (is_array($result)) $data['msgs'] = $result;
 			else $data['msgs'] = DB::find('chat', [
 				'timestamp >= :0: ORDER BY id DESC',
 				'bind' => [time() - intval($_GET['t']) - 1]
@@ -67,7 +67,7 @@ class Helper extends StaticEventEmitter {
 			self::spy_msg('enter');
 
 			$result = self::emit('load_messages', -1);
-			if ($result) $data['msgs'] = $result;
+			if (is_array($result)) $data['msgs'] = $result;
 			else $data['msgs'] = DB::find('chat', 'ORDER BY id DESC LIMIT 0,'.$_CONFIG['messages_limit']);
 			
 			// Get smile packs
@@ -234,7 +234,8 @@ class Helper extends StaticEventEmitter {
 				}
 			}
 
-			DB::insert('chat', $save);
+			$result = self::emit('send_message', $save);
+			if (!$result) DB::insert('chat', $save);
 			$_SESSION['antispam'][] = [
 				't' => $save['timestamp'],
 				'msg' => $msg_lower
@@ -252,11 +253,14 @@ class Helper extends StaticEventEmitter {
 
 			if ($bot_answer) {
 				$answers = explode(PHP_EOL, file_get_contents(DATA.'/bot_msgs'));
-				DB::insert('chat', [
+				$bot_answer = [
 					'user_id' => 0,
 					'timestamp' => time() + 1,
 					'message' => $_SESSION['userdata']['nick'].', '.$answers[rand(0, count($answers) - 1)]
-				]);
+				];
+
+				$result = self::emit('send_message', $bot_answer);
+				if (!$result) DB::insert('chat', $bot_answer);
 			}
 		} else {
 			View::error(403);
@@ -290,21 +294,27 @@ class Helper extends StaticEventEmitter {
 					'bind' => [$_SESSION['userdata']['id']]
 				]);
 
-				DB::insert('chat', [
+				$msg = [
 					'user_id' => 0,
 					'timestamp' => time(),
 					'message' => 'status;'.$nick.';'.$_GET['v']
-				]);
+				];
+
+				$result = self::emit('send_message', $msg);
+				if (!$result) DB::insert('chat', $msg);
 				exit;
 			default:
 				exit;
 		}
 
-		DB::insert('chat', [
+		$msg = [
 			'user_id' => 0,
 			'timestamp' => time(),
 			'message' => $_GET['m'].';'.$nick.';'.$_SESSION['userdata']['country']
-		]);
+		];
+
+		$result = self::emit('send_message', $msg);
+		if (!$result) DB::insert('chat', $msg);
 	}
 
 	public static function ignore() {

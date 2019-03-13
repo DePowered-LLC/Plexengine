@@ -48,7 +48,7 @@
         {% else %}
         <style>[profile] > body { margin: 15px auto; }</style>
         {% endif %}
-        {% if !isset($_SESSION['userdata']) or $_SESSION['userdata']['id'] != $vars->profile['id'] %}
+        {% if !isset($_SESSION['userdata']) || $_SESSION['userdata']['id'] != $vars->profile['id'] %}
         <style>i[edit] { display: none; }</style>
         {% endif %}
         <img src="/uploads/covers/id{{ $vars->profile['id'] }}.png" />

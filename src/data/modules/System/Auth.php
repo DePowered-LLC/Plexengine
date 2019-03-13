@@ -28,7 +28,7 @@ class Auth {
     }
 
     // Authentication
-    public static function is_access($required) {
+    public static function is_access ($required) {
         $priv = [
             'admin',
             'premium',
@@ -38,7 +38,7 @@ class Auth {
         return array_search(isset($_SESSION['userdata']) ? $_SESSION['userdata']['access'] : 'none', $priv) <= array_search($required, $priv);
     }
     
-    public static function login() {
+    public static function login () {
         $user = DB::find_first('users', [
             'email = :0: OR nick = :0:',
             'bind' => [$_POST['login']]
@@ -59,13 +59,13 @@ class Auth {
         }
     }
 
-    public static function logout() {
+    public static function logout () {
         session_destroy();
         header('Location: /');
     }
 
     // Registration
-    public static function register() {
+    public static function register () {
         // TODO: Use fields global validator
         // $check = Utils::check([
         //     'email' => [
@@ -123,7 +123,7 @@ class Auth {
         }
     }
 
-    public static function guest() {
+    public static function guest () {
         $check = Utils::check([
             'nick' => [             // $_POST['nick']
                 'type' => 'string', // Field type
