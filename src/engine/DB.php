@@ -81,4 +81,30 @@ class DB {
         self::$connection->query($query);
         return self::$insert_id = self::$connection->lastInsertId();
     }
+
+    // Models
+    public static function model ($table, $scheme) {
+        $table = addcslashes($table, '\'\\');
+        $is_exists = self::$connection->query("SELECT 1 FROM `$table`");
+        if (!$is_exists) {
+            $fields = [];
+            foreach ($scheme as $key => $desk) {
+                $key = addcslashes($key, '\'\\');
+                $fields[] = '`'.$key.'` '.self::parseField($key, $desk);
+            }
+
+            $fields = implode(',', $fields);
+            $query = "CREATE TABLE `$table` ($fields) CHARSET=utf8 AUTO_INCREMENT=1";
+            self::$connection->query($query);
+        }
+    }
+
+    public static function parseField ($key, $desk) {
+        if (is_array($desk)) {
+            $result = $desk['type'].' NOT NULL';
+            if (isset($desk['increment']) && $desk['increment']) $result .= ' AUTO_INCREMENT';
+            if (isset($desk['unique']) && $desk['unique']) $result .= ", UNIQUE KEY `$key` (`$key`)";
+            return $result;
+        } else return $desk.' NOT NULL';
+    }
 }

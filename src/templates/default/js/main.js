@@ -166,8 +166,8 @@ function update_tooltip (that, msg, side = 'bottom') {
 			styles.marginTop = 8;
 			break;
 		case 'right':
-			styles.left = $that.offset().left + $(this).outerWidth();
-			styles.top = $that.offset().top + $(this).outerHeight() / 2 - $tooltip.outerHeight() / 2;
+			styles.left = $that.offset().left + $that.outerWidth();
+			styles.top = $that.offset().top + $that.outerHeight() / 2 - $tooltip.outerHeight() / 2;
 			styles.marginLeft = 8;
 			break;
 		case 'left':

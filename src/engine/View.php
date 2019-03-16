@@ -30,25 +30,29 @@ class View {
     }
     
     private static $last_tpl_cont = '[No template]';
+    private static $last_vars;
     public static function load ($tpl, $_vars = []) {
         // Passing template variables
         global $vars, $_CONFIG;
-        $vars = new ViewVarsStore($_vars);
-
+        self::$last_vars = $vars;
+        if (is_array($_vars)) $vars = new ViewVarsStore($_vars);
+        else $vars = $_vars;
         ob_start();
 
         // Executing template
+        $tpl = str_replace('.', '/', $tpl);
         $tpl_cont = self::parse($tpl);
         self::$last_tpl_cont = $tpl_cont;
         
         try {
-            eval('namespace pe\\engine; global $vars; ?>'.$tpl_cont);
+            eval('namespace pe\\engine; ?>'.$tpl_cont);
         } catch (\Exception $e) {
             ob_end_clean();
             self::error(500, 'Error while executing template'.PHP_EOL.$e->getMessage().PHP_EOL.'  at line '.$e->getCode().PHP_EOL.htmlspecialchars($tpl_cont));
         }
 
         $result = ob_get_clean();
+        $vars = self::$last_vars;
 
         // TODO: Refactor this
         if(preg_match('/(Error|Notice|Warning):/i', trim($result))) {
@@ -71,9 +75,7 @@ class View {
                 // Removing comments
                 $tpl_cont = preg_replace('/{#(?:.|\n)*?#}/', '', $tpl_cont);
                 // Parsing include statements
-                $tpl_cont = preg_replace_callback('/{% *include ([^ ]+) *%}/', function ($matches) {
-                    return '<?php self::load("'.str_replace('.', '/', $matches[1]).'"); ?>';
-                }, $tpl_cont);
+                $tpl_cont = preg_replace('/{% *include ([^ ]+) *%}/', '<?php self::load("$1", $vars); ?>', $tpl_cont);
                 $tpl_cont = preg_replace_callback('/{% *module (.+) *%}/', function ($matches) {
                     return '<?php use pe\\modules\\'.str_replace('.', '\\', $matches[1]).'; ?>';
                 }, $tpl_cont);
@@ -98,8 +100,7 @@ class View {
     }
     
     private static $lang_data = [];
-    public static function lang($lng_text) {
-        if ($lng_text == '') return '||';
+    public static function lang ($lng_text) {
         if (self::$lang_data == []) {
             $lang_path = LANG.'/'.$_COOKIE['lng'].'.ini';
             if (file_exists($lang_path)) {
@@ -108,10 +109,10 @@ class View {
                 self::error(500, '[Lang] Language with code "'.$_COOKIE['lng'].'" doesn`t exists');
             }
         }
-        return isset(self::$lang_data[$lng_text])?self::$lang_data[$lng_text]:'none';
+        return isset(self::$lang_data[$lng_text]) ? self::$lang_data[$lng_text] : 'none';
     }
     
-    public static function get_languages() {
+    public static function get_languages () {
         $lang_codes = scandir(LANG);
         array_shift($lang_codes);
         array_shift($lang_codes);

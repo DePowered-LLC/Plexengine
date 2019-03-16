@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `timestamp` bigint(20) NOT NULL,
   `color` varchar(14) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13091 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `guests` (
   `nick` varchar(32) NOT NULL,

@@ -1061,8 +1061,8 @@ input:focus, select:focus {
 }
 
 /*
-* Dropdown
-*/
+ * Dropdown
+ */
 .dropdown {
     position: relative;
     padding: 0 10px;

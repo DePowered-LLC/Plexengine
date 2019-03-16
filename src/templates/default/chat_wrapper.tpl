@@ -56,7 +56,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="chat_popup">
+            <div id="chat-status" class="chat_popup">
                 <i class="chat_icon_{{ $_SESSION['userdata']['status'] }}"></i>
                 <div class="chat_popup_content chat_list">
                     {% if $_SESSION['userdata']['id'] == -1 %}

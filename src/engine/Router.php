@@ -8,15 +8,14 @@ class Router {
         $pattern = ltrim($pattern, '/');
         $pattern = str_replace('/', '\\/', $pattern);
         $pattern = preg_replace('/{(\w+):([^{}]*)}/', '(?P<$1>$2)', $pattern);
-        $pattern = '/^'.$pattern.'/';
+        $pattern = '/^'.$pattern.'$/';
         $route = [
             'pattern' => $pattern,
             'callback' => [self::$context.'\\'.$method[0], $method[1]],
-            'addv' => array_slice(func_get_args(), 3)
+            'addv' => array_slice(func_get_args(), is_bool($override) ? 4 : 3)
         ];
         
-        // TODO: Make normal loading
-        if ($override) array_unshift(self::$routes, $route);
+        if (is_bool($override) && $override) array_unshift(self::$routes, $route);
         else self::$routes[] = $route;
     }
 
@@ -53,8 +52,8 @@ class Router {
         foreach (self::$routes as $route) {
             $matches = [];
             if (preg_match($route['pattern'], $path, $matches)) {
-                call_user_func_array($route['callback'], array_merge([$matches], $route['addv']));
-                exit;
+                $r = call_user_func_array($route['callback'], array_merge([$matches], $route['addv']));
+                if ($r !== false) exit;
             }
         }
 

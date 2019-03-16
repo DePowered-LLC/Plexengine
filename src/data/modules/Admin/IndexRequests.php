@@ -6,12 +6,10 @@
 namespace pe\modules\Admin;
 use pe\engine\View;
 use pe\engine\DB;
+use pe\modules\System\Auth;
 
+if(!Auth::is_access('admin')) View::error(403, 'No admin access');
 class IndexRequests {
-    public static function index () {
-        View::load('admin/index');
-    }
-
     public static function action() {
         if ($_POST == []) exit;
         $limit = [$_POST['action']];
