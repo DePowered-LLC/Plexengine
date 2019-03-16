@@ -1274,8 +1274,8 @@ input:focus, select:focus {
 .chat_icon_emoji       { background-position: calc(1 * -23px) calc(1 * -23px); width: 17px; height: 17px; }
 .chat_icon_brush       { background-position: calc(2 * -23px) calc(1 * -23px); width: 17px; height: 17px; }
 .chat_icon_admin       { background-position: calc(3 * -23px) calc(1 * -23px); width: 12px; height: 15px; }
-.chat_icon_sound_off   { background-position: calc(4 * -23px) calc(1 * -23px); width: 14px; height: 14px; }
-.chat_icon_sound_on    { background-position: calc(5 * -23px) calc(1 * -23px); width: 14px; height: 14px; }
+.chat_icon_sound_on    { background-position: calc(4 * -23px) calc(1 * -23px); width: 14px; height: 14px; }
+.chat_icon_sound_off   { background-position: calc(5 * -23px) calc(1 * -23px); width: 14px; height: 14px; }
 .chat_icon_trash       { background-position: calc(6 * -23px) calc(1 * -23px); width: 12px; height: 14px; }
 .chat_icon_gradient    { background-position: calc(7 * -23px) calc(1 * -23px); width: 20px; height: 20px; }
 .chat_icon_reply       { background-position: calc(8 * -23px) calc(1 * -23px); width: 14px; height: 12px; }

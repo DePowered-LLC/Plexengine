@@ -179,10 +179,11 @@ var chat = {
     _receiver: null,
     get receiver () { return this._receiver; },
     set receiver (val) {
+        const last_msg = $('#chat-send-input').val();
+        const msg = last_msg.replace(/^[_a-zA-Z0-9А-Яа-яіІїЇєЄ;]+ >> /, val ? val + ' >> ' : '');
+        if (this._receiver != val && msg == last_msg) $('#chat-send-input').val((val ? val + ' >> ' : '') + last_msg);
+        else $('#chat-send-input').val(msg);
         this._receiver = val;
-        const msg = $('#chat-send-input').val();
-        if (msg.trim() == '') $('#chat-send-input').val(val ? val + ' >> ' : '');
-        else $('#chat-send-input').val(msg.replace(/^[_a-zA-Z0-9А-Яа-яіІїЇєЄ;]+ >> /, val ? val + ' >> ' : ''));
     },
 
     set users_filter (val) {
