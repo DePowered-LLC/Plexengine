@@ -13,6 +13,7 @@ class Main {
 
         Helper::on('load_messages', ['pe\\modules\\Rooms\\Main', '_load_messages']);
         Helper::on('send_message', ['pe\\modules\\Rooms\\Main', '_send_message']);
+        Helper::on('get_message', ['pe\\modules\\Rooms\\Main', '_get_message']);
     }
 
     public static function _select () {
@@ -65,5 +66,12 @@ class Main {
     public static function _send_message ($data) {
         DB::insert('room'.$_SESSION['userdata']['room'].'_chat', $data);
         return true;
+    }
+
+    public static function _get_message ($id) {
+        return DB::find_first('room'.$_SESSION['userdata']['room'].'_chat', [
+			'id = :0:',
+			'bind' => [$id]
+		]);
     }
 }
