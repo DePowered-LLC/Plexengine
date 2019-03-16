@@ -615,6 +615,9 @@ $(document).on('mouseenter', '.chat-reply', e => {
     $(document).on('click', '.notification > [delete]', e => {
         $.get('/notifications/remove?id=' + $(e.target).attr('delete'), () => {
             $(e.target).parent().remove();
+            if (!$('#notifications').children().length) {
+                $('#no_notifications').show();
+            }
         });
     });
     

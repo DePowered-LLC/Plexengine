@@ -68,10 +68,14 @@ class Main {
         return true;
     }
 
-    public static function _get_message ($id) {
-        return DB::find_first('room'.$_SESSION['userdata']['room'].'_chat', [
-			'id = :0:',
-			'bind' => [$id]
-		]);
+    public static function _get_message ($info) {
+        if (!is_array($info)) {
+            $info = [
+                'id = :0:',
+                'bind' => [$info]
+            ];
+        }
+
+        return DB::find_first('room'.$_SESSION['userdata']['room'].'_chat', $info);
     }
 }

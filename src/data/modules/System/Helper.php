@@ -282,11 +282,15 @@ class Helper extends StaticEventEmitter {
 			case 'st':
 				if ($_SESSION['userdata']['id'] == -1) exit('guest');
 				if ($_SESSION['userdata']['status'] == $_GET['v']) exit;
-				$is_timeout = DB::find_first('chat', [
+				$st_selector = [
 					'(message REGEXP :1:) AND timestamp >= :0:',
 					'bind' => [time() - 60, 'status;'.$nick]
-				]);
-				if ($is_timeout != []) exit('timeout');
+				];
+
+				$is_timeout = self::emit('get_message', $st_selector);
+				if (!$is_timeout) $is_timeout = DB::find_first('chat', $st_selector);
+				if ($is_timeout) exit('timeout');
+
 				$_SESSION['userdata']['status'] = $_GET['v'];
 				DB::update('users', [
 					'status' => $_GET['v']
