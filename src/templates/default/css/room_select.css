@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
+
+::selection {
+    background: #d26f6f;
+    color: #fff;
+}
+
+* { font-family: 'Roboto', sans-serif; }
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #edeef0;
+    margin: 0;
+}
+b, h4 { font-weight: 500; }
+
+#room_select > [content] {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+}
+
+/*
+ * Boxes
+ */
+.box {
+    border: 1px solid #e3e4e8;
+    border-radius: 4px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.box > .post_title {
+    display: block;
+    font-size: 13px;
+    color: #656565;
+}
+
+.box > .title {
+    display: block;
+    color: #2b2f33;
+    font-size: 20px;
+}
+
+#room_select {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 580px;
+    margin: auto;
+}
+
+.box hr {
+    width: 100%;
+    border: none;
+    height: 1px;
+    background-color: #e7e8ec;
+    margin: 10px 0;
+}
+
+#room_select .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#room_select .item:hover, #room_select .item:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+#room_select b { color: #2577ab; }
+#room_select .item > span { color: #878a98; }
+
+.muted {
+    color: #4c5861;
+    font-size: 14px;
+}
+
+#room_select > [heading] {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#room_select > [heading] > hr {display: list-item;width: 1px;height: 100%;margin: 0 10px;}
+
+#room_select > [heading] > img {
+    width: 46px;
+    height: 46px;
+    border-radius: 100%;
+    margin-right: 10px;
+}
+
+#wallet {
+    color: #4a76a8;
+    font-size: 12px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+#wallet > i {
+    margin-right: 5px;
+}
+
+#points {
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background-color: #84c605;
+}
+
+.btn {
+    display: inline-block;
+    border: none;
+    background-color: #4a76a8;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 20px;
+    vertical-align: top;
+    padding: 10px 20px;
+    text-decoration: none;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+/*
+ * Chat fallback & styles
+ */
+[class*="chat_icon"] {
+    /* 23x23 Sprite Sheet */
+    display: inline-block;
+    background-clip: content-box;
+    background-image: url('/public/img/sprites.png');
+    background-repeat: no-repeat;
+}
+.chat_icon_wallet { background-position: calc(1 * -23px) calc(3 * -23px); width: 23px; height: 23px; }
