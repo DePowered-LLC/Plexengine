@@ -8,18 +8,17 @@
     <body>
         <div id="room_select" class="box">
             <div heading>
+                <b style="float: right; font-size: 24px; margin-top: 5px;">
+                    <?php
+                        $total_online = 0;
+                        foreach ($vars->rooms as $room) $total_online += $room['online'];
+                        echo $total_online;
+                    ?>
+                </b>
+                
                 <img src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-                <b>{{ $_SESSION['userdata']['nick'] }}</b>
-                <hr />
-
-                <span id="wallet">
-                    <i class="chat_icon_wallet"></i>
-                    {{ $_SESSION['userdata']['credits'] }} | coins |
-                </span>
-
-                <span id="points">
-                    {{ $_SESSION['userdata']['points'] }} | points |
-                </span>
+                <h1>{{ $_SESSION['userdata']['nick'] }}</h1>
+                <span class="muted">| rooms_select |</span>
             </div>
             <hr />
             <div content>
@@ -31,7 +30,6 @@
                 {% endfor %}
             </div>
 
-            <span class="muted">| rooms_select |</span>
             <a class="btn" href="/auth/logout">| logout |</a>
         </div>
     </body>
