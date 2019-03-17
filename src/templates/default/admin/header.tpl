@@ -22,3 +22,4 @@
 				<a href="javascript:window.close()" class="item">Выйти</a>
 			</div>
 		</div>
+		<div id="wrapper">

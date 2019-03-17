@@ -1,6 +1,6 @@
 {% module System.Auth %}
 <form id="chat">
-    <div id="chat_heading">Рандомный текст чисто для теста</div>
+    <div id="chat_heading">| rooms_info | {{ $_SESSION['userdata']['room_name'] }}</div>
     <div id="chat_tools">
         <i class="chat_icon_photos" tooltip="| show |" open-pl onclick="open_pl()" style="display: none;"></i>
         <i sound tooltip="| sounds_off |" class="chat_icon_sound_off"></i>

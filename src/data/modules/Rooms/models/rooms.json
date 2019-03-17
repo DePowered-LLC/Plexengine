@@ -1,0 +1,23 @@
+{
+    "id": {
+        "type": "int(11)",
+        "increment": true,
+        "unique": true,
+        
+        "name": "#",
+        "readonly": true
+    },
+    "name": {
+        "type": "varchar(32)",
+        "name": "Название"
+    },
+    "online": {
+        "type": "int(11)",
+        "name": "Онлайн",
+        "readonly": true
+    },
+    "online_limit": {
+        "type": "int(11)",
+        "name": "Макс. онлайн"
+    }
+}

@@ -23,10 +23,12 @@
             </div>
             <hr />
             <div content>
-                <div class="item" onclick="select_room(1)">
-                    <b>0</b>
-                    <span>Главная</span>
+                {% for $room in $vars->rooms %}
+                <div class="item" onclick="select_room({{ $room['id'] }})">
+                    <b>{{ $room['online'] }}</b>
+                    <span>{{ $room['name'] }}</span>
                 </div>
+                {% endfor %}
             </div>
 
             <span class="muted">| rooms_select |</span>

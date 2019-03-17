@@ -3,14 +3,17 @@
     "name.ru": "Модуль комнат",
     "name.ua": "Модуль кімнат",
     "version": "0.0.1-4",
+
     "menus": {
+        "list": {
+            "name": "Список комнат",
+            "type": "db_view",
+            "model": "rooms"
+        },
         "add": {
             "name": "Добавить комнату",
-            "fields": {
-                "name": "Название комнаты",
-                "online": "Онлайн",
-                "online_limit": "Максимальный онлайн"
-            }
+            "type": "db_add",
+            "model": "rooms"
         }
     }
 }
