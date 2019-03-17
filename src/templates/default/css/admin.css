@@ -3,12 +3,12 @@
  */
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600');
 body {
+    display: flex;
+    min-height: 100vh;
     background-color: #edeef0;
     overflow: hidden;
     margin: 0;
-    margin-left: 250px;
     font-family: 'Open Sans', sans-serif;
-    padding: 20px 40px;
 }
 
 ::-webkit-scrollbar {
@@ -22,10 +22,7 @@ body {
 }
 
 #header {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    position: relative;
     width: 250px;
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.2) 10px 0 20px 0;
@@ -79,10 +76,15 @@ body {
     color: #263238;
     background-color: rgba(0, 0, 0, 0.05);
 }
+
+#wrapper {
+    padding: 20px 40px;
+    flex: 1;
+}
  
- /*
-  * Dropdown
-  */
+/*
+ * Dropdown
+ */
 .dropdown {
     position: relative;
     padding: 0 10px;
@@ -216,4 +218,62 @@ hr {
     height: 1px;
     background-color: #9E9E9E;
     margin: 10px 0;
+}
+
+/*
+ * Tables
+ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.15);
+}
+
+thead th {
+    text-align: left;
+    background-color: #6c7ae0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+th, td { padding: 10px 15px; font-size: 14px; }
+tr:nth-child(even) { background-color: #f8f6ff; }
+tr:hover {
+    background-color: rgba(108, 121, 224, 0.7);
+    color: #fff;
+}
+
+/*
+ * Forms
+ */
+input[type="text"] {
+    border: 1px solid #e5e5e5;
+    padding: 8px 15px;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+.btn {
+    background-color: #005296;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    line-height: 19px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    cursor: pointer;
+}
+.btn:not(:last-child) { margin-right: 10px; }
+.btn-green { background-color: #009688; }
+
+.btn[type="submit"] {
+    display: block;
+    margin-top: 20px;
+    margin-left: auto;
 }

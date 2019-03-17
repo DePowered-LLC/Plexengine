@@ -60,6 +60,7 @@ function parseTime (time, sec = true) {
 
 // Local API
 var chat = {
+    is_sound: false,
     parseTimestamp (time) {
         time = new Date(time*1000);
         return [
@@ -123,7 +124,7 @@ var chat = {
         msg.light = msg.light || false;
         const to_matches = /^([_a-zA-Z0-9А-Яа-яіІїЇєЄ;]+) &gt;&gt; /.exec(msg.message);
         if (to_matches && to_matches[1]) {
-            if (to_matches[1] == nick) is_sound = msg.light = true;
+            if (to_matches[1] == nick) chat.is_sound = msg.light = true;
             else if (msg.nick == nick) msg.light = true;
             msg.to_nick = to_matches[1];
             msg.message = msg.message.slice(to_matches[1].length + ' &gt;&gt; '.length);
@@ -581,7 +582,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
     function insertMessages (msgList) {
         var chat_list = $('#chat > chat-list');
         var is_scrolled = chat_list.innerHeight() + chat_list.scrollTop() + 2 < chat_list.prop('scrollHeight');
-        var is_sound = false;
+        chat.is_sound = false;
 
         msgList.forEach(msg => {
             if (!msg) return;
@@ -611,12 +612,15 @@ $(document).on('mouseenter', '.chat-reply', e => {
         if (!is_scrolled) {
             chat_list.scrollTop(chat_list.prop('scrollHeight'));
         }
-        if (sound_mode && is_sound) $('#chat audio[message]')[0].play();
+        if (sound_mode && chat.is_sound) $('#chat audio[message]')[0].play();
     }
     
     $(document).on('click', '.notification > [delete]', e => {
         $.get('/notifications/remove?id=' + $(e.target).attr('delete'), () => {
             $(e.target).parent().remove();
+            if (!$('#notifications').children().length) {
+                $('#no_notifications').show();
+            }
         });
     });
     

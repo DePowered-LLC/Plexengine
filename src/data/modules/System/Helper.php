@@ -5,7 +5,7 @@ use pe\engine\View;
 use pe\engine\DB;
 
 class Helper extends StaticEventEmitter {
-	public static function load_data($params) {
+	public static function load_data ($params) {
 		$data = [];
 		if (!isset($_SESSION['userdata'])) {
 			View::error(403, 'No read access');
@@ -146,7 +146,8 @@ class Helper extends StaticEventEmitter {
 	}
 
 	public static function load_msg () {
-		$msg = DB::find_first('chat', [
+		$msg = self::emit('get_message', $_GET['id']);
+		if (!$msg) $msg = DB::find_first('chat', [
 			'id = :0:',
 			'bind' => [$_GET['id']]
 		]);
@@ -281,11 +282,15 @@ class Helper extends StaticEventEmitter {
 			case 'st':
 				if ($_SESSION['userdata']['id'] == -1) exit('guest');
 				if ($_SESSION['userdata']['status'] == $_GET['v']) exit;
-				$is_timeout = DB::find_first('chat', [
+				$st_selector = [
 					'(message REGEXP :1:) AND timestamp >= :0:',
 					'bind' => [time() - 60, 'status;'.$nick]
-				]);
-				if ($is_timeout != []) exit('timeout');
+				];
+
+				$is_timeout = self::emit('get_message', $st_selector);
+				if (!$is_timeout) $is_timeout = DB::find_first('chat', $st_selector);
+				if ($is_timeout) exit('timeout');
+
 				$_SESSION['userdata']['status'] = $_GET['v'];
 				DB::update('users', [
 					'status' => $_GET['v']
@@ -317,7 +322,7 @@ class Helper extends StaticEventEmitter {
 		if (!$result) DB::insert('chat', $msg);
 	}
 
-	public static function ignore() {
+	public static function ignore () {
 		if (isset($_GET['n'])) {
 			$nick = $_GET['n'];
 		} else {

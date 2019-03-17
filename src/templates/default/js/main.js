@@ -196,7 +196,7 @@ $(document).on('mouseenter', '[tooltip]', function () {
 	else if ($(this).attr('t-left') != undefined) side = 'left';
 	$('body').append('<div tid="' + tooltip + '" class="tooltip tooltip-' + side + '"></div>');
 	update_tooltip(this, $(this).attr('tooltip'), side);
-	$(this).on('click', () => $tooltip.html($(this).attr('tooltip')));
+	$(this).on('click', () => $('[tid="' + tooltip + '"]').html($(this).attr('tooltip')));
 	tooltip++;
 	return false;
 })

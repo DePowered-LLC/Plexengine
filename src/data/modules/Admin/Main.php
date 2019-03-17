@@ -6,11 +6,13 @@
 namespace pe\modules\Admin;
 use pe\engine\Router;
 use pe\engine\View;
+use pe\engine\DB;
 use pe\modules\System\Auth;
 
 class Main {
     public function __construct () {
         Router::add('get', '/admin', 'Main.index');
+        Router::add('get', '/admin/result-{type:\w+}', 'IndexRequests.result');
         Router::module('get', '/admin/<action>', 'IndexRequests');
         Router::add('get', '/admin/{module:\w+}/{action:(-|\w)+}', 'Main.dispatchModule');
     }
@@ -33,6 +35,8 @@ class Main {
 
     public static function dispatchModule ($params) {
         if(!Auth::is_access('admin')) View::error(403, 'No admin access');
+        if (isset($_GET['apply'])) exit(self::applyModule($params));
+
         $info = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/info.json'), true);
         $menus = [];
         foreach ($info['menus'] as $key => $value) {
@@ -49,13 +53,41 @@ class Main {
         if ($params['action'] == 'index') {
             View::load('admin.module.index', $common);
         } else {
-            View::load('admin.module.edit', array_merge($common, [
-                'action' => $info['menus'][$params['action']]
-            ]));
+            $menu_info = $info['menus'][$params['action']];
+            $vars = array_merge($common, [
+                'menu_info' => $menu_info
+            ]);
+
+            switch ($menu_info['type']) {
+                case 'db_view':
+                    $vars['data'] = DB::find($menu_info['model']);
+                    $vars['scheme'] = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/models/'.$menu_info['model'].'.json'), true);
+                    break;
+                case 'db_add':
+                    $vars['scheme'] = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/models/'.$menu_info['model'].'.json'), true);
+                    break;
+                default:
+                    View::error(500, 'Page type `'.$menu_info['type'].'` not found.');
+            }
+
+            View::load('admin.module.edit', $vars);
         }
     }
 
-    private static function getLocaleParam ($obj, $name, $fallback) {
+    public static function applyModule ($params) {
+        $info = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/info.json'), true);
+        $menu_info = $info['menus'][$params['action']];
+        switch ($menu_info['type']) {
+            case 'db_add':
+                DB::insert($menu_info['model'], $_POST);
+                header('Location: /admin/result-success');
+                break;
+            default:
+                View::error(500, 'Page type `'.$menu_info['type'].'` not available for POST or not found.');
+        }
+    }
+
+    public static function getLocaleParam ($obj, $name, $fallback) {
         if (isset($obj[$name.'.'.$_COOKIE['lng']])) return $obj[$name.'.'.$_COOKIE['lng']];
         else if (isset($obj[$name.'.en'])) return $obj[$name.'.en'];
         else return $fallback;

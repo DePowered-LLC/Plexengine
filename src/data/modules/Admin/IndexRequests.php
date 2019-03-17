@@ -96,4 +96,8 @@ class IndexRequests {
             'color' => '#fff'
         ]);
     }
+
+    public static function result ($param) {
+        View::load('admin.result.'.$param['type']);
+    }
 }

@@ -84,8 +84,8 @@ class View {
                 $tpl_cont = preg_replace('/{% *else *%}/', '<?php else: ?>', $tpl_cont);
                 $tpl_cont = preg_replace('/{% *endif *%}/', '<?php endif; ?>', $tpl_cont);
                 // Parsing for statements
-                $tpl_cont = preg_replace('/{% *for ([^,]+) *, *(.+)? in (.+) *%}/', '<?php foreach($3 as $1 => $2): ?>', $tpl_cont);
                 $tpl_cont = preg_replace('/{% *for ([^,]+) * in (.+) *%}/', '<?php foreach($2 as $1): ?>', $tpl_cont);
+                $tpl_cont = preg_replace('/{% *for ([^,]+) *, *(.+)? in (.+) *%}/', '<?php foreach($3 as $1 => $2): ?>', $tpl_cont);
                 $tpl_cont = preg_replace('/{% *endfor *%}/', '<?php endforeach; ?>', $tpl_cont);
                 // Parsing template variables
                 $tpl_cont = preg_replace('/{{ *(.+?) *}}/', '<?php echo $1; ?>', $tpl_cont);

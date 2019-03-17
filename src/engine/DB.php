@@ -84,6 +84,10 @@ class DB {
 
     // Models
     public static function model ($table, $scheme) {
+        if (!is_array($scheme)) {
+            $scheme = json_decode(file_get_contents(MODULES.'/'.str_replace('.', '/', $scheme).'/models/'.$table.'.json'), true);
+        }
+
         $table = addcslashes($table, '\'\\');
         $is_exists = self::$connection->query("SELECT 1 FROM `$table`");
         if (!$is_exists) {
