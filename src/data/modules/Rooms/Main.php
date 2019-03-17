@@ -27,6 +27,11 @@ class Main {
 
     public static function apply () {
         if (Auth::is_access('user')) {
+            if ($_GET['id'] == -1) {
+                unset($_SESSION['userdata']['room']);
+                exit;
+            }
+
             $room = DB::find_first('rooms', [
                 'id = :0:',
                 'bind' => [$_GET['id']]

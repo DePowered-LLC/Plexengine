@@ -10,7 +10,7 @@
         <i open-modal="ignore_list" total="0" tooltip="| ignore_list |" t-right class="chat_icon_ignore_list"></i>
         <i tooltip="| favorites |" t-right class="chat_icon_favorite"></i>
         <i tooltip="| chat_help |" load-modal="help_main" load-path="/help" t-right class="chat_icon_help"></i>
-        <i tooltip="| rooms |" t-right class="chat_icon_rooms"></i>
+        <i onclick="select_room()" tooltip="| rooms |" t-right class="chat_icon_rooms"></i>
     </div>
     <div class="main_block">
         <div class="box" id="vip_photos">
