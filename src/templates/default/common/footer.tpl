@@ -25,8 +25,8 @@
                 <div id="notifications"></div>
                 <div id="no_notifications" style="display: none; text-align: center; padding: 5px;">
                     <h2>| notifi_title |</h2>
-                    <h5>| notifi_info |</h5>
                     <img src="/public/img/icons/note.png" />
+                    <h5>| notifi_info |</h5>
                 </div>
             </div>
         </div>

@@ -31,6 +31,7 @@ class Auth {
     public static function is_access ($required) {
         $priv = [
             'admin',
+            'moderator',
             'premium',
             'user',
             'none'

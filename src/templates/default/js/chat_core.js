@@ -77,7 +77,7 @@ var chat = {
         switch (args[0]) {
             case 'remove':
                 $('chat-message[msg_id="' + args[1] + '"]').remove();
-                break;
+                return;
             case 'enter':
                 msg.message = lang.spy_join
                     .split('{nick}').join(args[1])
@@ -119,7 +119,8 @@ var chat = {
     parseMessage (msg) {
         if (msg.user_id == 0) msg = this.parseSpyMsg(msg);
         else msg.message = msg.message.split('<').join('&lt;').split('>').join('&gt;');
-                
+        if (!msg) return;
+
         // Linting message
         msg.light = msg.light || false;
         const to_matches = /^([_a-zA-Z0-9А-Яа-яіІїЇєЄ;]+) &gt;&gt; /.exec(msg.message);
@@ -393,6 +394,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
             this.uid = user.id;
             this._status = user.status;
             this.gender = user.gender;
+            this.access = user.access;
             this.nick = user.nick;
             this.verificated = user.verificated;
             this._ignored = false;
@@ -431,7 +433,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
                         name: 'i',
                         attr: {
                             gender: true,
-                            class: 'chat_icon_' + this.gender
+                            class: 'chat_icon_' + this.getIcon()
                         }
                     }, {
                         name: 'i',
@@ -454,15 +456,30 @@ $(document).on('mouseenter', '.chat-reply', e => {
             }]);
         }
 
+        getIcon () {
+            if (this.access != 'user') {
+                switch (this.access) {
+                    case 'admin': return 'admins';
+                    case 'premium': return 'vip';
+                    default: return this.access;
+                }
+            }
+            return this.gender;
+        }
+
         render () {
-            $('#userlist [category="' + this.gender + '"] > .content').append(this.html);
-            $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML++;
+            var category = this.gender;
+            if ($('#userlist [category="' + this.access + '"]')[0]) category = this.access;
+            $('#userlist [category="' + category + '"] > .content').append(this.html);
+            $('#userlist [category="' + category + '"] [count]')[0].innerHTML++;
             $('#userlist [category="all"] [count]')[0].innerHTML++;
         }
 
         remove () {
             this.$el.remove();
-            $('#userlist [category="' + this.gender + '"] [count]')[0].innerHTML--;
+            var category = this.gender;
+            if ($('#userlist [category="' + this.access + '"]')[0]) category = this.access;
+            $('#userlist [category="' + category + '"] [count]')[0].innerHTML--;
             $('#userlist [category="all"] [count]')[0].innerHTML--;
         }
     }
@@ -534,22 +551,25 @@ $(document).on('mouseenter', '.chat-reply', e => {
 
     function updateSmiles (smiles) {
         var packs_list = $('#chat chat-smile-categories');
-        Object.keys(smiles).forEach((smile_group, key) => {
+        Object.keys(smiles).forEach(smile_group => {
             $('#smiles').append('<div class="smile_group" smile_group="'+smile_group+'"></div>');
             smiles[smile_group].forEach(smile_text => {
                 $('#smiles > [smile_group="'+smile_group+'"]').append('<img src="/uploads/smiles/'+smile_text+'.png" onclick="chat.add_to_msg(\' ['+smile_text+']\');" />');
-                if(key !== 1) {
-                    $('#smiles > [smile_group="'+smile_group+'"]').hide();
-                }
+                $('#smiles > [smile_group="'+smile_group+'"]').hide();
             });
             packs_list.append(`<img src="/uploads/smiles/${smile_group}/icon.png" smile_group="${smile_group}">`);
         });
+
+        $('chat-smile-categories [smile_group="' + (sessionStorage.getItem('smile-group') || 2) + '"]').click();
     }
 
     $(document).on('click', '#chat chat-smile-categories > img', e => {
         $('#smiles > *').hide();
         var smile_group = $(e.currentTarget).attr('smile_group');
         $('#smiles > [smile_group="' + smile_group + '"]').show();
+        $(e.currentTarget).siblings().removeClass('active');
+        $(e.currentTarget).addClass('active');
+        sessionStorage.setItem('smile-group', smile_group);
     });
 
     $(document).on('input', '#chat-send-input', e => {
@@ -569,7 +589,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
         $('#chat-send-input').focus();
     });
 
-    $(document).on('click', '#chat chat-timestamp', e => {
+    $(document).on('click', '#chat chat-timestamp, #chat .chat_icon_reply', e => {
         $('#chat-send-input').val($('#chat-send-input').val() + ' [reply: ' + $(e.target).parent().attr('msg_id') + '] ');
         $('#chat-send-input').focus();
     });
@@ -591,6 +611,8 @@ $(document).on('mouseenter', '.chat-reply', e => {
             loadedMsgList.push(msg.id);
 
             msg = chat.parseMessage(msg);
+            if (!msg) return;
+            
             if (access == 'admin') msg.content.push({
                 name: 'i',
                 attr: {
@@ -735,7 +757,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
             }
             else if (res == 'ignored') open_modal('ignored');
             else if (res == 'ignored_to') open_modal('ignored_to');
-            else $('#balance > span').html((parseInt($('#balance > span').html()) + 10) + ' points');
+            else $('#balance [points]').html((parseInt($('#balance [points]').html()) + 10));
         });
         return false;
     });

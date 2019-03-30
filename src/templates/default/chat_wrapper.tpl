@@ -1,16 +1,21 @@
 {% module System.Auth %}
 <form id="chat">
-    <div id="chat_heading">| rooms_info | {{ $_SESSION['userdata']['room_name'] }}</div>
-    <div id="chat_tools">
-        <i class="chat_icon_photos" tooltip="| show |" open-pl onclick="open_pl()" style="display: none;"></i>
-        <i sound tooltip="| sounds_off |" class="chat_icon_sound_off"></i>
+    <div id="chat_heading">
+        <i class="chat_icon_eye"></i>
+        <div>
+            | rooms_info | {{ $_SESSION['userdata']['room_name'] }} <a load-modal="room-select" load-path="/rooms/select" tooltip="| rooms |">| rooms_change |</a>
+        </div>
+        <div id="chat_tools">
+            <i class="chat_icon_photos" tooltip="| show |" open-pl onclick="open_pl()" style="display: none;"></i>
+            <i sound tooltip="| sounds_off |" class="chat_icon_sound_off"></i>
+        </div>
     </div>
     <audio src="/public/message.ogg" message></audio>
-    <chat-list></chat-list>
-    <div id="chat-send-wrapper">
+    <chat-list class="box"></chat-list>
+    <div class="box" id="chat-send-wrapper">
         <span id="chat-message-limit">300</span>
         <input id="chat-receiver-toggle" type="checkbox" t-right tooltip="| chat_to_clear |">
-        <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+        <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" /> >> 
         <input id="chat-send-input" placeholder="| enter_msg |" />
         <div right>
             <hr />
@@ -65,6 +70,10 @@
                         <chat-status-set status="chat" class="chat_list_item">
                             <i class="chat_icon_chat"></i>
                             <span>| status_chat |</span>
+                        </chat-status-set>
+                        <chat-status-set status="priv" class="chat_list_item">
+                            <i class="chat_icon_priv"></i>
+                            <span>| status_priv |</span>
                         </chat-status-set>
                         <chat-status-set status="dnd" class="chat_list_item">
                             <i class="chat_icon_dnd"></i>
@@ -130,6 +139,10 @@
     </div>
 </div>
 
+<div class="modal_wrapper" modal-name="room-select">
+    <div class="modal modal-flat" loadhere></div>
+</div>
+
 <script>
     var nick = '{{ $_SESSION['userdata']['nick'] }}';
     var message_limit = '{{ $_CONFIG['message_limit'] }}';
@@ -155,6 +168,7 @@
         remove: '| remove |',
 
         status_chat: '| status_chat |',
+        status_priv: '| status_priv |',
         status_dnd: '| status_dnd |',
         status_na: '| status_na |',
 

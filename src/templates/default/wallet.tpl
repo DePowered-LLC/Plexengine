@@ -1,6 +1,6 @@
 <div id="wallet-top-block">
-    <img src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-    <h1>{{ $_SESSION['userdata']['nick'] }}, | points_iya | {{ $_SESSION['userdata']['credits'] }} | coins |</h1>
+    <img src="/public/img/icons/coins.png" />
+    <h1>{{ $_SESSION['userdata']['nick'] }}, | points_iya | <b>{{ $_SESSION['userdata']['credits'] }}</b> | coins |</h1>
     <span>| points_info |</span>
     <b>| points_yh | <i>{{ $_SESSION['userdata']['points'] }}</i> | points |</b>
 </div>
@@ -32,8 +32,8 @@
             if (res == 'no_points') alert('| no_points |');
             else if (res == 'success') {
                 load_modal('wallet', null, $('[load-modal="wallet"]'));
-                $('#balance > t').html(parseFloat($('#balance > t').html()) + val / ex_rate);
-                $('#balance > span').html((parseInt($('#balance > span').html()) - val) + ' points');
+                $('#balance [coins]').html(parseFloat($('#balance [coins]').html()) + val / ex_rate);
+                $('#balance [points]').html((parseInt($('#balance [points]').html()) - val));
             } else alert('Server error');
             $('#wallet-footer > button').removeClass('loading');
         });

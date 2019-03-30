@@ -1,20 +1,19 @@
 <div id="wrapper">
-    <div class="left_block">
+    <div class="box left_block">
         <i open-modal="my_profile" tooltip="| my_page |" t-right class="chat_icon_home"></i>
         <i tooltip="| security |" t-right class="chat_icon_settings"></i>
         <i open-modal="upload_photo" tooltip="| upload_photo |" t-right class="chat_icon_camera"></i>
-        <i tooltip="| tool_music |" t-right class="chat_icon_music"></i>
-        <i tooltip="| video |" t-right class="chat_icon_video"></i>
         <i tooltip="| gifts |" t-right class="chat_icon_gift"></i>
         <i tooltip="| attach |" t-right class="chat_icon_attach"></i>
         <i open-modal="ignore_list" total="0" tooltip="| ignore_list |" t-right class="chat_icon_ignore_list"></i>
+        <i tooltip="| video |" t-right class="chat_icon_video"></i>
         <i tooltip="| favorites |" t-right class="chat_icon_favorite"></i>
         <i tooltip="| chat_help |" load-modal="help_main" load-path="/help" t-right class="chat_icon_help"></i>
-        <i onclick="select_room()" tooltip="| rooms |" t-right class="chat_icon_rooms"></i>
+        <i tooltip="| rules |" load-modal="rules" t-right class="chat_icon_rules"></i>
     </div>
     <div class="main_block">
         <div class="box" id="vip_photos">
-            <span class="caption">| mod_vip_photo |</span>
+            <span class="caption"><i class="chat_icon_photos"></i> | mod_vip_photo |</span>
             <span class="close" tooltip="| hide |" t-left></span>
             <div class="photoline">
                 <div class="add">
@@ -37,8 +36,15 @@
             <div class="nano-content">
                 <div class="category" category="all">
                     <div class="caption">
-                        | all |
+                        | all | {{ $_SESSION['userdata']['room_name'] }} - <span count>0</span> online
+                    </div>
+                    <div class="content"></div>
+                </div>
+                <div class="category" category="admin">
+                    <div class="caption">
+                        | admins |
                         <span class="right">
+                            <i class="chat_icon_admins"></i>
                             <span count>0</span>
                         </span>
                     </div>
@@ -277,7 +283,6 @@ $max_file = file_upload_max_size() / 1024 / 1024;
     {% if $_SESSION['userdata']['id'] != -1 %}
     <span do="ignore" class="item">| ignore |</span>
     {% endif %}
-    <span do="report" class="item">| report |</span>
     {% if $_SESSION['userdata']['access'] == 'admin' %}
     <span do="ban" class="item">| ban |</span>
     <span do="kick" class="item">| kick |</span>

@@ -182,5 +182,3 @@ $('#upload_photo_preview [upload]').click(e => {
         }
     });
 });
-
-function select_room () { $.get('/rooms/apply?id=-1', () => window.location.href = '/'); }

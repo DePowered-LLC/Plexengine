@@ -1,6 +1,6 @@
 ﻿@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
 ::selection {
-    background: #d26f6f;
+    background: #4a76a8;
     color: #fff;
 }
 
@@ -50,15 +50,15 @@
     margin-top: -95px;
     min-width: 180px;
     min-height: 180px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px 0;
+	border-radius: 3px;
 }
 
 #profile_status {
     position: absolute;
-    left: 215px;
+    left: 216px;
     bottom: calc(100% + 10px);
     letter-spacing: -0.1px;
-    background-color: #fff;
+    background-color: #ffffffe0;
     font-size: 13px;
     padding: 5px 8px;
     border-radius: 3px;
@@ -76,13 +76,14 @@
 
 #profile_top > div {
     flex: 1 1 0;
-    padding-left: 15px;
+    padding-left: 11px;
 }
 
 #profile_top > div > h1 {
     display: block;
-    margin: 8px 0 0 0;
+    margin: 2px 0 0 0;
     font-size: 25px;
+    color: #416792;
     font-weight: lighter;
     letter-spacing: -1px;
 }
@@ -95,18 +96,19 @@
 #profile_top > div > span {
     font-size: 14px;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
 }
 
 #profile_top > [online] {
     position: absolute;
     top: -85px;
-    left: 170px;
-    width: 25px;
-    height: 25px;
-    background-color: #4caf50;
-    box-shadow: #4caf50 0 0 0 0;
+    left: 28px;
+    width: 20px;
+    height: 20px;
+    background-color: #59ce5d;
+    box-shadow: #ffffff 0 0 0 0;
     border-radius: 100%;
+    border: 3px solid #ffffff;
     animation: pulse 1s infinite;
 }
 @keyframes pulse { 100% { box-shadow: #f000 0 0 5px 10px; } }
@@ -122,9 +124,10 @@
 }
 
 #profile_gifts {
-    display: block;
+	display: block;
     height: 100px;
-    margin-top: 25px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 #profile_gifts > span {
@@ -206,6 +209,7 @@
 .chat_icon_edit        { background-position: calc(5 * -23px) calc(2 * -23px); width: 20px; height: 20px; }
 .chat_icon_premium1    { background-position: calc(0 * -31px) calc(4 * -23px); width: 31px; height: 31px; }
 .chat_icon_admin1      { background-position: calc(1 * -31px) calc(4 * -23px); width: 31px; height: 31px; }
+.chat_icon_moderator1  { background-position: calc(2 * -31px) calc(4 * -23px); width: 31px; height: 31px; }
 
 i[edit] {
     opacity: 0;
@@ -247,7 +251,7 @@ i[edit="avatar"] {
 #profile_wrapper .btn {
     display: inline-block;
     border: none;
-    background-color: #3487d5;
+    background-color: #416792;
     color: #fff;
     font-size: 14px;
     font-weight: 500;
@@ -304,10 +308,10 @@ i[edit="avatar"] {
 }
 
 .tabs > .caption {
-    display: flex;
-    color: #8c8c8c;
-    border-bottom: 1px solid #e7e8ec;
-    font-size: 13px;
+	display: flex;
+    color: #252932;
+    border-bottom: 1px solid #fafbfc;
+    font-size: 14px;
 }
 
 .tabs > .caption > span {
@@ -325,8 +329,8 @@ i[edit="avatar"] {
 }
 
 .tabs > .caption > span.active {
-    border-bottom-color: #408ed6;
-    color: #408ed6;
+    border-bottom-color: #416792;
+    color: #4a76a8;
     opacity: 1;
 }
 
@@ -353,7 +357,7 @@ i[edit="avatar"] {
 }
 
 .access > b { display: block; font-weight: normal; }
-.access > span { color: #656565; }
+.access > span { color: #f84b25; }
 .access > i {
     position: absolute;
     left: 0;
@@ -363,14 +367,15 @@ i[edit="avatar"] {
 #profile_gifts > [no-gifts] {
     display: flex;
     height: 100%;
+    background: #fafbfc;
     align-items: center;
     font-size: 16px;
     padding: 0 15px;
-    color: #656565;
+    color: #878a98;
 }
 
 #profile_gifts > [no-gifts] > i {
-    background-color: #3487d5;
+    background-color: #4a76a8;
     background-image: url('/public/img/icons/gift.png');
     background-repeat: no-repeat;
     background-position: center;
@@ -491,6 +496,6 @@ i[edit="avatar"] {
 #profile_free_gifts .gift:hover { background-color: #E3F2FD; }
 
 a {
-    color: #490bb7;
+    color: #000000;
     text-decoration: none;
 }

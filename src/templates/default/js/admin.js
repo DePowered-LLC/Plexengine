@@ -24,3 +24,9 @@ $(document).on('mouseouver', '.dropdown > .dropdown_container', e => {
 		}
 	}
 });
+
+function apply (mode, data) {
+	return new Promise(resolve => {
+		$.post('?apply=' + mode, data, resolve);
+	});
+}

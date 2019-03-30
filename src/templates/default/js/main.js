@@ -1,6 +1,7 @@
 ﻿/*
 @copy
  */
+if (!window.loaded) {
 function change_lang(lng_code) {
     document.cookie = 'lng='+lng_code;
     window.location.reload();
@@ -54,7 +55,6 @@ $(document).on('click', '[load-modal]', e => {
 $(document).on('click', e => {
 	if (!$(e.target).closest('.modal')[0]) {
 		$('.modal_wrapper[closable]').css('opacity', 0);
-		$('.modal_wrapper:not([closable])')[0] && $('body').removeClass('blur');
 		setTimeout(() => {
 			$('.modal_wrapper[closable]').hide();
 		}, 300);
@@ -74,7 +74,6 @@ function open_modal(modal_name, $caller = null) {
 			$elem.css('left', offset.left + $caller.outerWidth() / 2 - $elem.outerWidth() / 2);
 		}
 	} else {
-		$('body').addClass('blur');
 		if (!$elem.attr('builded')) {
 			var $title = $('.title', $elem);
 			var $ch = $title.children().clone();
@@ -91,7 +90,6 @@ function open_modal(modal_name, $caller = null) {
 function close_modal(modal_name) {
     let elem = $('[modal-name="'+modal_name+'"]');
     elem.css('opacity', 0);
-	$('body').removeClass('blur');
     setTimeout(() => { elem.hide(); }, 300);
 }
 
@@ -109,13 +107,13 @@ $(document).on('click', '.modal_wrapper .close', e => {
 
 function load_modal(modal, url, $caller = null) {
 	let elem = $('[modal-name="' + modal + '"] [loadhere]');
-	if(!url) { url = '/'+modal; }
-	//if (!elem.attr('loaded')) {
-		$.get(url, data => {
-			elem.html(data);
-			elem.attr('loaded', true);
-		});
-	//}
+	elem.removeAttr('loaded');
+	if(!url) { url = '/' + modal; }
+	$.get(url, data => {
+		elem.html(data + `<script>
+			setTimeout(() => $('[modal-name="${modal}"] [loadhere]').attr('loaded', true), 100);
+		</script>`);
+	});
 	open_modal(modal, $caller);
 }
 
@@ -235,3 +233,6 @@ $(document).on('click', '.tabs > .caption > [tab-id]', e => {
 	$(e.target).closest('.tabs').children('.tab[tab-id]').removeClass('active');
 	$(e.target).closest('.tabs').children('.tab[tab-id="'+$(e.target).attr('tab-id')+'"]').addClass('active');
 });
+
+window.loaded = true;
+}

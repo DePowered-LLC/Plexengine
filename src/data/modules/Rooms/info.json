@@ -7,12 +7,12 @@
     "menus": {
         "list": {
             "name": "Список комнат",
-            "type": "db_view",
+            "type": "db.view",
             "model": "rooms"
         },
         "add": {
             "name": "Добавить комнату",
-            "type": "db_add",
+            "type": "db.add",
             "model": "rooms"
         }
     }

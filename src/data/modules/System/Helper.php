@@ -88,52 +88,57 @@ class Helper extends StaticEventEmitter {
 			}
 		}
 
-		if ($_SESSION['userdata']['id'] != -1) {
-			// Update self online
-			DB::update('users', [
-				'last_online' => time()
-			], $user_selector);
+		$data['msgs'] = array_reverse($data['msgs']);
 
-			// Get ignored list
+		// Update self online
+		DB::update($user_table, [
+			'last_online' => time()
+		], $user_selector);
+		
+		// Get ignored list
+		if ($_SESSION['userdata']['id'] != -1) {
 			$data['ignored'] = implode(',', $_SESSION['userdata']['ignored']);
-		} else {
-			// var_dump('update_online for '.$_SESSION['userdata']['nick']);
-			DB::update('guests', [
-				'last_online' => time()
-			], [
-				'nick = :0:',
-				'bind' => [$_SESSION['userdata']['nick']]
-			]);
 		}
 
 		// Get online users (last request 4 seconds ago)
-		$data['online'] = DB::find('users', [
-			'last_online > :0:',
-			'bind' => [time() - 4]
-		]);
+		$online_info = self::emit('get_online');
+		if ($online_info) {
+			$data['online'] = $online_info['users'];
+		} else {
+			$data['online'] = DB::find('users', [
+				'last_online > :0:',
+				'bind' => [time() - 4]
+			]);
+		}
+
 		foreach($data['online'] as $ukey => $user) {
 			$data['online'][$ukey] = [
 				'id'          => $user['id'],
 				'nick'        => $user['nick'],
 				'gender'      => $user['gender'],
+				'access'      => $user['access'],
 				'verificated' => $user['verificated'],
 				'status'      => strpos($user['limitation'], 'mute') === 0 ? 'muted' : $user['status']
 			];
 		}
 
 		// Get online guests
-		$guests_online = DB::find('guests', [
-			'last_online > :0:',
-			'bind' => [time() - 4]
-		]);
+		if ($online_info) {
+			$guests_online = $online_info['guests'];
+		} else {
+			$guests_online = DB::find('guests', [
+				'last_online > :0:',
+				'bind' => [time() - 4]
+			]);
+		}
+
 		foreach($guests_online as $gkey => $guest) $guests_online[$gkey] = $guest['nick'];
 		$data['online'][] = [
 			'id' => -1,
 			'list' => $guests_online
 		];
 
-		$data['msgs'] = array_reverse($data['msgs']);
-
+		// Get notifications
 		$data['notifications'] = [];
 		if ($_SESSION['userdata']['id'] != -1) {
 			$data['notifications'] = DB::find('notifications', [
@@ -278,6 +283,7 @@ class Helper extends StaticEventEmitter {
 		switch ($_GET['m']) {
 			case 'enter':
 			case 'leave':
+				self::emit($_GET['m']);
 				break;
 			case 'st':
 				if ($_SESSION['userdata']['id'] == -1) exit('guest');

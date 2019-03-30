@@ -19,15 +19,18 @@
                 <script>
                     var is_full = false;
                     function full_size() {
-                        document.getElementsByClassName('container')[0].style.maxWidth = is_full?'':'80%';
-                        document.getElementById('full_size').innerHTML = is_full?'<< >>                                                                                                                                                 ':'>> <<';
-                        console.log(this);
+                        document.getElementsByClassName('container')[0].style.maxWidth = is_full ? '' : '80%';
+                        document.getElementById('full_size').innerHTML = is_full ? '<< >>' : '>> <<';
                         is_full = !is_full;
                     }
                 </script>
-                <pre><?php echo $debug ?></pre>
-                {# Trace:
-                <pre><?php //debug_print_backtrace(); ?></pre> #}
+                <pre>
+<?php echo $debug ?>
+
+
+Trace: (disabled)
+<?php //debug_print_backtrace(); ?>
+                </pre>
                 <?php endif; ?>
                 <b>Contact administrator and make them aware of this issue</b>
             </div>

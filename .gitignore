@@ -1,4 +1,3 @@
-sync/
 .vscode/
 node_modules/
 src/data/config.ini

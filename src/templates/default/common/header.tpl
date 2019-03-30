@@ -23,26 +23,39 @@
 				{% if $_SESSION['userdata']['id'] == -1 %}
 					<span class="item" tooltip="| ignore_guest |"><i class="chat_icon_alert"></i></span>
 					<span class="item" tooltip="| ignore_guest |"><i class="chat_icon_message"></i></span>
+					<span music open-modal="music" class="item" tooltip="| ignore_guest |">
+						<i class="chat_icon_music"></i>
+					</span>
 					<span tooltip="| ignore_guest |" id="balance" class="item">
 						<i class="chat_icon_wallet m"></i>
-						<t>0</t> &nbsp;| coins |
+						| points_yh |&nbsp;<t>0</t> &nbsp;| coins |
 					</span>
-					<span tooltip="| ignore_guest |" class="item" style="font-weight: 500; color: #289de3;">
-						<i class="chat_icon_premium m"></i> Premium
+					<span tooltip="| ignore_guest |" class="item" style="font-weight: 500; color: #9dcf43;">
+						<i class="chat_icon_premium m"></i> | vip |
 					</span>
 				{% else %}
 					<span notifications open-modal="notifications" class="item" tooltip="| tool_alert |">
 						<i class="chat_icon_alert"></i>
 						<span class="sup">0</span>
 					</span>
-					<span class="item" tooltip="| tool_message |"><i class="chat_icon_message"></i></span>
-					<span load-modal="wallet" id="balance" class="item">
-						<span class="sup">{{ $_SESSION['userdata']['points'] }} points</span>
-						<i class="chat_icon_wallet m"></i>
-						<t>{{ $_SESSION['userdata']['credits'] }}</t> &nbsp;| coins |
+					<span mailbox class="item" tooltip="| tool_message |">
+						<i class="chat_icon_message"></i>
+						<span class="sup">0</span>
 					</span>
-					<span class="item" style="font-weight: 500; color: #289de3;">
-						<i class="chat_icon_premium m"></i> Premium
+					<span music open-modal="music" class="item" tooltip="| tool_music |">
+						<i class="chat_icon_music"></i>
+						<i class="music-play-icon"></i>
+					</span>
+					<span load-modal="wallet" id="balance" class="item" tooltip="| wallet |">
+						<i class="chat_icon_wallet m"></i>
+						<span class="sup">
+							<span points>{{ $_SESSION['userdata']['points'] }}</span> | points |
+							:
+							<span coins>{{ $_SESSION['userdata']['credits'] }}</span> | coins |
+						</span>
+					</span>
+					<span class="item" style="font-weight: 500; color: #9dcf43;">
+						<i class="chat_icon_premium m"></i> | vip |
 					</span>
 				{% endif %}
 				<div>
@@ -51,9 +64,10 @@
 						<input />
 						<span>| search |</span>
 					</span>
-					<span class="item" load-modal="rules">| rules |</span>
 					{% if $_SESSION['userdata']['access'] == 'admin' %}
-					<a class="item" href="/admin" target="_blank">| adminpanel |</a>
+					<a href="/admin" target="_blank" class="item" tooltip="| adminpanel |">
+						<i class="chat_icon_admin1"></i>
+					</a>
 					{% endif %}
 				</div>
 			</div>

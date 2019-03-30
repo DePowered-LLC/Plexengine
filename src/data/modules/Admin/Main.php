@@ -12,7 +12,6 @@ use pe\modules\System\Auth;
 class Main {
     public function __construct () {
         Router::add('get', '/admin', 'Main.index');
-        Router::add('get', '/admin/result-{type:\w+}', 'IndexRequests.result');
         Router::module('get', '/admin/<action>', 'IndexRequests');
         Router::add('get', '/admin/{module:\w+}/{action:(-|\w)+}', 'Main.dispatchModule');
     }
@@ -59,18 +58,18 @@ class Main {
             ]);
 
             switch ($menu_info['type']) {
-                case 'db_view':
+                case 'db.view':
                     $vars['data'] = DB::find($menu_info['model']);
                     $vars['scheme'] = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/models/'.$menu_info['model'].'.json'), true);
                     break;
-                case 'db_add':
+                case 'db.add':
                     $vars['scheme'] = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/models/'.$menu_info['model'].'.json'), true);
                     break;
                 default:
                     View::error(500, 'Page type `'.$menu_info['type'].'` not found.');
             }
 
-            View::load('admin.module.edit', $vars);
+            View::load('admin.module.'.$menu_info['type'], $vars);
         }
     }
 
@@ -78,9 +77,22 @@ class Main {
         $info = json_decode(file_get_contents(MODULES.'/'.$params['module'].'/info.json'), true);
         $menu_info = $info['menus'][$params['action']];
         switch ($menu_info['type']) {
-            case 'db_add':
+            case 'db.add':
+                foreach ($_POST as $key => $val) {
+                    if (!$val || is_string($val) && trim($val) == '') exit('fill-all');
+                }
+
                 DB::insert($menu_info['model'], $_POST);
-                header('Location: /admin/result-success');
+                exit('success');
+            case 'db.view':
+                switch ($_GET['apply']) {
+                    case 'remove':
+                        DB::delete($menu_info['model'], [
+                            'id = :0:',
+                            'bind' => [$_POST['id']]
+                        ]);
+                        exit('success');
+                }
                 break;
             default:
                 View::error(500, 'Page type `'.$menu_info['type'].'` not available for POST or not found.');

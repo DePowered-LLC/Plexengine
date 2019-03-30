@@ -9,6 +9,7 @@
         global $vars;
         switch ($vars->profile['access']) {
             case 'admin':   $l = 'info_administrator'; break;
+            case 'moderator': $l = 'info_moderator';     break;
             case 'premium': $l = 'pr_info_vip';        break;
             case 'user':    $l = 'pr_info_user';       break;
         }

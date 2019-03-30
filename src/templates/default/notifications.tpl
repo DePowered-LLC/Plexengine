@@ -21,8 +21,8 @@ function parseInfo($n) {
 {% if !count($GLOBALS['list']) %}
 <div style="text-align: center; padding: 5px;">
     <h2>| notifi_title |</h2>
-    <h5>| notifi_info |</h5>
     <img src="/public/img/icons/note.png" />
+
 </div>
 {% endif %}
 

@@ -13,11 +13,25 @@ class DB {
             return $e;
         }
     }
+
+    private static function _error ($query) {
+        $err = self::$connection->errorInfo();
+        $err_text = '[DB] #'.$err[1].': '.$err[2].PHP_EOL;
+        $err_text .= PHP_EOL;
+        $err_text .= 'Query: '.$query;
+        View::error(500, $err_text);
+    }
     
     public static function count($table, $field, $opts = '') {
         $where = self::where_parser($opts);
         $query = 'SELECT COUNT(`'.addcslashes($field, '`\\').'`) FROM `'.addcslashes($table, '`\\').'`'.$where;
         $result = self::$connection->query($query)->fetch()[0];
+        return $result;
+    }
+
+    public static function query ($q, $isFetch = false) {
+        $result = self::$connection->query($q);
+        if ($isFetch) $result = $result->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
     
@@ -30,8 +44,9 @@ class DB {
     public static function find($table, $opts = '') {
         $where = self::where_parser($opts);
         $query = 'SELECT * FROM `'.addcslashes($table, '`\\').'`'.$where;
-        $result = self::$connection->query($query)->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        $result = self::$connection->query($query);
+        if (!$result) self::_error($query);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public static function find_first($table, $opts) {
@@ -101,6 +116,23 @@ class DB {
             $query = "CREATE TABLE `$table` ($fields) CHARSET=utf8 AUTO_INCREMENT=1";
             self::$connection->query($query);
         }
+    }
+
+    public static function modelExtend ($table, $scheme) {
+        if (!is_array($scheme)) {
+            $scheme = json_decode(file_get_contents(MODULES.'/'.str_replace('.', '/', $scheme).'/models/'.$table.'.json'), true);
+        }
+
+        $table = addcslashes($table, '\'\\');
+        $fields = [];
+        foreach ($scheme as $key => $desk) {
+            $key = addcslashes($key, '\'\\');
+            $fields[] = 'ADD `'.$key.'` '.self::parseField($key, $desk);
+        }
+
+        $fields = implode(',', $fields);
+        $query = "ALTER TABLE `$table` $fields";
+        self::$connection->query($query);
     }
 
     public static function parseField ($key, $desk) {

@@ -7,10 +7,11 @@ namespace pe\modules\Admin;
 use pe\engine\View;
 use pe\engine\DB;
 use pe\modules\System\Auth;
+use pe\modules\System\Helper;
 
 if(!Auth::is_access('admin')) View::error(403, 'No admin access');
 class IndexRequests {
-    public static function action() {
+    public static function action () {
         if ($_POST == []) exit;
         $limit = [$_POST['action']];
         switch ($_POST['action']) {
@@ -37,14 +38,15 @@ class IndexRequests {
             'bind' => [$_POST['nick']]
         ]);
 
-        DB::insert('chat', [
+        $info_msg = [
             'user_id' => 0,
             'timestamp' => time(),
             'message' => implode(';', array_merge([$limit[0], $_POST['nick']], array_slice($limit, 1)))
-        ]);
+        ];
+        if (!Helper::emit('send_message', $info_msg)) DB::insert('chat', $info_msg);
     }
 
-    private static function parseTime() {
+    private static function parseTime () {
         $time = $_POST['time1'];
         switch ($_POST['time2']) {
             case 'h': $time *= 60; break;
@@ -55,7 +57,7 @@ class IndexRequests {
         return time() + $time * 60;
     }
 
-    public static function banlist() {
+    public static function banlist () {
         $result = [];
         $banned = DB::find('users', ['limitation <> ""']);
         foreach ($banned as $key => $user) {
@@ -67,7 +69,7 @@ class IndexRequests {
         exit(json_encode($result));
     }
 
-    public static function unban() {
+    public static function unban () {
         DB::update('users', [
             'limitation' => ''
         ], [
@@ -76,28 +78,28 @@ class IndexRequests {
         ]);
     }
 
-    public static function remove_msg() {
-        $msg = DB::find_first('chat', [
+    public static function remove_msg () {
+        $msg = Helper::emit('get_message', $_GET['id']);
+        if (!$msg) $msg = DB::find_first('chat', [
             'id = :0:',
             'bind' => [$_GET['id']]
         ]);
 
         if ($msg['user_id'] == 0) exit('sys');
-        DB::delete('chat', [
-            'id = :0:',
-            'bind' => [$_GET['id']]
-        ]);
+        if (!Helper::emit('remove_message', $_GET['id'])) {
+            DB::delete('chat', [
+                'id = :0:',
+                'bind' => [$_GET['id']]
+            ]);
+        }
 
-        DB::insert('chat', [
+        $tag_msg = [
             'user_id' => 0,
             'nick' => '',
             'timestamp' => time(),
             'message' => 'remove;'.$_GET['id'],
             'color' => '#fff'
-        ]);
-    }
-
-    public static function result ($param) {
-        View::load('admin.result.'.$param['type']);
+        ];
+        if (!Helper::emit('send_message', $tag_msg)) DB::insert('chat', $tag_msg);
     }
 }
