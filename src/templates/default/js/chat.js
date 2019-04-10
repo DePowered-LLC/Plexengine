@@ -61,6 +61,12 @@ $(document).on('click', '#userlist .user', e => {
         }
         $('#user_menu').css('left', e.pageX - $('#user_menu').width() / 2);
         $('#user_menu').css('top', e.pageY);
+
+        if ($(e.target).attr('ignored') == 'true') {
+            $('#user_menu > .item[do="ignore"]').html(lang.unignore);
+        } else {
+            $('#user_menu > .item[do="ignore"]').html(lang.ignore);
+        }
 	}
 });
 
@@ -181,4 +187,32 @@ $('#upload_photo_preview [upload]').click(e => {
             $avatar.attr('src', $avatar.attr('src').split('?')[0] + '?' + Math.random());
         }
     });
+});
+
+function openProfileDatings (uid) {
+    load_modal('profile', '/id' + uid + '?short');
+    modal_loaded = () => $('#profile_wrapper .tabs > .caption > [tab-id="datings"]').click();
+}
+
+$('#notifications > [remove]').click(() => {
+    $('#notifications > .notification > [delete]').click();
+});
+
+var $lastPLI;
+$(document).on('click', '.photoline > .item:not(.add)', e => {
+    $lastPLI = $(e.target).closest('.item');
+    open_modal('vip-sel', $lastPLI);
+});
+
+$('[modal-name="vip-sel"] [do="like"]').click(e => {
+    $.get('/profile/like?i='+$lastPLI.attr('i'), res => {
+        var $c = $('.img-wrapper > span', $lastPLI);
+        $c.html('<i class="chat_icon_like"></i> ' + (parseInt($c.text()) + 1));
+    });
+    close_modal('vip-sel');
+});
+
+$('[modal-name="vip-sel"] [do="view"]').click(e => {
+    openProfileDatings($lastPLI.attr('uid'));
+    close_modal('vip-sel');
 });

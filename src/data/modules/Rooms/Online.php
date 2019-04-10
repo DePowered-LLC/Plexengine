@@ -1,4 +1,8 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\Rooms;
 use pe\engine\DB;
 

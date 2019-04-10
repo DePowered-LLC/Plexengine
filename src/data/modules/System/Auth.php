@@ -1,7 +1,11 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\System;
-use pe\engine\Utils;
 use pe\engine\DB;
+use pe\engine\Utils;
 
 class Auth {
     // Captcha

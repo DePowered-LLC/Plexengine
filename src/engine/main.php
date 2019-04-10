@@ -2,6 +2,7 @@
 /*
 @copy
  */
+
 // Global values
 namespace pe\engine;
 error_reporting(E_ALL);

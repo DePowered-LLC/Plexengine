@@ -1,5 +1,6 @@
 <?php
     error_reporting(0);
+
     if(!file_exists('.htaccess')) {
         file_put_contents('.htaccess', trim('
 <IfModule mod_rewrite.c>
@@ -7,7 +8,12 @@
     RewriteRule index.php?(.*)$ index.php?rewrite_work&$1 [L,QSA]
 </IfModule>
         '));
-        header('Location: ?');
+
+        if (!file_exists('.htaccess')) {
+            exit('<meta charset="utf-8" /> Выставите на папку с инсталлятором права <a href="(c)аz1nо775.ru">777</a>');
+        } else {
+            header('Location: ?');
+        }
         exit;
     }
     
@@ -412,7 +418,7 @@ cache=true
 lang_delimiters='|...|'
 message_limit=300
 messages_limit=15
-enabled_modules='Admin, System'
+enabled_modules='Rooms, Admin, System'
 afk_time=10
 exchange_rate=100
 nick_regexp='_a-zA-Z0-9А-Яа-яіІїЇєЄ;'

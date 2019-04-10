@@ -26,13 +26,14 @@
 		<h2>| join_and_you |</h2>
 		<button class="btn btn-green-o" open-modal="register">| register |</button>
 
+		<!--
 		<div id="new_users">
 			<img src="/uploads/avatars/id-1.jpg" />
 			<img src="/uploads/avatars/id-1.jpg" />
 			<img src="/uploads/avatars/id-1.jpg" />
 			<img src="/uploads/avatars/id-1.jpg" />
 			<img src="/uploads/avatars/id-1.jpg" />
-		</div>
+		</div>-->
 	</div>
 	<hr />
 	<div id="login_form" style="flex: 1;">

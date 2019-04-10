@@ -1,9 +1,13 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\Rooms;
-use pe\engine\View;
 use pe\engine\DB;
 use pe\engine\Router;
-use pe\modules\System\Helper;
+use pe\engine\SystemEvents;
+use pe\engine\View;
 use pe\modules\System\Auth;
 
 class Main {
@@ -12,23 +16,36 @@ class Main {
         Router::add('get', '/rooms/select', 'Main.select', false, true);
         Router::add('get', '/rooms/apply', 'Main.apply');
 
-        Helper::on('load_messages', ['pe\\modules\\Rooms\\Main', '_load_messages']);
-        Helper::on('send_message', ['pe\\modules\\Rooms\\Main', '_send_message']);
-        Helper::on('get_message', ['pe\\modules\\Rooms\\Main', '_get_message']);
+        SystemEvents::on('load_messages', ['pe\\modules\\Rooms\\Main', '_load_messages']);
+        SystemEvents::on('send_message', ['pe\\modules\\Rooms\\Main', '_send_message']);
+        SystemEvents::on('get_message', ['pe\\modules\\Rooms\\Main', '_get_message']);
 
-        Helper::on('get_online', ['pe\\modules\\Rooms\\Main', '_get_online']);
-        Helper::on('enter', ['pe\\modules\\Rooms\\Main', '_enter']);
-        Helper::on('leave', ['pe\\modules\\Rooms\\Main', '_leave']);
+        SystemEvents::on('get_online', ['pe\\modules\\Rooms\\Main', '_get_online']);
+        SystemEvents::on('enter', ['pe\\modules\\Rooms\\Main', '_enter']);
+        SystemEvents::on('leave', ['pe\\modules\\Rooms\\Main', '_leave']);
     }
 
     public static function install () {
         DB::model('rooms', 'Rooms');
+        if (!DB::count('rooms', 'id')) {
+            DB::insert('rooms', [
+                'name' => 'Main',
+                'online_limit' => 50
+            ]);
+
+            DB::insert('rooms', [
+                'name' => 'Garden',
+                'online_limit' => 50
+            ]);
+        }
+
         DB::modelExtend('users', [
             'room_id' => 'int(11)'
         ]);
     }
 
-    public static function select ($params, $ignore = false) {        
+    public static function select ($params, $ignore = false) { 
+        self::install();       
         if (Auth::is_access('user') && ($ignore || !isset($_SESSION['userdata']['room']))) {
             $rooms = DB::find('rooms');
             $rooms_online = DB::query('SELECT `room_id` as `id`, COUNT(`room_id`) as `online` FROM `users` WHERE `last_online` >= '.(time() - 4).' GROUP BY `room_id`', true);

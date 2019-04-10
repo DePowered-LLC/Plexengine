@@ -4,10 +4,10 @@
  */
 
 namespace pe\modules\Admin;
-use pe\engine\View;
 use pe\engine\DB;
+use pe\engine\SystemEvents;
+use pe\engine\View;
 use pe\modules\System\Auth;
-use pe\modules\System\Helper;
 
 if(!Auth::is_access('admin')) View::error(403, 'No admin access');
 class IndexRequests {
@@ -40,10 +40,11 @@ class IndexRequests {
 
         $info_msg = [
             'user_id' => 0,
+            'nick' => $_SESSION['userdata']['nick'],
             'timestamp' => time(),
             'message' => implode(';', array_merge([$limit[0], $_POST['nick']], array_slice($limit, 1)))
         ];
-        if (!Helper::emit('send_message', $info_msg)) DB::insert('chat', $info_msg);
+        if (!SystemEvents::emit('send_message', $info_msg)) DB::insert('chat', $info_msg);
     }
 
     private static function parseTime () {
@@ -79,14 +80,14 @@ class IndexRequests {
     }
 
     public static function remove_msg () {
-        $msg = Helper::emit('get_message', $_GET['id']);
+        $msg = SystemEvents::emit('get_message', $_GET['id']);
         if (!$msg) $msg = DB::find_first('chat', [
             'id = :0:',
             'bind' => [$_GET['id']]
         ]);
 
         if ($msg['user_id'] == 0) exit('sys');
-        if (!Helper::emit('remove_message', $_GET['id'])) {
+        if (!SystemEvents::emit('remove_message', $_GET['id'])) {
             DB::delete('chat', [
                 'id = :0:',
                 'bind' => [$_GET['id']]
@@ -100,6 +101,6 @@ class IndexRequests {
             'message' => 'remove;'.$_GET['id'],
             'color' => '#fff'
         ];
-        if (!Helper::emit('send_message', $tag_msg)) DB::insert('chat', $tag_msg);
+        if (!SystemEvents::emit('send_message', $tag_msg)) DB::insert('chat', $tag_msg);
     }
 }

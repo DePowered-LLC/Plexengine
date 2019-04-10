@@ -29,7 +29,7 @@
 {% else %}
         <i class="close"></i>
 {% endif %}
-        {% if !isset($vars->profile) %}
+        {% if !isset($vars->profile) || !$vars->profile %}
         <h1 style="font-size: 32px;">| no_profile |</h1>
         <p style="font-size: 16px;">| no_profile_info |</p>
         <style>
@@ -39,123 +39,134 @@
             }
         </style>
         {% else %}
-        {% if isset($_SESSION['userdata']) %}
-        <img avatar class="my_avatar" src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-        <div id="profile_free_gifts">
-            <h1>| free |</h1>
-            <span>| free_gift_info |</span>
-            <img class="gift" src="/public/img/test_gift.png" />
-        </div>
-        {% else %}
-        <style>[profile] > body { margin: 15px auto; }</style>
-        {% endif %}
-        {% if !isset($_SESSION['userdata']) || $_SESSION['userdata']['id'] != $vars->profile['id'] %}
-        <style>i[edit] { display: none; }</style>
-        {% endif %}
-        <img src="/uploads/covers/id{{ $vars->profile['id'] }}.png" />
-        <i edit="cover" class="chat_icon_edit"></i>
-        <div id="profile_top">
-            {% if $vars->profile['last_online'] + 5 >= time() %}
-                <i online="{{ $vars->profile['status'] }}" tooltip="{{ self::lang('status_'.$vars->profile['status']) }}"></i>
-            {% endif %}
-            {% if isset($_SESSION['userdata']) && $vars->profile['id'] == $_SESSION['userdata']['id'] %}
-            <img avatar width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
+            {% if isset($_SESSION['userdata']) %}
+            <img avatar class="my_avatar" src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+            <div id="profile_free_gifts">
+                <h1>| free |</h1>
+                <span>| free_gift_info |</span>
+                <img class="gift" src="/public/img/test_gift.png" />
+            </div>
             {% else %}
-            <img width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
+            <style>[profile] > body { margin: 15px auto; }</style>
             {% endif %}
-            <i edit="avatar" class="chat_icon_edit"></i>
-            <span id="profile_status"><b>| pr_info_myid |</b> <a href="http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}" target="_blank">http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}</a></span>
-            <div style="flex: 1 1 100%;">
-                <h1>
-                    | pr_info | {{ $vars->profile['nick'] }}
-                    {% if $vars->profile['verificated'] == 1 %}
-                    <i tooltip="| verifed_info |" class="chat_icon_verificated"></i>
-                    {% endif %}
-                </h1>
+            {% if !isset($_SESSION['userdata']) || $_SESSION['userdata']['id'] != $vars->profile['id'] %}
+            <style>i[edit] { display: none; }</style>
+            {% endif %}
+            <img src="/uploads/covers/id{{ $vars->profile['id'] }}.png" />
+            <i edit="cover" class="chat_icon_edit"></i>
+            <div id="profile_top">
                 {% if $vars->profile['last_online'] + 5 >= time() %}
-                <span>
-                    {% if isset($vars->profile['about']['city']) %}
-                    {{ $vars->profile['about']['city'] }},
-                    {% endif %}
-                    {{ $vars->profile['zodiac'] }},
-                    | age | {{ $vars->profile['age'] }}
-                </span>
-                {% if isset($_GET['short']) %}
-                <button onclick="write_fpr()" class="btn">| write_to |</button>
+                    <i online="{{ $vars->profile['status'] }}" tooltip="{{ self::lang('status_'.$vars->profile['status']) }}"></i>
                 {% endif %}
+                {% if isset($_SESSION['userdata']) && $vars->profile['id'] == $_SESSION['userdata']['id'] %}
+                <img avatar width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
                 {% else %}
-                <span>| user_was_online | {{ date('d.m.Y H:i:s', $vars->profile['last_online']) }}</span>
+                <img width="180px" height="180px" src="/uploads/avatars/id{{ $vars->profile['id'] }}.jpg" />
                 {% endif %}
-                <div class="access">
-                    <i class="chat_icon_{{ $vars->profile['access'] }}1"></i>
-                    <b>{{ $vars->profile['nick'] }}</b>
-                    <span>{{ getAccessLang() }}</span>
+                <i edit="avatar" class="chat_icon_edit"></i>
+                <span id="profile_status"><b>| pr_info_myid |</b> <a href="http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}" target="_blank">http://{{ $_SERVER['SERVER_NAME'] }}/id{{ $vars->profile['id'] }}</a></span>
+                <div style="flex: 1 1 100%;">
+                    <h1>
+                        | pr_info | {{ $vars->profile['nick'] }}
+                        {% if $vars->profile['verificated'] == 1 %}
+                        <i tooltip="| verifed_info |" class="chat_icon_verificated"></i>
+                        {% endif %}
+                    </h1>
+                    {% if $vars->profile['last_online'] + 5 >= time() %}
+                    <span>
+                        {% if isset($vars->profile['about']['city']) %}
+                        {{ $vars->profile['about']['city'] }},
+                        {% endif %}
+                        {{ $vars->profile['zodiac'] }},
+                        | age | {{ $vars->profile['age'] }}
+                    </span>
+                    {% if isset($_GET['short']) %}
+                    <button onclick="write_fpr()" class="btn">| write_to |</button>
+                    {% endif %}
+                    {% else %}
+                    <span>| user_was_online | {{ date('d.m.Y H:i:s', $vars->profile['last_online']) }}</span>
+                    {% endif %}
+                    <div class="access">
+                        <i class="chat_icon_{{ $vars->profile['access'] }}1"></i>
+                        <b>{{ $vars->profile['nick'] }}</b>
+                        <span>{{ getAccessLang() }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="profile_gifts">
-            <div no-gifts>
-                <i></i>
-                <span>
-                    {{ $vars->profile['nick'] }}
-                    {% if $vars->profile['gender'] == 'male' %}| pr_info_to_gift_male |{% endif %}
-                    {% if $vars->profile['gender'] == 'female' %}| pr_info_to_gift_female |{% endif %}
-                </span>
-                <!-- <span>| pr_info_sh_all |</span> -->
+            <div id="profile_gifts">
+                <div no-gifts>
+                    <i></i>
+                    <span>
+                        {{ $vars->profile['nick'] }}
+                        {% if $vars->profile['gender'] == 'male' %}| pr_info_to_gift_male |{% endif %}
+                        {% if $vars->profile['gender'] == 'female' %}| pr_info_to_gift_female |{% endif %}
+                    </span>
+                    <!-- <span>| pr_info_sh_all |</span> -->
+                </div>
             </div>
-        </div>
-        <div class="tabs">
-            <div class="caption">
-                <span tab-id="info" class="active">| pr_info_about |</span>
-                <span tab-id="contacts">| pr_info_contacts |</span>
-                <span tab-id="photos">| pr_info_photo |</span>
-            </div>
-            <form id="profile_about" tab-id="info" class="tab flex active">
-                <div style="position: relative; flex: 1;">
-                    <h1>| pr_info_about_me |</h1>
-                    <p edit="info">{{ getAbout('info') }}</p>
-                    <i edit class="chat_icon_edit"></i>
-                    <br />
-                    
-                    <table>
-                        <tr>
-                            <td>| pr_info_date |</td>
-                            <td>{{ $vars->profile['date_of_birth'] }}</td>
-                        </tr>
-                        <tr>
-                            <td>| pr_info_city |</td>
-                            <td edit="city">{{ getAbout('city') }}</td>
-                        </tr>
-                        <tr>
-                            <td>| pr_info_fam_status |</td>
-                            <td edit="family_status">{{ getAbout('family_status') }}</td>
-                        </tr>
-                        <tr>
-                            <td>| pr_info_work |</td>
-                            <td edit="work">{{ getAbout('work') }}</td>
-                        </tr>
-                        <tr>
-                            <td>| pr_info_www |</td>
-                            <td edit="site">{{ getAbout('site') }}</td>
-                        </tr>
-                    </table>
+            <div class="tabs">
+                <div class="caption">
+                    <span tab-id="info" class="active">| pr_info_about |</span>
+                    <span tab-id="contacts">| pr_info_contacts |</span>
+                    <span tab-id="photos">| pr_info_photo |</span>
+                    <span tab-id="datings">Волшебная вкладка</span>
+                </div>
+                <form id="profile_about" tab-id="info" class="tab flex active">
+                    <div style="position: relative; flex: 1;">
+                        <h1>| pr_info_about_me |</h1>
+                        <p edit="info">{{ getAbout('info') }}</p>
+                        <i edit class="chat_icon_edit"></i>
+                        <br />
+                        
+                        <table>
+                            <tr>
+                                <td>| pr_info_date |</td>
+                                <td>{{ $vars->profile['date_of_birth'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>| pr_info_city |</td>
+                                <td edit="city">{{ getAbout('city') }}</td>
+                            </tr>
+                            <tr>
+                                <td>| pr_info_fam_status |</td>
+                                <td edit="family_status">{{ getAbout('family_status') }}</td>
+                            </tr>
+                            <tr>
+                                <td>| pr_info_work |</td>
+                                <td edit="work">{{ getAbout('work') }}</td>
+                            </tr>
+                            <tr>
+                                <td>| pr_info_www |</td>
+                                <td edit="site">{{ getAbout('site') }}</td>
+                            </tr>
+                        </table>
+                        <br />
+                        <button style="display: none;" class="btn" type="submit">| apply |</button>
+                    </div>
+                </form>
+                <form id="profile_contacts" tab-id="contacts" class="tab">
+                    <div>
+                        <i edit class="chat_icon_edit"></i>
+                        <span edit="vk"><img src="/public/img/icons/vk.png" /> {{ getAbout('vk') }}</span>
+                        <span edit="phone"><img src="/public/img/icons/phone.png" /> {{ getAbout('phone') }}</span>
+                        <span edit="skype"><img src="/public/img/icons/skype.png" /> {{ getAbout('skype') }}</span>
+                        <span edit="inst"><img src="/public/img/icons/inst.png" /> {{ getAbout('inst') }}</span>
+                    </div>
                     <br />
                     <button style="display: none;" class="btn" type="submit">| apply |</button>
+                </form>
+                <div tab-id="photos" class="tab"></div>
+                <div class="tab flex" tab-id="datings">
+                    Это должно быть открыто
                 </div>
-            </form>
-            <form id="profile_contacts" tab-id="contacts" class="tab">
-                <div>
-                    <i edit class="chat_icon_edit"></i>
-                    <span edit="vk"><img src="/public/img/icons/vk.png" /> {{ getAbout('vk') }}</span>
-                    <span edit="phone"><img src="/public/img/icons/phone.png" /> {{ getAbout('phone') }}</span>
-                    <span edit="skype"><img src="/public/img/icons/skype.png" /> {{ getAbout('skype') }}</span>
-                    <span edit="inst"><img src="/public/img/icons/inst.png" /> {{ getAbout('inst') }}</span>
-                </div>
-                <br />
-                <button style="display: none;" class="btn" type="submit">| apply |</button>
-            </form>
-            <div tab-id="photos" class="tab"></div>
-        </div>
+            </div>
+            <script>
+                function write_fpr () {
+                    $('#chat chat-send-to > input').val('{{ $vars->profile['nick'] }}');
+                    $('#chat-send-input').focus();
+                    close_modal('profile');
+                }
+            </script>
         {% endif %}
         <script>
             $('#profile_about i[edit]').click(e => {
@@ -257,12 +268,6 @@
                 });
                 return false;
             });
-
-            function write_fpr () {
-                $('#chat chat-send-to > input').val('{{ $vars->profile['nick'] }}');
-                $('#chat-send-input').focus();
-                close_modal('profile');
-            }
             
             $avatar = $('img[avatar]');
             $avatar.attr('src', $avatar.attr('src').split('?')[0] + '?' + Math.random());

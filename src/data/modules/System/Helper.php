@@ -1,10 +1,15 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\System;
+use pe\engine\DB;
+use pe\engine\SystemEvents;
 use pe\engine\Utils;
 use pe\engine\View;
-use pe\engine\DB;
 
-class Helper extends StaticEventEmitter {
+class Helper {
 	public static function load_data ($params) {
 		$data = [];
 		if (!isset($_SESSION['userdata'])) {
@@ -56,7 +61,7 @@ class Helper extends StaticEventEmitter {
 
 		if(isset($_GET['t']) && $_GET['t'] > 0) {
 			if ($_GET['t'] > 15) $_GET['t'] = 15;
-			$result = self::emit('load_messages', $_GET['t']);
+			$result = SystemEvents::emit('load_messages', $_GET['t']);
 			if (is_array($result)) $data['msgs'] = $result;
 			else $data['msgs'] = DB::find('chat', [
 				'timestamp >= :0: ORDER BY id DESC',
@@ -66,7 +71,7 @@ class Helper extends StaticEventEmitter {
 			global $_CONFIG;
 			self::spy_msg('enter');
 
-			$result = self::emit('load_messages', -1);
+			$result = SystemEvents::emit('load_messages', -1);
 			if (is_array($result)) $data['msgs'] = $result;
 			else $data['msgs'] = DB::find('chat', 'ORDER BY id DESC LIMIT 0,'.$_CONFIG['messages_limit']);
 			
@@ -101,7 +106,7 @@ class Helper extends StaticEventEmitter {
 		}
 
 		// Get online users (last request 4 seconds ago)
-		$online_info = self::emit('get_online');
+		$online_info = SystemEvents::emit('get_online');
 		if ($online_info) {
 			$data['online'] = $online_info['users'];
 		} else {
@@ -138,11 +143,11 @@ class Helper extends StaticEventEmitter {
 			'list' => $guests_online
 		];
 
-		// Get notifications
+		// TODO: Move
 		$data['notifications'] = [];
 		if ($_SESSION['userdata']['id'] != -1) {
 			$data['notifications'] = DB::find('notifications', [
-				'user_id = :0: AND is_readed = false',
+				'user_id = :0: AND is_readed = false ORDER BY `id` DESC',
 				'bind' => [$_SESSION['userdata']['id']]
 			]);
 		}
@@ -151,7 +156,7 @@ class Helper extends StaticEventEmitter {
 	}
 
 	public static function load_msg () {
-		$msg = self::emit('get_message', $_GET['id']);
+		$msg = SystemEvents::emit('get_message', $_GET['id']);
 		if (!$msg) $msg = DB::find_first('chat', [
 			'id = :0:',
 			'bind' => [$_GET['id']]
@@ -178,7 +183,8 @@ class Helper extends StaticEventEmitter {
 			$matches = [];
 			global $_CONFIG;
 			$bot_answer = false;
-			if (preg_match('/^(['.$_CONFIG['nick_regexp'].']+) >> (.*)/', $_POST['message'], $matches)) {
+			if (preg_match('/^([\s\S]+) >> (.*)/', $_POST['message'], $matches)) {
+			// if (preg_match('/^(['.$_CONFIG['nick_regexp'].']+) >> (.*)/', $_POST['message'], $matches)) {
 				if (trim($matches[2]) == '') exit;
 				if (in_array($matches[1], $_SESSION['userdata']['ignored'])) exit('ignored');
 				if ($matches[1] == View::lang('spy_nick')) $bot_answer = true;
@@ -240,7 +246,7 @@ class Helper extends StaticEventEmitter {
 				}
 			}
 
-			$result = self::emit('send_message', $save);
+			$result = SystemEvents::emit('send_message', $save);
 			if (!$result) DB::insert('chat', $save);
 			$_SESSION['antispam'][] = [
 				't' => $save['timestamp'],
@@ -262,10 +268,10 @@ class Helper extends StaticEventEmitter {
 				$bot_answer = [
 					'user_id' => 0,
 					'timestamp' => time() + 1,
-					'message' => $_SESSION['userdata']['nick'].', '.$answers[rand(0, count($answers) - 1)]
+					'message' => $_SESSION['userdata']['nick'].' &gt;&gt; '.$answers[rand(0, count($answers) - 1)]
 				];
 
-				$result = self::emit('send_message', $bot_answer);
+				$result = SystemEvents::emit('send_message', $bot_answer);
 				if (!$result) DB::insert('chat', $bot_answer);
 			}
 		} else {
@@ -283,7 +289,7 @@ class Helper extends StaticEventEmitter {
 		switch ($_GET['m']) {
 			case 'enter':
 			case 'leave':
-				self::emit($_GET['m']);
+				SystemEvents::emit($_GET['m']);
 				break;
 			case 'st':
 				if ($_SESSION['userdata']['id'] == -1) exit('guest');
@@ -293,7 +299,7 @@ class Helper extends StaticEventEmitter {
 					'bind' => [time() - 60, 'status;'.$nick]
 				];
 
-				$is_timeout = self::emit('get_message', $st_selector);
+				$is_timeout = SystemEvents::emit('get_message', $st_selector);
 				if (!$is_timeout) $is_timeout = DB::find_first('chat', $st_selector);
 				if ($is_timeout) exit('timeout');
 
@@ -311,7 +317,7 @@ class Helper extends StaticEventEmitter {
 					'message' => 'status;'.$nick.';'.$_GET['v']
 				];
 
-				$result = self::emit('send_message', $msg);
+				$result = SystemEvents::emit('send_message', $msg);
 				if (!$result) DB::insert('chat', $msg);
 				exit;
 			default:
@@ -324,7 +330,7 @@ class Helper extends StaticEventEmitter {
 			'message' => $_GET['m'].';'.$nick.';'.$_SESSION['userdata']['country']
 		];
 
-		$result = self::emit('send_message', $msg);
+		$result = SystemEvents::emit('send_message', $msg);
 		if (!$result) DB::insert('chat', $msg);
 	}
 

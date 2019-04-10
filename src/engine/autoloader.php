@@ -1,4 +1,8 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\engine;
 function loadClass($path) {
     $path = explode('\\', $path);
@@ -15,8 +19,7 @@ function loadClass($path) {
                 $path = implode('/', array_slice($path, 2));
                 $cDir = ENGINE.'/'.$path;
                 if (file_exists($cDir.'.php')) require_once($cDir.'.php');
-                else exit($cDir.'.php 404');
-                //else View::error(500, 'Engine class `'.$path.'` not found');
+                else View::error(500, 'Engine class `'.$path.'` not found');
                 break;
             default:
                 View::error(500, 'Namespace `'.implode('\\', $path).'` not supported');

@@ -20,6 +20,7 @@ class Main {
 
         Router::add('get', '/public/{file:.*}', 'Resources.getPublic');
         Router::add('get', '/uploads/{type:.*}/{file:.*}', 'Resources.getUpload');
+        Router::add('get', '/uploads/{file:.*}', 'Resources.getDirectUpload');
         Router::module('get', '/auth/<action>', 'Auth');
         Router::module('get', '/profile/<action>', 'Profile');
         Router::module('get', '/helper/<action>', 'Helper');

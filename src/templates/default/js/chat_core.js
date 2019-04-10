@@ -72,7 +72,6 @@ var chat = {
 
     parseSpyMsg (msg) {
         var args = msg.message.split(';');
-        msg.nick = lang.spy_nick;
         if (args[1]) args[1] = args[1].split('&#59').join(';');
         switch (args[0]) {
             case 'remove':
@@ -95,12 +94,14 @@ var chat = {
             case 'kick':
                 msg.message = lang.spy_kick
                     .split('{nick}').join(args[1])
+                    .split('{author}').join(msg.nick)
                     .split('{reason}').join(args[2]);
                 msg.light = true;
                 break;
             case 'mute':
                 msg.message = lang.spy_mute
                     .split('{nick}').join(args[1])
+                    .split('{author}').join(msg.nick)
                     .split('{reason}').join(args[2])
                     .split('{time}').join(parseTime(args[3]));
                 msg.light = true;
@@ -108,11 +109,14 @@ var chat = {
             case 'ban':
                 msg.message = lang.spy_ban
                     .split('{nick}').join(args[1])
+                    .split('{author}').join(msg.nick)
                     .split('{reason}').join(args[2])
                     .split('{time}').join(parseTime(args[3]));
                 msg.light = true;
                 break;
         }
+        
+        msg.nick = lang.spy_nick;
         return msg;
     },
 
@@ -198,8 +202,9 @@ var chat = {
     },
 
     add_to_msg (text) {
-        var input = $('#chat-send-input');
-        input.val(input.val() + text);
+        var $input = $('#chat-send-input');
+        $input.val($input.val() + text);
+        $input.focus();
     },
 
     _colors: [],
@@ -472,7 +477,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
             if ($('#userlist [category="' + this.access + '"]')[0]) category = this.access;
             $('#userlist [category="' + category + '"] > .content').append(this.html);
             $('#userlist [category="' + category + '"] [count]')[0].innerHTML++;
-            $('#userlist [category="all"] [count]')[0].innerHTML++;
+            $('#online_count')[0].innerHTML++;
         }
 
         remove () {
@@ -480,7 +485,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
             var category = this.gender;
             if ($('#userlist [category="' + this.access + '"]')[0]) category = this.access;
             $('#userlist [category="' + category + '"] [count]')[0].innerHTML--;
-            $('#userlist [category="all"] [count]')[0].innerHTML--;
+            $('#online_count')[0].innerHTML--;
         }
     }
 
@@ -537,7 +542,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
                 const userBlock = new UserBlock(user);
                 userBlock.render();
                 userBlock.ignored = !!~ignored.indexOf(user.nick);
-                $('#userlist .nano').nanoScroller();
+                // $('#userlist .nano').nanoScroller();
                 rendered[user.id] = userBlock;
                 delete renderCheck[user.id];
             }
@@ -618,14 +623,18 @@ $(document).on('mouseenter', '.chat-reply', e => {
                 attr: {
                     class: 'close',
                     remove: true,
-                    tooltip: lang.remove
+                    tooltip: lang.remove,
+                    't-style': 'dark',
+                    't-top': true
                 }
             });
             msg.content.push({
                 name: 'i',
                 attr: {
                     class: 'chat_icon_reply',
-                    tooltip: lang.reply
+                    tooltip: lang.reply,
+                    't-style': 'dark',
+                    't-top': true
                 }
             });
             chat_list.append(build_html([msg]));
@@ -641,6 +650,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
         $.get('/notifications/remove?id=' + $(e.target).attr('delete'), () => {
             $(e.target).parent().remove();
             if (!$('#notifications').children().length) {
+                $('#notifications').hide();
                 $('#no_notifications').show();
             }
         });
@@ -693,14 +703,14 @@ $(document).on('mouseenter', '.chat-reply', e => {
                     content: [
                         {
                             name: 'img',
-                            attr: { src: '/public/img/icons/note.png' }
+                            attr: { src: '/uploads/avatars/id' + n.sender_id + '.jpg' }
                         },
                         {
                             name: 'p',
                             content: (() => {
                                 switch (n.type) {
                                     case 'profile_view':
-                                        return lang.notifi_viev_info.split('{user}').join('<b>' + n.info.sender_nick + '</b>');
+                                        return lang.notifi_viev_info.split('{user}').join('<b load-modal="profile" load-path="/id' + n.sender_id + '?short">' + n.info.sender_nick + '</b>');
                                 }
                             })()
                         },
@@ -719,9 +729,11 @@ $(document).on('mouseenter', '.chat-reply', e => {
             $('[notifications] > .sup').html(data.notifications.length);
             if (!data.notifications.length) {
                 $('[notifications] > .sup').css('animation', '');
+                $('#notifications').hide();
                 $('#no_notifications').show();
             } else {
                 $('[notifications] > .sup').css('animation', 'pulse 1s infinite');
+                $('#notifications').show();
                 $('#no_notifications').hide();
             }
 

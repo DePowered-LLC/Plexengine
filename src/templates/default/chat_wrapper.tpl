@@ -2,6 +2,7 @@
 <form id="chat">
     <div id="chat_heading">
         <i class="chat_icon_eye"></i>
+        &nbsp;—&nbsp;<span id="online_count">0</span>&nbsp;| rooms_users |&nbsp;
         <div>
             | rooms_info | {{ $_SESSION['userdata']['room_name'] }} <a load-modal="room-select" load-path="/rooms/select" tooltip="| rooms |">| rooms_change |</a>
         </div>
@@ -161,11 +162,13 @@
         mute_info: '| mute_info |',
         enter_reason: '| enter_reason |',
         enter_nick: '| enter_nick |',
+        ignore: '| ignore |',
         unignore: '| unignore |',
         reply: '| reply |',
         replyed_message: '| replyed_message |',
         loading: '| loading |',
         remove: '| remove |',
+        notifi_delete_all: '| notifi_delete_all |',
 
         status_chat: '| status_chat |',
         status_priv: '| status_priv |',

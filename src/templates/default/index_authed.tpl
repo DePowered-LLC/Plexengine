@@ -16,10 +16,17 @@
             <span class="caption"><i class="chat_icon_photos"></i> | mod_vip_photo |</span>
             <span class="close" tooltip="| hide |" t-left></span>
             <div class="photoline">
-                <div class="add">
+                <div load-modal="add-to-photoline" load-path="/add_to_photoline" class="add item">
                     <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-                    {# | mod_vip_add | #}
                 </div>
+                {% for $info in DB::find('vip_photos', 'ORDER BY `id` DESC LIMIT 0,3') %}
+                <div uid="{{ $info['user_id'] }}" i="{{ $info['id'] }}" class="item">
+                    <div class="img-wrapper">
+                        <img src="/uploads/{{ $info['photo'] }}.jpg" />
+                        <span><i class="chat_icon_like"></i> {{ $info['likes'] }}</span>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
         {{ self::load('chat_wrapper') }}
@@ -34,12 +41,6 @@
 
         <div class="nano">
             <div class="nano-content">
-                <div class="category" category="all">
-                    <div class="caption">
-                        | all | {{ $_SESSION['userdata']['room_name'] }} - <span count>0</span> online
-                    </div>
-                    <div class="content"></div>
-                </div>
                 <div class="category" category="admin">
                     <div class="caption">
                         | admins |
@@ -92,8 +93,15 @@
     </div>
 </div>
 
+<div class="modal_wrapper modal-tooltip" modal-name="vip-sel">
+    <div class="modal t-menu" style="width: 150px;">
+        <span do="view" class="item">| mod_vip_profile |</span>
+        <span do="like" class="item">| mod_vip_like |</span>
+    </div>
+</div>
+
 <div class="modal_wrapper" modal-name="ignored">
-    <div class="modal">
+    <div class="modal modal-flat">
         <div class="title">
             | antispam | <span class="close"></span>
         </div>
@@ -109,7 +117,7 @@
 </div>
 
 <div class="modal_wrapper" modal-name="ignored_to">
-    <div class="modal">
+    <div class="modal modal-flat">
         <div class="title">
             | antispam | <span class="close"></span>
         </div>
@@ -125,7 +133,7 @@
 </div>
 
 <div class="modal_wrapper" modal-name="spam">
-    <div class="modal">
+    <div class="modal modal-flat">
         <div class="title">
             | antispam | <span class="close"></span>
         </div>
@@ -141,7 +149,7 @@
 </div>
 
 <div class="modal_wrapper" modal-name="status_spam">
-    <div class="modal">
+    <div class="modal modal-flat">
         <div class="title">
             | antispam | <span class="close"></span>
         </div>
@@ -277,11 +285,12 @@ $max_file = file_upload_max_size() / 1024 / 1024;
     </div>
 </div>
 
-<div id="user_menu" class="tooltip tooltip-bottom">
+<div id="user_menu" class="t-menu tooltip tooltip-bottom">
     <span do="profile" class="item">| profile |</span>
     <span do="write" class="item">| write_to |</span>
     {% if $_SESSION['userdata']['id'] != -1 %}
     <span do="ignore" class="item">| ignore |</span>
+    <span do="report" class="item">| report |</span>
     {% endif %}
     {% if $_SESSION['userdata']['access'] == 'admin' %}
     <span do="ban" class="item">| ban |</span>
@@ -291,7 +300,7 @@ $max_file = file_upload_max_size() / 1024 / 1024;
 </div>
 
 <div id="lmodal" class="modal_wrapper" modal-name="limitation">
-    <div class="modal">
+    <div class="modal modal-flat" style="min-width: 550px;">
         <div class="title">
             | limitation | <span class="close"></span>
         </div>
@@ -302,6 +311,22 @@ $max_file = file_upload_max_size() / 1024 / 1024;
             | reason |: <span reason></span>
 			<br />
 			<br />
+        </div>
+    </div>
+</div>
+
+<div class="modal_wrapper" modal-name="add-to-photoline">
+    <div class="modal">
+        <div class="title">
+            | mod_vip_title | <span class="close"></span>
+        </div>
+        <div class="content" loadhere>
+			{# <br />
+            <span info></span>
+			<br />
+            | reason |: <span reason></span>
+			<br />
+			<br /> #}
         </div>
     </div>
 </div>

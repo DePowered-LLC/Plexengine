@@ -1,7 +1,11 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\System;
-use pe\engine\View;
 use pe\engine\DB;
+use pe\engine\View;
 
 class Profile {
     public static function view ($params) {
@@ -112,7 +116,7 @@ class Profile {
         ]);
     }
     
-    public static function exchange() {
+    public static function exchange () {
         global $_CONFIG;
         if ($_SESSION['userdata']['id'] == -1 && !isset($_GET['v'])) exit;
         $val = intval($_GET['v']);
@@ -130,7 +134,7 @@ class Profile {
         } else exit('no_points');
     }
 
-    public static function upload_photo() {
+    public static function upload_photo () {
         if (!isset($_SESSION['userdata'])) exit('forbidden');
         else if ($_SESSION['userdata']['id'] == -1) exit('guest');
         else if (!isset($_FILES['file'])) exit('no_file');
@@ -158,5 +162,43 @@ class Profile {
             if ($task === false) exit('save_error');
             else exit('success');
         }
+    }
+
+    public static function vip_add () {
+        if (!file_exists(UPLOADS.'/avatars/id'.$_SESSION['userdata']['id'].'.jpg')) exit('no_photo');
+        if ($_SESSION['userdata']['credits'] < 10) exit('no_coins');
+
+        $r = [];
+        $r['photo'] = $_SESSION['userdata']['id'].time();
+        $r['uid'] = $_SESSION['userdata']['id'];
+        copy(UPLOADS.'/avatars/id'.$_SESSION['userdata']['id'].'.jpg', UPLOADS.'/'.$r['photo'].'.jpg');
+        DB::insert('vip_photos', [
+            'user_id' => $_SESSION['userdata']['id'],
+            'photo' => $r['photo'],
+            'likes' => 0
+        ]);
+        echo json_encode($r);
+
+        $_SESSION['userdata']['credits'] -= 10;
+        DB::update('users', [
+            'credits' => $_SESSION['userdata']['credits']
+        ], [
+            'id = :0:',
+            'bind' => [$_SESSION['userdata']['id']]
+        ]);
+    }
+
+    public static function like () {
+        $ph = DB::find_first('vip_photos', [
+            'id = :0:',
+            'bind' => [$_GET['i']]
+        ]);
+
+        DB::update('vip_photos', [
+            'likes' => $ph['likes'] + 1
+        ], [
+            'id = :0:',
+            'bind' => [$_GET['i']]
+        ]);
     }
 }

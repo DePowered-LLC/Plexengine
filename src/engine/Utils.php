@@ -1,4 +1,8 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\engine;
 class Utils {
     private static $is_case_sensitive = false;

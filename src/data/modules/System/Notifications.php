@@ -1,4 +1,8 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\System;
 use pe\engine\DB;
 

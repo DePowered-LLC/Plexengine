@@ -273,7 +273,7 @@ i[edit="avatar"] {
     padding: 5px 10px;
     border-radius: 3px;
     opacity: 0;
-    z-index: 9999;
+    z-index: 10000;
     transition: 0.3s;
 }
 

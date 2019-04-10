@@ -1,7 +1,11 @@
 <?php
+/*
+@copy
+ */
+
 namespace pe\modules\System;
-use pe\engine\View;
 use pe\engine\DB;
+use pe\engine\View;
 
 class Resources {
     public static function load ($path) {
@@ -45,7 +49,8 @@ class Resources {
         if(!in_array($file_ext, $ext_deny)) self::load($path);
         else View::error(403, 'Was requested forbidden file type');
     }
-
+    
+    public static function getDirectUpload ($params) { self::load(UPLOADS.'/'.$params['file']); }
     public static function getUpload ($params) {
         $path = UPLOADS.'/'.$params['type'].'/'.$params['file'];
         switch ($params['type']) {

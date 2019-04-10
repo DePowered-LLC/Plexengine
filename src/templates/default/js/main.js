@@ -105,13 +105,17 @@ $(document).on('click', '.modal_wrapper .close', e => {
     close_modal(elem.attr('modal-name'));
 });
 
+window.modal_loaded = null;
 function load_modal(modal, url, $caller = null) {
 	let elem = $('[modal-name="' + modal + '"] [loadhere]');
 	elem.removeAttr('loaded');
 	if(!url) { url = '/' + modal; }
 	$.get(url, data => {
 		elem.html(data + `<script>
-			setTimeout(() => $('[modal-name="${modal}"] [loadhere]').attr('loaded', true), 100);
+			setTimeout(() => {
+				$('[modal-name="${modal}"] [loadhere]').attr('loaded', true);
+				window.modal_loaded && window.modal_loaded();
+			}, 100);
 		</script>`);
 	});
 	open_modal(modal, $caller);
@@ -192,7 +196,9 @@ $(document).on('mouseenter', '[tooltip]', function () {
 	if ($(this).attr('t-right') != undefined) side = 'right';
 	else if ($(this).attr('t-top') != undefined) side = 'top';
 	else if ($(this).attr('t-left') != undefined) side = 'left';
-	$('body').append('<div tid="' + tooltip + '" class="tooltip tooltip-' + side + '"></div>');
+
+	var tStyle = $(this).attr('t-style');
+	$('body').append('<div tid="' + tooltip + '" class="tooltip tooltip-' + side + (tStyle ? ' tooltip-' + tStyle : '') + '"></div>');
 	update_tooltip(this, $(this).attr('tooltip'), side);
 	$(this).on('click', () => $('[tid="' + tooltip + '"]').html($(this).attr('tooltip')));
 	tooltip++;

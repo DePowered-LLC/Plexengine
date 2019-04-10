@@ -22,7 +22,7 @@
 
         <div class="modal_wrapper modal-tooltip" modal-name="notifications">
             <div class="modal" style="width: 450px;">
-                <div id="notifications"></div>
+                <div id="notifications"><span remove>| notifi_delete_all |</span></div>
                 <div id="no_notifications" style="display: none; text-align: center; padding: 5px;">
                     <h2>| notifi_title |</h2>
                     <img src="/public/img/icons/note.png" />

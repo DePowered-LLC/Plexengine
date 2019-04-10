@@ -4,9 +4,9 @@
  */
 
 namespace pe\modules\Admin;
+use pe\engine\DB;
 use pe\engine\Router;
 use pe\engine\View;
-use pe\engine\DB;
 use pe\modules\System\Auth;
 
 class Main {

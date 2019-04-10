@@ -6,7 +6,8 @@
 	<head>
 		<title>{{ $_CONFIG['site_name'] }}</title>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		{# <meta name="viewport" content="width=device-width, initial-scale=1, "> #}
+		<meta name="viewport" content="initial-scale=1" />
 		<link rel="stylesheet" href="/public/css/main.css" />
 		<link rel="stylesheet" href="/public/css/nanoscroller.css" />
 		<link rel="shortcut icon" href="/public/favicon.ico" type="image/x-icon" />
@@ -47,11 +48,10 @@
 						<i class="music-play-icon"></i>
 					</span>
 					<span load-modal="wallet" id="balance" class="item" tooltip="| wallet |">
-						<i class="chat_icon_wallet m"></i>
 						<span class="sup">
-							<span points>{{ $_SESSION['userdata']['points'] }}</span> | points |
-							:
-							<span coins>{{ $_SESSION['userdata']['credits'] }}</span> | coins |
+							<i class="chat_icon_points m"></i> <span points>{{ $_SESSION['userdata']['points'] }}</span> | points |
+							&nbsp;&nbsp;
+							<i class="chat_icon_coins m"></i> <span coins>{{ $_SESSION['userdata']['credits'] }}</span> | coins |
 						</span>
 					</span>
 					<span class="item" style="font-weight: 500; color: #9dcf43;">
