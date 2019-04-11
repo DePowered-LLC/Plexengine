@@ -68,7 +68,14 @@ class View {
         global $_CONFIG;
         if ($_CONFIG['cache'] && file_exists($cache_path)) return file_get_contents($cache_path);
         else {
-            $tpl_path = TEMPLATE.'/'.$tpl.'.tpl';
+            if (substr($tpl, 0, 1) == '*') {
+                $inc = get_included_files();
+                $inc = dirname($inc[count($inc) - 2]);
+                $tpl_path = $inc.'/'.substr($tpl, 1).'.tpl';
+            } else {
+                $tpl_path = TEMPLATE.'/'.$tpl.'.tpl';
+            }
+
             if(file_exists($tpl_path)) {
                 // Removing UTF-8 BOM
                 $tpl_cont = file_get_contents($tpl_path);

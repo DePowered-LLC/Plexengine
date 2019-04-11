@@ -5,10 +5,7 @@ const { normalize } = require('path');
 
 const tpl = fs.readFileSync('copyright');
 const root = '../src';
-const remove = [
-    './sync',
-    './data/config.ini'
-];
+const remove = ['./data/config.ini'];
 
 (function parse (parent = '.') {
     try {
@@ -29,6 +26,5 @@ const remove = [
     }
 })();
 
-zip.file('db.sql', fs.readFileSync('db.sql'));
 zip.generateNodeStream({ streamFiles: true })
    .pipe(fs.createWriteStream(process.argv[2]+'.zip'));

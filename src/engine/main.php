@@ -9,19 +9,29 @@ error_reporting(E_ALL);
 date_default_timezone_set('UTC');
 
 define('ROOT', dirname(__DIR__));
-define('UPLOADS', ROOT.'/uploads');
 define('DATA', ROOT.'/data');
-$_CONFIG = parse_ini_file(DATA.'/config.ini');
-$_CONFIG['lang_delimiters'] = explode('...', $_CONFIG['lang_delimiters']);
 define('ENGINE', ROOT.'/engine');
+define('UPLOADS', ROOT.'/uploads');
 define('TEMPLATES', ROOT.'/templates');
 define('CACHE', DATA.'/cache');
 define('LANG', ROOT.'/languages');
 define('MODULES', DATA.'/modules');
-define('TEMPLATE', TEMPLATES.'/'.$_CONFIG['template_name']);
+
+$isInstall = file_exists(ROOT.'/install/index.php');
+if ($isInstall) {
+    $_CONFIG = [
+        'debug' => true,
+        'cache' => false
+    ];
+    define('TEMPLATE', TEMPLATES.'/default');
+} else {
+    $_CONFIG = parse_ini_file(DATA.'/config.ini');
+    define('TEMPLATE', TEMPLATES.'/'.$_CONFIG['template_name']);
+}
 
 // TODO: merge with `View` or autoloader/utils
 function get_debug($errno = 0, $errstr = '') {
+    // if (!$errno) return 0;
     require_once ENGINE.'/View.php';
     $error_codes = [
         'E_USER_DEPRECATED' => '[Script] Deprecated construction',
@@ -66,6 +76,10 @@ set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line) {
 }, E_NOTICE);
 
 require_once 'autoloader.php';
+if ($isInstall) {
+    require_once ROOT.'/install/index.php';
+    exit;
+}
 
 // Parsing request URL
 $url = $_GET['__url'];
