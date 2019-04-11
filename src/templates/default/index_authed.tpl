@@ -16,9 +16,15 @@
             <span class="caption"><i class="chat_icon_photos"></i> | mod_vip_photo |</span>
             <span class="close" tooltip="| hide |" t-left></span>
             <div class="photoline">
-                <div load-modal="add-to-photoline" load-path="/add_to_photoline" class="add item">
-                    <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
-                </div>
+                {% if $_SESSION['userdata']['id'] == -1 %}
+                    <div tooltip="| ignore_guest |" t-right class="add item">
+                        <img avatar src="/uploads/avatars/id-1.jpg" />
+                    </div>
+                {% else %}
+                    <div load-modal="add-to-photoline" load-path="/add_to_photoline" class="add item">
+                        <img avatar src="/uploads/avatars/id{{ $_SESSION['userdata']['id'] }}.jpg" />
+                    </div>
+                {% endif %}
                 {% for $info in DB::find('vip_photos', 'ORDER BY `id` DESC LIMIT 0,3') %}
                 <div uid="{{ $info['user_id'] }}" i="{{ $info['id'] }}" class="item">
                     <div class="img-wrapper">

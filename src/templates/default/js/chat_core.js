@@ -405,7 +405,9 @@ $(document).on('mouseenter', '.chat-reply', e => {
             this._ignored = false;
         }
 
-        get $el () { return $(document.getElementById('uid' + this.uid)); }
+        get $el () {
+            return $('#uid' + this.uid + (this.uid == '-1' ? '[nick="' + this.nick + '"]' : ''));
+        }
 
         set ignored (val) {
             if (val) this.$el.attr('ignored', true);
@@ -524,7 +526,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
                 user.list.forEach(guest => {
                     if (!('-1' + guest in rendered)) {
                         var guestBlock = new UserBlock({
-                            id: '-1' + guest,
+                            id: '-1',
                             status: 'chat',
                             gender: 'guest',
                             nick: guest
@@ -737,7 +739,7 @@ $(document).on('mouseenter', '.chat-reply', e => {
                 $('#no_notifications').hide();
             }
 
-            $('#notifications').append(data.notifications);
+            $('#notifications').prepend(data.notifications);
             is_first && (is_first = false);
         });
     }

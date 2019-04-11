@@ -2601,3 +2601,7 @@ chat-message a {
     border-bottom: 6px solid transparent;
     border-left: 6px solid #fff;
 }
+
+.modal_wrapper[modal-name="profile"] {
+    z-index: 10002;
+}
